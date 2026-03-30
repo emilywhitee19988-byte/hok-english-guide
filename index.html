@@ -693,7 +693,7 @@
       'yao': {
         id: 'yao',
         nameEn: 'Yao',
-        nameEnAlt: 'Yaria',
+        nameEnAlt: null,
         nameCn: '瑶',
         role: 'Support',
         primaryLane: 'Roam',
@@ -738,7 +738,7 @@
       'gaochanggong': {
         id: 'gaochanggong',
         nameEn: 'Gao Changgong',
-        nameEnAlt: 'Lancelot',
+        nameEnAlt: 'Prince of Lanling',
         nameCn: '兰陵王',
         role: 'Assassin',
         primaryLane: 'Jungle',
@@ -830,7 +830,7 @@
       'luna': {
         id: 'luna',
         nameEn: 'Luna',
-        nameEnAlt: 'Diana',
+        nameEnAlt: null,
         nameCn: '露娜',
         role: 'Fighter',
         primaryLane: 'Jungle',
@@ -1555,8 +1555,8 @@
       },
       'xiaoqiao': {
         id: 'xiaoqiao',
-        nameEn: 'Xiao Qiao',
-        nameEnAlt: null,
+        nameEn: 'Breezeheart',
+        nameEnAlt: 'Xiao Qiao',
         nameCn: '小乔',
         role: 'Mage',
         primaryLane: 'Mid',
@@ -2604,22 +2604,18 @@
     
     // Real HOK portrait URLs (manually mapped from official CDN)
     const HERO_IMAGE_URLS = {
-      // S-TIER & POPULAR HEROES (mapped from API)
-      'jing': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/972b1c55fde9a0139b79775b73e820d6.jpg',
+      // CONFIRMED CORRECT IMAGES
       'daji': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/bcd91d44280372709afd773f986cb339.jpg',
       'donghuang': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/f4d9cd082796ba6217280ac160eedf7f.jpg',
-      'angela': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/6a2d0bf5eefa8d674952457e27ee1fe5.jpg',
       'houyi': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/d09631d5a0f92bff8a26c8dd2f70bd76.jpg',
       'diaochan': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/3fd8c305278c1eca10763d815eb816e4.jpg',
-      'marcopolo': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/13065163d87a9193f163c713cc5d2a1c.jpg',
       'luban': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/3432a0860d33fece1e2a7380397d4167.jpg',
       'zhaoyun': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/98353cde994528b648e6f73a63188067.jpg',
-      'yingzheng': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/11aa0d0f2aaef5404f55ee6a0aca86d0.jpg',
-      'xiaoqiao': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/e085141af66d62fb752abc552f93f68a.jpg',
-      'mozi': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/09885842684010e2227f64c7ff4a7711.jpg',
+      'xiaoqiao': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/e085141af66d62fb752abc552f93f68a.jpg',  // Breezeheart
       'ladysun': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/5aff3bec15be42191e7bf0a67fee92fd.jpg',
       
-      // Add more mappings here - visit https://qing762.is-a.dev/api/wangzhe to get URLs
+      // Rest will use UI Avatars (professional placeholders with correct names)
+      // Add more verified mappings here
     };
     
     // Generate hero image URL (real portrait or placeholder)
@@ -2680,33 +2676,33 @@
       // Role-based general tips
       'tank_vs_assassin': {
         threat: 'High HP and CC shuts down your burst combos.',
-        counterplay: '⚔️ HOW TO PLAY: Don\'t target tanks - go for backline. Wait for tanks to use CC on teammates. Build penetration items. Roam and gank instead of fighting tanks directly.'
+        counterplay: '⚔️ HOW TO PLAY: NEVER target tanks first - always ignore them and dash past to backline. Wait for tank to blow CC on your teammate, then engage (CC cooldowns are 8-12s). Build 2-3 penetration items mandatory. Focus on roaming and ganking squishy lanes - don\'t 1v1 tanks ever. If tank zones you, retreat and find another angle - you can\'t kill them.'
       },
       'support_vs_assassin': {
         threat: 'Healing/shields counter your burst. CC prevents escape.',
-        counterplay: '⚔️ HOW TO PLAY: Kill support first to remove peel. Bait CC abilities before engaging. Buy Anti-heal. Wait for support cooldowns (check if heal is down).'
+        counterplay: '⚔️ HOW TO PLAY: KILL THE SUPPORT FIRST before touching carries - remove their protection. Bait CC by fake-engaging then backing off (most supports panic-CC). Buy Anti-Heal item 2nd (cuts healing 50%). Track support cooldowns - heal is usually 10-15s CD, hard CC is 8-12s. After they blow abilities, you have a 5-8 second window to all-in before cooldowns return.'
       },
       'assassin_vs_mage': {
         threat: 'High burst damage. Can one-shot you before you escape.',
-        counterplay: '⚔️ HOW TO PLAY: Check mini-map for missing enemies. Don\'t overextend. Farm under tower. Buy defensive item first. Roam with support. Avoid blind areas and bushes when enemy is missing.'
+        counterplay: '⚔️ HOW TO PLAY: NEVER push past river if enemy mage is missing - they\'re looking for you. Farm under tower when they rotate. Buy Magic Defense boots 1st item (Demon Res 360 gold). SAVE your escape ability - don\'t blow it on minions. Most mages need to land skillshot CC first - dodge sideways, not backward. Their burst combo takes 2-3 seconds - if you survive initial hit, dash away immediately. Rush level 4 before fighting.'
       },
       'assassin_vs_marksman': {
         threat: 'High mobility assassin. Bursts you before you can react.',
-        counterplay: '⚔️ HOW TO PLAY: Stay near support/tank. Check mini-map constantly. Build defensive item 2nd. Don\'t push without vision of enemy. Position in backline during fights. Save dash for escape only.'
+        counterplay: '⚔️ HOW TO PLAY: NEVER be alone - stay glued to support/tank (within 2 screen-lengths). Build defensive item 2nd (Dreadstar 2140g or Necklace 2100g). Keep 1 dash ready AT ALL TIMES - never use both dashes to chase. If assassin appears, flash TOWARD your team not away (counterintuitive but correct). Most assassins need 1-2s to burst - kite backward while dealing damage. Position in extreme backline fights - let them dive through your team first.'
       },
       'mage_vs_fighter': {
         threat: 'Gap closers reach you. Out-sustains your poke.',
-        counterplay: '⚔️ HOW TO PLAY: Maintain distance. Use CC when they engage. Build movement speed. Poke but don\'t commit. Kite backwards during fights.'
+        counterplay: '⚔️ HOW TO PLAY: Keep distance = 600-700 units (about 1.5 screen widths). When they dash toward you, use CC immediately - don\'t wait. Build Boots of Tranquility (+60 move speed) rush. Poke with max-range abilities but NEVER auto-attack (brings you too close). In teamfights, kite backward in circles - not straight lines. Most fighter dashes are 300-400 range - stay beyond that. If they land on you, flash immediately - don\'t try to fight.'
       },
       'marksman_vs_fighter': {
         threat: 'Gap closers. Dives backline.',
-        counterplay: '⚔️ HOW TO PLAY: Position far back. Attack closest target first (kite back). Build anti-dive items. Save mobility spell for escape. Let tank peel.'
+        counterplay: '⚔️ HOW TO PLAY: Position 800+ units back (about 2 screen-lengths behind tank). Attack whoever is CLOSEST - don\'t walk forward to hit carries. Build Dreadstar 2nd item (2140g) for shield. Save mobility spell for when they\'re IN MELEE RANGE - not before. Kite in circles around your tank - use them as a wall. Most fighters have 1 dash (400 range, 10s CD) - if they blow it on someone else, you\'re safe for 10s. Let your tank peel - if you run away from team, you die alone.'
       },
       
       // Generic fallback
       'default': {
         threat: 'Strong matchup based on role advantage.',
-        counterplay: '⚔️ HOW TO PLAY: Play safe early. Outscale if possible. Roam to other lanes. Ask for jungle ganks. Build defensive items.'
+        counterplay: '⚔️ HOW TO PLAY: Play safe early game (levels 1-4). Farm under tower if needed - XP more important than gold. If losing lane, roam to help other lanes win. Ask jungle for ganks (ping mini-map). Build 1 defensive item if getting killed repeatedly. Outscale strategy: survive to level 10+, then teamfight. Don\'t fight alone - group with team.'
       }
     };
 

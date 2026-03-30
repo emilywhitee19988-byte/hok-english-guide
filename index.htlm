@@ -2598,6 +2598,57 @@
     // Generate counters on load
     generateCounters();
 
+    // ============================================
+    // HERO IMAGE SYSTEM - REAL HOK PORTRAITS
+    // ============================================
+    
+    // Real HOK portrait URLs (manually mapped from official CDN)
+    const HERO_IMAGE_URLS = {
+      // S-TIER & POPULAR HEROES (mapped from API)
+      'jing': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/972b1c55fde9a0139b79775b73e820d6.jpg',
+      'daji': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/bcd91d44280372709afd773f986cb339.jpg',
+      'donghuang': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/f4d9cd082796ba6217280ac160eedf7f.jpg',
+      'angela': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/6a2d0bf5eefa8d674952457e27ee1fe5.jpg',
+      'houyi': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/d09631d5a0f92bff8a26c8dd2f70bd76.jpg',
+      'diaochan': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/3fd8c305278c1eca10763d815eb816e4.jpg',
+      'marcopolo': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/13065163d87a9193f163c713cc5d2a1c.jpg',
+      'luban': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/3432a0860d33fece1e2a7380397d4167.jpg',
+      'zhaoyun': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/98353cde994528b648e6f73a63188067.jpg',
+      'yingzheng': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/11aa0d0f2aaef5404f55ee6a0aca86d0.jpg',
+      'xiaoqiao': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/e085141af66d62fb752abc552f93f68a.jpg',
+      'mozi': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/09885842684010e2227f64c7ff4a7711.jpg',
+      'ladysun': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/5aff3bec15be42191e7bf0a67fee92fd.jpg',
+      
+      // Add more mappings here - visit https://qing762.is-a.dev/api/wangzhe to get URLs
+    };
+    
+    // Generate hero image URL (real portrait or placeholder)
+    function getHeroImageUrl(hero) {
+      // First check if we have a real image mapped
+      if (HERO_IMAGE_URLS[hero.id]) {
+        return HERO_IMAGE_URLS[hero.id];
+      }
+      
+      // Otherwise, use UI Avatars placeholder
+      const name = encodeURIComponent(hero.nameEn);
+      const bgColor = getRoleColor(hero.role);
+      
+      return `https://ui-avatars.com/api/?name=${name}&size=200&background=${bgColor}&color=fff&bold=true&format=png`;
+    }
+    
+    // Get color for role (for placeholder backgrounds)
+    function getRoleColor(role) {
+      const colors = {
+        'Tank': '1e40af',
+        'Fighter': 'dc2626',
+        'Assassin': '7c3aed',
+        'Mage': '2563eb',
+        'Marksman': 'ea580c',
+        'Support': '059669'
+      };
+      return colors[role] || '334155';
+    }
+
     // Counter tips database with counterplay advice
     const COUNTER_TIPS = {
       // Specific hero matchups
@@ -2795,9 +2846,16 @@
     // Create hero card HTML
     function createHeroCard(hero) {
       const altName = hero.nameEnAlt ? `<div class="hero-name-alt">${hero.nameEnAlt}</div>` : '';
+      const imageUrl = getHeroImageUrl(hero);
+      
       return `
         <div class="hero-card" onclick="showView('herodetail', '${hero.id}')">
-          <div class="hero-avatar">${hero.avatar}</div>
+          <div class="hero-avatar">
+            <img src="${imageUrl}" alt="${hero.nameEn}" 
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                 style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+            <span style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; font-size: 2rem;">${hero.avatar}</span>
+          </div>
           <div class="hero-name-en">${hero.nameEn}</div>
           ${altName}
           <div class="hero-name-cn">${hero.nameCn}</div>
@@ -2845,6 +2903,7 @@
       const h = currentHero;
       const tierClass = `tier-badge-${h.tier.toLowerCase()}`;
       const altNameHtml = h.nameEnAlt ? `<div class="hero-name-alt-large">${h.nameEnAlt}</div>` : '';
+      const imageUrl = getHeroImageUrl(h);
       
       // Get available lanes with counters
       const availableLanes = Object.keys(h.counters || {});
@@ -2853,7 +2912,12 @@
       document.getElementById('hero-detail-content').innerHTML = `
         <div class="hero-header">
           <div class="hero-header-content">
-            <div class="hero-avatar-large">${h.avatar}</div>
+            <div class="hero-avatar-large">
+              <img src="${imageUrl}" alt="${h.nameEn}" 
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                   style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+              <span style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; font-size: 4rem;">${h.avatar}</span>
+            </div>
             <div class="hero-info">
               <div class="hero-names">
                 <div class="hero-name-en-large">${h.nameEn}</div>
@@ -2975,11 +3039,17 @@
       const isThreating = type === 'threat';
       const tip = getCounterTip(heroId, referenceId, isThreating);
       const altName = counter.nameEnAlt ? `<div class="counter-name-cn" style="color: #60a5fa; font-style: italic;">${counter.nameEnAlt}</div>` : '';
+      const imageUrl = getHeroImageUrl(counter);
       
       return `
         <div class="counter-card ${type}" onclick="showView('herodetail', '${heroId}')">
           <div class="counter-hero-info">
-            <div class="counter-avatar">${counter.avatar}</div>
+            <div class="counter-avatar">
+              <img src="${imageUrl}" alt="${counter.nameEn}" 
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                   style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+              <span style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; font-size: 1.5rem;">${counter.avatar}</span>
+            </div>
             <div class="counter-names">
               <div class="counter-name-en">${counter.nameEn}</div>
               ${altName}

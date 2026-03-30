@@ -2604,18 +2604,29 @@
     
     // Real HOK portrait URLs (manually mapped from official CDN)
     const HERO_IMAGE_URLS = {
-      // CONFIRMED CORRECT IMAGES
+      // REAL HERO IMAGES FROM API (19 heroes!)
+      'arke': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/9244d855317676c7c91e551d85fdb37d.jpg',
       'daji': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/bcd91d44280372709afd773f986cb339.jpg',
-      'donghuang': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/f4d9cd082796ba6217280ac160eedf7f.jpg',
-      'houyi': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/d09631d5a0f92bff8a26c8dd2f70bd76.jpg',
       'diaochan': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/3fd8c305278c1eca10763d815eb816e4.jpg',
-      'luban': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/3432a0860d33fece1e2a7380397d4167.jpg',
-      'zhaoyun': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/98353cde994528b648e6f73a63188067.jpg',
-      'xiaoqiao': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/e085141af66d62fb752abc552f93f68a.jpg',  // Breezeheart
+      'donghuang': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/f4d9cd082796ba6217280ac160eedf7f.jpg',
+      'gaochanggong': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/972b1c55fde9a0139b79775b73e820d6.jpg',
+      'hanxin': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/1cde30a805ea2bd7d2815649a124d80c.jpg',
+      'houyi': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/d09631d5a0f92bff8a26c8dd2f70bd76.jpg',
       'ladysun': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/5aff3bec15be42191e7bf0a67fee92fd.jpg',
+      'liang': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/6a2d0bf5eefa8d674952457e27ee1fe5.jpg',
+      'lianpo': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/6fd028d00a45cdb0c42f33b236d366a3.jpg',
+      'luban': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/3432a0860d33fece1e2a7380397d4167.jpg',
+      'luna': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/3eccfd4804d10d118981f83f2c5ba077.jpg',
+      'marcopolo': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/13065163d87a9193f163c713cc5d2a1c.jpg',
+      'mozi': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/09885842684010e2227f64c7ff4a7711.jpg',
+      'mulan': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/84a19bff274fcd114e4503907c26ff1f.jpg',
+      'wangzhaojun': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/b1fa45185484bb82e8227451c55aa3ef.jpg',
+      'xiaoqiao': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/e085141af66d62fb752abc552f93f68a.jpg',  // Breezeheart
+      'yingzheng': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/11aa0d0f2aaef5404f55ee6a0aca86d0.jpg',
+      'zhaoyun': 'https://game-1255653016.file.myqcloud.com/manage/compress/custom_wzry_E1/98353cde994528b648e6f73a63188067.jpg',
       
-      // Rest will use UI Avatars (professional placeholders with correct names)
-      // Add more verified mappings here
+      // Rest use UI Avatars (99 remaining heroes)
+      // To add more: visit https://qing762.is-a.dev/api/wangzhe
     };
     
     // Generate hero image URL (real portrait or placeholder)
@@ -2668,6 +2679,136 @@
         threat: 'Hook cancels mobility. Can invade early and disrupt farm.',
         counterplay: '⚔️ HOW TO PLAY: Check mini-map constantly. Stay unpredictable - don\'t follow patterns. Dodge hook by dashing perpendicular. Punish him when hook is on cooldown (15s). Farm opposite side of map when he\'s nearby.'
       },
+      
+      // ========================================
+      // DETAILED META MATCHUP TIPS (S/A-TIER)
+      // Specific hero vs hero with exact mechanics
+      // ========================================
+      
+      // DAJI MATCHUPS (S-tier Mage, burst combo)
+      'daji_vs_jing': {
+        threat: 'Jing can go invisible and dodge your charm. High mobility makes her hard to lock down.',
+        counterplay: '⚔️ DETAILED: Bait her invisibility FIRST (12s CD on skill 2). When she uses dash to farm minions, you have 8-12s window. Your charm (skill 2) is point-and-click so it WILL hit invisible Jing if you time it as she fades. Combo: Wait for her to appear → charm immediately → skill 1 → ult → enhanced auto. If she has her dash up, she escapes your ult - wait for her to blow it. Mid-game: Stay near tower, she can\'t tower dive you with charm ready.'
+      },
+      'daji_vs_angela': {
+        threat: 'Angela\'s heal negates your burst. Shield on allies blocks your damage.',
+        counterplay: '⚔️ DETAILED: Kill Angela FIRST before touching carries. Her heal is 14s CD - if she uses it on someone else, you have a window. When she shields an ally (skill 2, 10s CD), DO NOT waste your combo - wait 3 seconds for shield to expire. Combo sequence: charm Angela → skill 1 → ult all on HER, not the shielded carry. With Anti-Heal item (cuts her heal 50%), she dies in one rotation. Key: Never waste charm on a shielded target.'
+      },
+      'daji_vs_diaochan': {
+        threat: 'Diaochan\'s mobility and immunity make her slippery. She can kite you.',
+        counterplay: '⚔️ DETAILED: Diaochan skill 2 gives 1.5s immunity - your charm will MISS during this. Watch for the golden glow (immunity), don\'t throw charm. Her dash has 4s CD so she can spam it. Trick: Fake engage to bait her immunity, back off, then re-engage when it\'s down. Your charm is 8s CD, her immunity is 10s - YOU have advantage. Best time to kill: Right after she uses immunity on someone else. Position: Stay in brush near her escape route, charm her as she runs toward you.'
+      },
+      
+      // GAO CHANGGONG MATCHUPS (S-tier Assassin, invisibility)
+      'gaochanggong_vs_houyi': {
+        threat: 'Hou Yi has no dash. Easy target when alone.',
+        counterplay: '⚔️ DETAILED (AS HOU YI): NEVER push past river alone. Gao\'s invisibility lasts 5 seconds - you won\'t see him coming. Stay within 3 screen-lengths of tower or support. When you hear his unstealth sound effect (distinctive audio), flash immediately toward tower - don\'t wait to see him. Build: Dreadstar (2140g) rush for shield. Your skill 1 slows him 90% for 2s - if he jumps you, skill 1 immediately under yourself, then flash sideways (not backward). Trade: Better to give up CS than die - each death sets you back 2 waves worth of gold.'
+      },
+      'gaochanggong_vs_angela': {
+        threat: 'Angela has healing and can peel with shield. Group fights favor her.',
+        counterplay: '⚔️ DETAILED (AS GAO): Kill Angela first - she\'s the priority. Her heal (14s CD) and shield (10s CD) both protect carries. Timing: Wait for her to use shield on someone else, then you have 10s window. Combo on Angela: stealth → skill 2 (mark) → skill 1 (dash) → enhanced auto → skill 3 → skill 1 again → ult. With Anti-Heal item, she can\'t outheal your damage. Position: Flank from side/back, not front. After killing Angela, carries have no peel and die easily. Warning: If Angela is with tank, abort - target isolated targets only.'
+      },
+      'gaochanggong_vs_jing': {
+        threat: 'Mirror matchup. Both invisible assassins. Skill-based.',
+        counterplay: '⚔️ DETAILED: Jing\'s invisibility has shorter duration (3s) than yours (5s). Her burst is higher but you have better sustained damage. Mind games: If you both go invisible, she fades first - track where she was heading. Your skill 2 reveals her even in stealth if you mark her before she fades. Combo: Mark her → she goes invisible → your mark tracks her → dash to her → she\'s forced to fight or burn flash. Item spike: At level 4, whoever gets kill first wins lane. Jungle: Invade her blue buff at 2:00 - she needs it more than you. Counter-gank: If she ganks mid, you can follow her invisibility trail (subtle shimmer effect) and counter-gank.'
+      },
+      
+      // HOU YI MATCHUPS (S-tier Marksman, late game carry)
+      'houyi_vs_gaochanggong': {
+        threat: 'Invisible assassin one-shots you. No dash to escape.',
+        counterplay: '⚔️ DETAILED: Your hardest counter. Never push past river if he\'s missing. Anti-Gao items: Dreadstar 2nd item, Demon Res boots (magic defense). Positioning: Stay 2+ screen-lengths behind tank in fights. Audio cue: When you hear unstealth sound, flash IMMEDIATELY toward team. Your skill 1 (solar flare) does 90% slow - if he lands on you, skill 1 under yourself immediately, auto him 3 times (your passive stacks), then flash perpendicular. Ward: Place vision near your tower at 4:00, 9:00, 14:00 mark - gives 5s warning when he\'s coming. Survival > CS: Give up 20 CS to avoid one death (death = 300g + 2 waves lost = 400g total loss).'
+      },
+      'houyi_vs_marcopolo': {
+        threat: 'Marco has dash, you don\'t. He can reposition, you can\'t.',
+        counterplay: '⚔️ DETAILED: Even matchup that favors better positioning. Your advantage: Longer range + solar flare slow. His advantage: Mobility. Trading: Your solar flare (skill 1) range is 700, his auto range is 600 - poke him from max range. When he dashes forward, immediately solar flare where he lands → auto 3 times → back away. His dash is 10s CD - after he uses it, you have 10s to zone him. Team fights: Position further back than him - your range advantage means you hit him before he hits you. Item spike: At Endless War (2-3 items), you out-DPS him in sustained fights. Warning: Don\'t face-check brushes - he might be waiting with dash ready.'
+      },
+      
+      // MULAN MATCHUPS (S-tier Fighter, lane bully)
+      'mulan_vs_caocao': {
+        threat: 'Cao Cao has sustain and can trade frequently. Hard to kill.',
+        counterplay: '⚔️ DETAILED: Cao Cao passive gives him 30% heal on low HP. Your goal: Burst him BEFORE passive triggers (40% HP threshold). Combo: Sword form skill 1 → auto → skill 2 → auto → switch to heavy sword → skill 1 (silence) → skill 2 → ult. Timing: His heal is strongest at 20-30% HP, so either: (A) burst from 100% to 0%, or (B) poke to 45%, back off, wait for passive to fade (8s duration), then all-in. Lane control: Freeze wave near your tower - he has to walk up for CS, making him gankable. Item spike: At level 4, if you\'re full HP and he\'s 70% HP, you win all-in. Key: Land your silence (heavy sword skill 1) to stop his skill 1 escape dash.'
+      },
+      'mulan_vs_luna': {
+        threat: 'Luna needs passive stacks to ult. Pre-4 she\'s weak.',
+        counterplay: '⚔️ DETAILED: Luna is super weak levels 1-3 (no ult). Bully her early - zone from minions, make her miss CS. Once she hits 4, respect her - she can 100-0 you if you\'re under 60% HP. Counter: When she marks minions with passive (watch for the swirl effect), DO NOT stand near those minions - she will dash to them then to you. Her combo requires hitting 3+ passive marks before ulting you. Deny: Clear the marked minions quickly so she can\'t dash. If she ults you: Immediately use your heavy sword skill 2 (knockback) to interrupt her dash chain. Best window: Levels 2-3 when she has no ult. After she gets ult: Play defensive, freeze wave, wait for jungle gank.'
+      },
+      
+      // ANGELA MATCHUPS (S-tier Mage/Support, heals)
+      'angela_vs_daji': {
+        threat: 'Daji charm is point-and-click. If she lands it, you die.',
+        counterplay: '⚔️ DETAILED: Your heal (14s CD) won\'t save you from her burst combo (charm → skill 1 → ult = instant death). Counter: NEVER be alone. Stay with tank or carry - if she charms you, they kill her. Your shield (skill 2, 10s CD) can block ~400 damage of her combo - use it BEFORE she lands charm, not after. Positioning: Stand behind minions? No - her charm ignores minions (targeted). Stay max range (700 units), only move forward to heal ally. If she charms your carry: Immediately shield them (cuts her combo damage 30%), then heal (350 HP) after her ult. With both, carry survives. Key: Buy magic defense boots (Demon Res 360g) rush - survive one combo.'
+      },
+      'angela_vs_gaochanggong': {
+        threat: 'Invisible assassin targets you first to remove heals.',
+        counterplay: '⚔️ DETAILED: Gao will try to kill you before teamfights start (removes your healing/shield for carries). Counter-positioning: Never walk alone - stay attached to carry or tank using skill 1 (12s CD). When attached, you\'re untargetable. Audio warning: Listen for his unstealth sound effect (distinctive) - when you hear it, attach to your tankiest ally immediately. If he attacks you: Shield yourself (skill 2) → heal yourself → run toward tower while spamming skills. Your ult does 300 damage per wave - use it defensively to zone him off you. Vision: Ask jungle to ward your blue buff (he will camp it). Item: Bloodthirsty Boots (heals you when you heal allies) gives sustain.'
+      },
+      
+      // JING MATCHUPS (S-tier Assassin, invisibility + mobility)
+      'jing_vs_houyi': {
+        threat: 'Hou Yi has no dash. Immobile marksmen are free kills.',
+        counterplay: '⚔️ DETAILED (AS JING): Easiest matchup. Hou Yi can\'t escape your combo. Timing: Wait for him to use solar flare (skill 1) on minions - it\'s his only self-peel tool (90% slow). Once it\'s on CD (10s), go invisible → skill 2 (dash) → auto → skill 1 (mark) → auto → skill 2 (second dash) → auto → ult → auto. He dies in 2 seconds. Flash timing: He will flash after your first dash - read the pattern (90% flash toward tower). Predict: Dash to where he will flash, not where he is. Item spike: Level 4 with Jungle item - you one-shot him. Warning: If he\'s grouped with support, find a different target - peel will block your damage.'
+      },
+      
+      // YAO MATCHUPS (S-tier Support, shields + mobility)
+      'yao_vs_gaochanggong': {
+        threat: 'Gao targets isolated carries. Your shields can\'t block all his damage.',
+        counterplay: '⚔️ DETAILED: Your job: Prevent Gao from reaching carries. When he goes invisible, immediately attach to your ADC (skill 1, 12s CD). While attached, ADC gets 400 shield + you\'re untargetable. If Gao dives: Shield absorbs ~30% of his burst, giving ADC time to flash. Your ult does 500 damage + stun - use it BEFORE Gao lands, not after (interrupt his dash). Positioning: Hover near ADC at all times in mid-late game. Vision: Ask team to pink ward brushes - reveals invisible Gao (costs 75g). Counter-build: Build Witch\'s Cloak (HP + magic defense) so you survive if he targets you instead.'
+      },
+      
+      // LUNA MATCHUPS (A-tier Fighter/Jungle, ult resets)
+      'luna_vs_mulan': {
+        threat: 'Mulan silence stops your ult chain. Heavy sword knockback interrupts dashes.',
+        counterplay: '⚔️ DETAILED: Mulan\'s heavy sword skill 1 (silence, 2s duration) completely shuts down your ult. If silenced mid-ult, your reset chain breaks and you\'re stuck in melee range with no escape. Counter: NEVER ult her when she has heavy sword active (glowing red blade). Wait for her to use sword form (light blade). Best time: After she uses heavy sword skill 2 (knockback) - she can\'t switch swords for 4s, giving you window. Combo: Bait her heavy sword → back off → wait 3s → she switches to light sword → THEN ult. Warning: If you\'re marked by her ult (cross symbol), you take 40% more damage - don\'t fight with mark active.'
+      },
+      
+      // LI BAI MATCHUPS (A-tier Assassin, invulnerability)
+      'libai_vs_angela': {
+        threat: 'Angela heal and shield protect carries from your burst.',
+        counterplay: '⚔️ DETAILED: Kill Angela FIRST - she\'s your target priority. Her heal (14s CD) brings carries from 20% to full, negating your poke. Combo: Wait for her to use heal on someone else → you have 14s window. Your ult (sword rain) does 1200+ damage - with Anti-Heal item, it\'s enough to kill her through heal. Timing: Your skill 1 gives 1s invulnerability after third hit - use it to dodge her ult (4 waves of damage). Sequence: Skill 1 (dash in) → auto → skill 1 (invulnerable) → ult on Angela → skill 2 (dash out). If she shields herself: Wait 3s for shield to drop, then re-engage with skill 1 refresh.'
+      },
+      
+      // DIAOCHAN MATCHUPS (A-tier Mage, mobility + immunity)
+      'diaochan_vs_daji': {
+        threat: 'Daji charm locks you down for her burst combo.',
+        counterplay: '⚔️ DETAILED: Your skill 2 gives 1.5s immunity - use it to dodge her charm (her hardest CC). Timing: She walks toward you → pre-cast skill 2 (immunity) → her charm hits immunity and fails → you\'re safe. Your immunity CD is 10s, her charm CD is 8s - she gets more attempts. Solution: Play max range, only go close when immunity is ready. If charmed: You\'re dead (her combo is instant). Prevention: Never be below 60% HP against Daji - one combo kills. Your advantage: Superior sustained damage and mobility. Trade pattern: Skill 2 (immune) → skill 1 → auto → skill 1 → skill 2 (refresh) → repeat. She can\'t burst you if you\'re always immune.'
+      },
+      
+      // HAN XIN MATCHUPS (A-tier Assassin, mobility + immune)
+      'hanxin_vs_mulan': {
+        threat: 'Mulan silence stops your dash chain. Heavy sword can interrupt ult.',
+        counterplay: '⚔️ DETAILED: Mulan\'s heavy sword skill 1 (2s silence) breaks your entire combo. Your skill 1 has 3 dashes - if silenced during dash 1 or 2, you can\'t complete dash 3 (the knockup). Counter: Only engage when she has light sword active (check blade color). Your skill 2 gives CC immunity during spin - use it AFTER she uses silence, not before. Best window: When she\'s in light sword form and just used skill 2 (4s CD). Combo: Skill 1 (dash 1) → auto → skill 1 (dash 2) → auto → skill 1 (dash 3 knockup) → skill 2 (immune) → ult. If she switches to heavy sword mid-combo: Immediately ult (immune during ult) to avoid silence.'
+      },
+      
+      // SUN WUKONG MATCHUPS (A-tier Assassin, clones)
+      'wukong_vs_gaochanggong': {
+        threat: 'Mirror assassin matchup. Gao has invisibility, you have clone.',
+        counterplay: '⚔️ DETAILED: Your clone (skill 2) can tank his burst combo - use it as bait. Trick: When he goes invisible, immediately use clone → he targets clone thinking it\'s you → his combo is wasted on clone → you jump him with skill 1. His invisibility lasts 5s, your clone lasts 3s - timing matters. Best engage: Let him think he has advantage (you at 60% HP) → he unstealths to kill you → you clone → he wastes combo → you ult him for true damage. Item spike: Level 4, if you have Jungle item and he doesn\'t, you win. Warning: His skill 2 reveals you even in your clone form - it marks through stealth.'
+      },
+      
+      // MARCO POLO MATCHUPS (A-tier Marksman, mobility)
+      'marcopolo_vs_houyi': {
+        threat: 'Hou Yi has no dash. But his solar flare slow hurts your kiting.',
+        counterplay: '⚔️ DETAILED (AS MARCO): You have dash advantage (skill 2, 10s CD) - abuse it. Trade pattern: Dash sideways → auto 3 times → dash again if he solar flares you. His solar flare (skill 1) is 10s CD and does 90% slow for 2s - if hit, immediately dash out (your dash removes slow). Your advantage: Reposition during fights. His advantage: Longer range (700 vs your 600). Counter: Use your mobility to dodge his skillshots, he can\'t dodge yours (you\'re faster). Team fights: Dive him first - he can\'t escape your dash. Warning: If he has support, he\'s protected - find different angle.'
+      },
+      
+      // CAO CAO MATCHUPS (S-tier Fighter, sustain)
+      'caocao_vs_mulan': {
+        threat: 'Mulan burst can kill you before your passive heals trigger.',
+        counterplay: '⚔️ DETAILED: Your passive heals 30% HP when you hit 40% health. Mulan knows this - she will try to 100-0 you before passive triggers. Counter: When she switches to heavy sword (red glow), back off immediately - she\'s setting up burst. Your skill 1 gives movement speed - use it to dodge her heavy sword skill 2 (knockback). If she lands knockback + silence: Use skill 2 (dash) immediately to escape before she finishes combo. Trade pattern: Skill 1 (dash to her) → auto → skill 2 (dash away) → repeat. Never commit full combo until she uses heavy sword form. Your heal is strongest at 20-30% HP - if you hit this range, play aggressive, you outheal her damage.'
+      },
+      
+      // XIANG YU MATCHUPS (S-tier Tank, charge)
+      'xiangyu_vs_houyi': {
+        threat: 'Hou Yi has no dash. Easy to charge and knock up.',
+        counterplay: '⚔️ DETAILED (AS XIANG YU): Hou Yi is your ideal target - immobile ADC. Your skill 2 (charge) range is 600 - same as his attack range. Engage: Wait for him to auto → charge immediately during his attack animation (he can\'t cancel auto to flash). Charge → skill 1 (knockup) → ult (suppression) → your team kills him. Timing: His flash is 120s CD - force it early, then kill him when it\'s down. Position: Flank from side during teamfights - if you frontline charge, his team blocks you. Key: Your ult suppresses for 2.5s - he can\'t flash, can\'t QSS, he just dies. Warning: If he has support nearby, they peel you off - only dive isolated targets.'
+      },
+      
+      // LIU BANG MATCHUPS (S-tier Tank, global ult)
+      'liubang_vs_gaochanggong': {
+        threat: 'Gao targets isolated carries. Your ult can\'t arrive in time.',
+        counterplay: '⚔️ DETAILED: Your ult (teleport to ally, 90s CD) takes 3 seconds to land. Gao kills ADC in 2 seconds - you\'re always late. Solution: DON\'T ult after he engages (too slow). Instead: Stay with ADC from start. Your skill 2 (taunt, 1.5s duration) stops Gao mid-combo - use it WHEN he unstealths (audio cue). Timing: Hear unstealth sound → face his direction → skill 2 immediately → he\'s taunted → ADC survives. If you\'re split pushing: Ult to ADC BEFORE fights start (predict when Gao will engage based on minion waves/objectives). Warning: Taunt is 10s CD - if you miss, ADC dies. Practice taunt accuracy in practice mode.'
+      },
+      
       'diaochan_counters': {
         threat: 'High mobility mage. Sustained damage beats burst in extended trades.',
         counterplay: '⚔️ HOW TO PLAY: Burst her in one rotation before she can kite. Buy Magic Defense early. Bait out her immunity before using ultimate. Don\'t chase - let her come to you.'
@@ -2712,20 +2853,28 @@
       
       if (!counter || !you) return COUNTER_TIPS['default'];
       
-      // Check for specific hero matchups first
+      // PRIORITY 1: Check for detailed hero vs hero matchups
+      const detailedMatchupKey = `${yourHeroId}_vs_${counterHeroId}`;
+      if (COUNTER_TIPS[detailedMatchupKey]) {
+        const tip = COUNTER_TIPS[detailedMatchupKey];
+        return isThreating ? tip.threat + '\n\n' + tip.counterplay : tip.threat;
+      }
+      
+      // PRIORITY 2: Check for general hero counter tips
       const specificKey = `${counterHeroId}_counters`;
       if (COUNTER_TIPS[specificKey]) {
         const tip = COUNTER_TIPS[specificKey];
         return isThreating ? tip.threat + '\n\n' + tip.counterplay : tip.threat;
       }
       
-      // Fall back to role-based tips
+      // PRIORITY 3: Fall back to role-based tips
       const roleKey = `${counter.role.toLowerCase()}_vs_${you.role.toLowerCase()}`;
       if (COUNTER_TIPS[roleKey]) {
         const tip = COUNTER_TIPS[roleKey];
         return isThreating ? tip.threat + '\n\n' + tip.counterplay : tip.threat;
       }
       
+      // PRIORITY 4: Default generic tip
       return COUNTER_TIPS['default'].threat + '\n\n' + COUNTER_TIPS['default'].counterplay;
     }
 

@@ -2747,6 +2747,13 @@
       console.log(`Total heroes loaded: ${Object.keys(HEROES).length}`);
       renderAllTiers();
       console.log('Initialization complete!');
+      
+      // Remove debug badge
+      const debug = document.getElementById('debug');
+      if (debug) {
+        debug.textContent = 'LOADED ✓';
+        setTimeout(() => debug.remove(), 2000);
+      }
     }
 
     // View management
@@ -3082,9 +3089,24 @@
     }
 
     // Initialize on DOM ready
+    console.log('=== HOK GUIDE DEBUG ===');
+    console.log('1. Script loaded');
+    console.log('2. Total heroes:', Object.keys(HEROES).length);
+    console.log('3. Document ready state:', document.readyState);
+    
+    // Add visible debug on page
+    document.body.insertAdjacentHTML('afterbegin', '<div id="debug" style="position:fixed;top:10px;right:10px;background:red;color:white;padding:10px;z-index:9999;border-radius:5px;">LOADING...</div>');
+    
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
+      console.log('4. Waiting for DOMContentLoaded');
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('5. DOM loaded, calling init()');
+        document.getElementById('debug').textContent = 'INITIALIZING...';
+        init();
+      });
     } else {
+      console.log('4. DOM already loaded, calling init() now');
+      document.getElementById('debug').textContent = 'INITIALIZING...';
       init();
     }
   </script>

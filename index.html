@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOK English Guide - Master Tier List</title>
+  <title>HOK Global Guide - S14 Tier List</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; line-height: 1.4; }
@@ -15,7 +15,7 @@
     .header { text-align: center; margin-bottom: 30px; padding: 25px; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .header h1 { font-size: 2.2rem; margin-bottom: 5px; }
     
-    /* Selection & Search */
+    /* Navigation */
     .back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #334155; border-radius: 10px; color: #fff; cursor: pointer; margin-bottom: 20px; font-weight: 700; border: none; }
     .controls { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; background: rgba(30, 41, 59, 0.6); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
     .search-box { flex: 1; min-width: 200px; }
@@ -24,7 +24,7 @@
     .filter-btn { padding: 8px 14px; border: 1px solid #334155; border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: #94a3b8; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
     .filter-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
     
-    /* Tiers */
+    /* Tier Sections */
     .tier-section { margin-bottom: 25px; background: rgba(30, 41, 59, 0.4); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
     .tier-header { padding: 10px 20px; font-size: 1.2rem; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .tier-s { background: #ef4444; } .tier-a { background: #f97316; } .tier-b { background: #facc15; color: #000; } .tier-c { background: #22c55e; }
@@ -36,16 +36,17 @@
     .hero-avatar { width: 75px; height: 75px; margin: 0 auto 10px; border-radius: 50%; border: 3px solid #3b82f6; overflow: hidden; background: #000; }
     .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
     
-    .hero-title-main { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 2px; line-height: 1.2; }
+    .hero-title-main { font-size: 0.9rem; font-weight: 800; color: #fff; margin-bottom: 2px; line-height: 1.1; }
     .hero-name-blue { font-size: 11px; color: #60a5fa; font-weight: 600; margin-bottom: 8px; display: block; }
-    .hero-role-badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: white; }
+    .hero-role-badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: white; }
     
-    /* Stats Details */
+    /* Detail View Styles */
     .hero-detail-header { background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%); border-radius: 20px; padding: 30px; margin-bottom: 25px; border: 1px solid #3b82f6; }
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin-top: 20px; }
     .stat-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
     .stat-val { font-size: 1.5rem; font-weight: 800; display: block; }
     .stat-lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; }
+    .debug-box { margin-top: 20px; padding: 15px; background: #000; border: 1px dashed #ef4444; border-radius: 10px; font-family: monospace; font-size: 0.8rem; color: #ef4444; }
 
     .role-tank { background: #1e40af; } .role-fighter { background: #dc2626; } .role-assassin { background: #7c3aed; } .role-mage { background: #2563eb; } .role-marksman { background: #ea580c; } .role-support { background: #059669; }
 
@@ -55,7 +56,7 @@
 <body>
   <div class="container">
     <div id="view-tierlist" class="view active">
-      <div class="header"><h1>🎮 HOK English Guide</h1><p>Full 114+ Hero Roster • Detail Stats Active</p></div>
+      <div class="header"><h1>🎮 HOK English Guide</h1><p>Season 14 Global Meta • Click for Stats</p></div>
       <div class="controls">
         <div class="search-box"><input type="text" id="search-input" placeholder="🔍 Search Hero or Title..." oninput="filterHeroes()"></div>
         <div class="filter-buttons">
@@ -70,6 +71,7 @@
       </div>
       <div id="tier-container"></div>
     </div>
+
     <div id="view-herodetail" class="view">
       <button class="back-btn" onclick="showView('tierlist')">← Back to List</button>
       <div id="hero-detail-content"></div>
@@ -77,104 +79,110 @@
   </div>
 
   <script>
-    // DATABASE: IDs MATCH YOUR FILENAMES EXACTLY
+    // DATABASE: THE KEY MATCHES YOUR PROVIDED FILENAMES EXACTLY
     const HEROES = {
-      'Daji': { title: 'Heartseeker', role: 'Mage', tier: 'S' },
+      'Agudo': { title: 'Wild Rider', role: 'Fighter', tier: 'B' },
+      'Alessio': { title: 'Red Hawk', role: 'Marksman', tier: 'C' },
+      'Allain': { title: 'Forgotten Blade', role: 'Fighter', tier: 'A' },
       'Angela': { title: 'Scorchette', role: 'Mage', tier: 'S' },
-      'Princess Frost': { title: 'Princess Frost', role: 'Mage', tier: 'S' },
-      'Mai Shiranui': { title: 'Everfrost', role: 'Mage', tier: 'A' },
-      'Ziya': { title: 'Divine Enforcer', role: 'Mage', tier: 'A' },
-      'Dr Bian': { title: 'Curious Mixture', role: 'Mage', tier: 'B' },
-      'Xiao Qiao': { title: 'Breezeheart', role: 'Mage', tier: 'A' },
-      'Milady': { title: 'Mechaboss', role: 'Mage', tier: 'A' },
-      'Nuwa': { title: 'Celestial', role: 'Mage', tier: 'B' },
+      'Arke': { title: 'Shadowstalker', role: 'Assassin', tier: 'S' },
+      'Arli': { title: 'Parasola', role: 'Marksman', tier: 'A' },
+      'Arthur': { title: 'Paladin', role: 'Fighter', tier: 'B' },
+      'Ata': { title: 'White Anchor', role: 'Tank', tier: 'B' },
+      'Athena': { title: 'Athena', role: 'Fighter', tier: 'B' },
+      'Augran': { title: 'Soulguide', role: 'Fighter', tier: 'A' },
+      'Bai Qi': { title: 'Blood General', role: 'Tank', tier: 'A' },
+      'Biron': { title: 'Sparkmace', role: 'Fighter', tier: 'A' },
+      'Butterfly': { title: 'Death\'s Whisper', role: 'Assassin', tier: 'B' },
+      'Cai Yan': { title: 'Healing Tone', role: 'Support', tier: 'S' },
+      'Cao Cao': { title: 'Dominant Ruler', role: 'Fighter', tier: 'B' },
+      'Chano': { title: 'Packleader', role: 'Marksman', tier: 'B' },
+      'Charlotte': { title: 'Rose Fencer', role: 'Fighter', tier: 'B' },
+      'Cirrus': { title: 'Razorwing', role: 'Assassin', tier: 'A' },
+      'Consort Yu': { title: 'Woodland Ranger', role: 'Marksman', tier: 'A' },
+      'Da Qiao': { title: 'Lanternlight', role: 'Support', tier: 'A' },
+      'Daji': { title: 'Heartseeker', role: 'Mage', tier: 'S' },
+      'Dharma': { title: 'Martial Monk', role: 'Tank', tier: 'B' },
+      'Di Renjie': { title: 'Magistrate', role: 'Marksman', tier: 'C' },
+      'Dian Wei': { title: 'Dian Wei', role: 'Fighter', tier: 'A' },
       'Diaochan': { title: 'Lotusdancer', role: 'Mage', tier: 'B' },
-      'Yixing': { title: 'Boardmaster', role: 'Mage', tier: 'B' },
+      'Dolia': { title: 'Seasinger', role: 'Support', tier: 'S' },
+      'Donghuang': { title: 'Harbinger', role: 'Tank', tier: 'S' },
+      'Dr Bian': { title: 'Curious Mixture', role: 'Mage', tier: 'B' },
+      'Dun': { title: 'Belligerence', role: 'Tank', tier: 'A' },
+      'Dyadia': { title: 'Bondweaver', role: 'Support', tier: 'A' },
+      'Erin': { title: 'Laurel Princess', role: 'Marksman', tier: 'A' },
+      'Fang': { title: 'Private Ear', role: 'Support', tier: 'B' },
+      'Feyd': { title: 'Featherfoot', role: 'Assassin', tier: 'S' },
+      'Fuzi': { title: 'Wise Sage', role: 'Fighter', tier: 'B' },
       'Gan & Mo': { title: 'Smith and Blade', role: 'Mage', tier: 'A' },
-      'Zhou Yu': { title: 'Inferno', role: 'Mage', tier: 'C' },
-      'Lady Zhen': { title: 'Cascada', role: 'Mage', tier: 'A' },
-      'Liang': { title: 'Grand Strategist', role: 'Mage', tier: 'S' },
-      'Yuhuan': { title: 'Fatal Lyrist', role: 'Mage', tier: 'B' },
-      'Shi': { title: 'Silkweaver', role: 'Mage', tier: 'B' },
+      'Gao': { title: 'Fatal Lyrist', role: 'Mage', tier: 'B' },
+      'Garo': { title: 'Piercing Arrow', role: 'Marksman', tier: 'A' },
+      'Guan Yu': { title: 'Guan Yu', role: 'Fighter', tier: 'B' },
+      'Guiguzi': { title: 'Animist', role: 'Support', tier: 'B' },
+      'Han Xin': { title: 'Firespear', role: 'Assassin', tier: 'B' },
+      'Heino': { title: 'Fateturner', role: 'Fighter', tier: 'B' },
+      'Hou Yi': { title: 'Solarus', role: 'Marksman', tier: 'S' },
+      'Huang Zhong': { title: 'Artillerist', role: 'Marksman', tier: 'C' },
+      'Jing': { title: 'Broken Mirage', role: 'Assassin', tier: 'S' },
+      'Kaizer': { title: 'Demonplate', role: 'Tank', tier: 'S' },
       'Kongming': { title: 'Mastermind', role: 'Mage', tier: 'A' },
       'Kui': { title: 'Voidcaller', role: 'Mage', tier: 'B' },
-      'Kaizer': { title: 'Demonplate', role: 'Tank', tier: 'S' },
-      'Donghuang': { title: 'Harbinger', role: 'Tank', tier: 'S' },
-      'Ata': { title: 'White Anchor', role: 'Tank', tier: 'B' },
-      'Bai Qi': { title: 'Blood General', role: 'Tank', tier: 'A' },
-      'Dun': { title: 'Belligerence', role: 'Tank', tier: 'A' },
-      'Lian Po': { title: 'Earthshaker', role: 'Tank', tier: 'B' },
-      'Liu Bang': { title: 'Liu Bang', role: 'Tank', tier: 'B' },
-      'Liu Shan': { title: 'Mecha Brat', role: 'Tank', tier: 'B' },
-      'Sun Ce': { title: 'Seafarer', role: 'Tank', tier: 'A' },
-      'Xiang Yu': { title: 'Ultimate Weapon', role: 'Tank', tier: 'C' },
-      'Zhang Fei': { title: 'The Beast', role: 'Tank', tier: 'A' },
-      'Zhuangzi': { title: 'Dreamwanderer', role: 'Tank', tier: 'B' },
-      'Wuyan': { title: 'Sledgehammer', role: 'Tank', tier: 'B' },
-      'Dharma': { title: 'Martial Monk', role: 'Tank', tier: 'B' },
-      'Allain': { title: 'Forgotten Blade', role: 'Fighter', tier: 'A' },
-      'Arthur': { title: 'Paladin', role: 'Fighter', tier: 'B' },
-      'Athena': { title: 'Athena', role: 'Fighter', tier: 'B' },
-      'Biron': { title: 'Sparkmace', role: 'Fighter', tier: 'A' },
-      'Cao Cao': { title: 'Dominant Ruler', role: 'Fighter', tier: 'B' },
-      'Charlotte': { title: 'Rose Fencer', role: 'Fighter', tier: 'B' },
-      'Fuzi': { title: 'Wise Sage', role: 'Fighter', tier: 'B' },
-      'Guan Yu': { title: 'Guan Yu', role: 'Fighter', tier: 'B' },
-      'Heino': { title: 'Fateturner', role: 'Fighter', tier: 'B' },
+      'Lady Sun': { title: 'Cannon Belle', role: 'Marksman', tier: 'B' },
+      'Lady Zhen': { title: 'Cascada', role: 'Mage', tier: 'A' },
+      'Lam': { title: 'Stealthfin', role: 'Assassin', tier: 'S' },
+      'Li Bai': { title: 'Lyricist', role: 'Assassin', tier: 'B' },
       'Li Xin': { title: 'Vengeance', role: 'Fighter', tier: 'S' },
+      'Lian Po': { title: 'Earthshaker', role: 'Tank', tier: 'B' },
+      'Liang': { title: 'Grand Strategist', role: 'Mage', tier: 'S' },
+      'Liu Bang': { title: 'Liu Bang', role: 'Tank', tier: 'B' },
+      'Liu Bei': { title: 'Pointblank', role: 'Fighter', tier: 'B' },
+      'Liu Shan': { title: 'Mecha Brat', role: 'Tank', tier: 'B' },
+      'Loong': { title: 'Loong', role: 'Marksman', tier: 'S' },
       'Lu Bu': { title: 'Unrivaled Warrior', role: 'Fighter', tier: 'B' },
-      'Ma Chao': { title: 'Ma Chao', role: 'Fighter', tier: 'A' },
+      'Luara': { title: 'Sandstorm', role: 'Marksman', tier: 'A' },
+      'Luban No. 7': { title: 'Mecha Shooter', role: 'Marksman', tier: 'B' },
+      'Luna': { title: 'Moonblade', role: 'Assassin', tier: 'A' },
+      'Mai Shiranui': { title: 'Everfrost', role: 'Mage', tier: 'A' },
+      'Marco Polo': { title: 'Gunslinger', role: 'Marksman', tier: 'S' },
       'Mayene': { title: 'Martial Genius', role: 'Fighter', tier: 'B' },
+      'Meng Ya': { title: 'Loose Cannon', role: 'Marksman', tier: 'B' },
+      'Menki': { real: 'Menki', role: 'Fighter', tier: 'B' },
       'Mi Yue': { title: 'Raveness', role: 'Fighter', tier: 'B' },
+      'Milady': { title: 'Mechaboss', role: 'Mage', tier: 'A' },
+      'Ming': { title: 'Star Teller', role: 'Support', tier: 'C' },
       'Mozi': { title: 'Peacekeeper', role: 'Fighter', tier: 'B' },
       'Mulan': { title: 'Ironbloom', role: 'Fighter', tier: 'B' },
       'Musashi': { title: 'Swordmaster', role: 'Fighter', tier: 'B' },
-      'Pangu': { title: 'World Creator', role: 'Fighter', tier: 'A' },
-      'Agudo': { title: 'Wild Rider', role: 'Fighter', tier: 'B' },
-      'Augran': { title: 'Soulguide', role: 'Fighter', tier: 'A' },
-      'Arke': { title: 'Shadowstalker', role: 'Assassin', tier: 'S' },
-      'Butterfly': { title: 'Death\'s Whisper', role: 'Assassin', tier: 'B' },
-      'Feyd': { title: 'Featherfoot', role: 'Assassin', tier: 'S' },
-      'Prince of Lanling': { title: 'Shadowblade', role: 'Assassin', tier: 'S' },
-      'Han Xin': { title: 'Firespear', role: 'Assassin', tier: 'B' },
-      'Jing': { title: 'Broken Mirage', role: 'Assassin', tier: 'S' },
-      'Lam': { title: 'Stealthfin', role: 'Assassin', tier: 'S' },
-      'Li Bai': { title: 'Lyricist', role: 'Assassin', tier: 'B' },
-      'Luna': { title: 'Moonblade', role: 'Assassin', tier: 'A' },
       'Nakoruru': { title: 'Hawk Whisperer', role: 'Assassin', tier: 'B' },
+      'Nezha': { title: 'Wild Spark', role: 'Fighter', tier: 'C' },
+      'Nuwa': { title: 'Celestial', role: 'Mage', tier: 'B' },
       'Pei': { title: 'Tigerous', role: 'Assassin', tier: 'B' },
+      'Prince of Lanling': { title: 'Shadowblade', role: 'Assassin', tier: 'S' },
+      'Princess Frost': { title: 'Princess Frost', role: 'Mage', tier: 'S' },
       'Shangguan': { title: 'Calligrapher', role: 'Assassin', tier: 'C' },
-      'Sima Yi': { title: 'Shadowreaper', role: 'Assassin', tier: 'C' },
-      'Xuance': { title: 'Madlash', role: 'Assassin', tier: 'A' },
-      'Zilong': { title: 'Fearless Spear', role: 'Assassin', tier: 'C' },
-      'Cirrus': { title: 'Razorwing', role: 'Assassin', tier: 'A' },
-      'Wukong': { title: 'Monkey King', role: 'Assassin', tier: 'B' },
-      'Alessio': { title: 'Red Hawk', role: 'Marksman', tier: 'C' },
-      'Consort Yu': { title: 'Woodland Ranger', role: 'Marksman', tier: 'A' },
-      'Di Renjie': { title: 'Magistrate', role: 'Marksman', tier: 'C' },
-      'Erin': { title: 'Laurel Princess', role: 'Marksman', tier: 'A' },
-      'Garo': { title: 'Piercing Arrow', role: 'Marksman', tier: 'A' },
-      'Hou Yi': { title: 'Solarus', role: 'Marksman', tier: 'S' },
-      'Huang Zhong': { title: 'Artillerist', role: 'Marksman', tier: 'C' },
-      'Lady Sun': { title: 'Cannon Belle', role: 'Marksman', tier: 'B' },
-      'Loong': { title: 'Loong', role: 'Marksman', tier: 'S' },
-      'Luban No. 7': { title: 'Mecha Shooter', role: 'Marksman', tier: 'B' },
-      'Marco Polo': { title: 'Gunslinger', role: 'Marksman', tier: 'S' },
-      'Meng Ya': { title: 'Loose Cannon', role: 'Marksman', tier: 'B' },
+      'Shi': { title: 'Silkweaver', role: 'Mage', tier: 'B' },
       'Shouyue': { title: 'Longshot', role: 'Marksman', tier: 'B' },
-      'Luara': { title: 'Sandstorm', role: 'Marksman', tier: 'A' },
-      'Chano': { title: 'Packleader', role: 'Marksman', tier: 'B' },
-      'Yao': { title: 'Starblade', role: 'Marksman', tier: 'S' },
-      'Arli': { title: 'Parasola', role: 'Marksman', tier: 'A' },
-      'Cai Yan': { title: 'Healing Tone', role: 'Support', tier: 'S' },
-      'Da Qiao': { title: 'Lanternlight', role: 'Support', tier: 'A' },
-      'Dolia': { title: 'Seasinger', role: 'Support', tier: 'S' },
-      'Dyadia': { title: 'Bondweaver', role: 'Support', tier: 'A' },
-      'Guiguzi': { title: 'Animist', role: 'Support', tier: 'B' },
-      'Ming': { title: 'Star Teller', role: 'Support', tier: 'C' },
+      'Sima Yi': { title: 'Shadowreaper', role: 'Assassin', tier: 'C' },
       'Sun Bin': { title: 'Timebender', role: 'Support', tier: 'C' },
+      'Sun Ce': { title: 'Seafarer', role: 'Tank', tier: 'A' },
+      'Ukyo Tachibana': { title: 'Ukyo', role: 'Assassin', tier: 'B' },
+      'Wukong': { title: 'Monkey King', role: 'Assassin', tier: 'B' },
+      'Wuyan': { title: 'Sledgehammer', role: 'Tank', tier: 'B' },
+      'Xiang Yu': { title: 'Ultimate Weapon', role: 'Tank', tier: 'C' },
+      'Xiao Qiao': { title: 'Breezeheart', role: 'Mage', tier: 'A' },
+      'Xuance': { title: 'Madlash', role: 'Assassin', tier: 'A' },
+      'Yang Jian': { title: 'Avici Puppeteer', role: 'Fighter', tier: 'C' },
+      'Yao': { title: 'Starblade', role: 'Marksman', tier: 'S' },
       'Yaria': { title: 'Deerie', role: 'Support', tier: 'A' },
-      'Fang': { title: 'Private Ear', role: 'Support', tier: 'B' }
+      'Ying': { title: 'Celestial Emperor', role: 'Mage', tier: 'B' },
+      'Yixing': { title: 'Boardmaster', role: 'Mage', tier: 'B' },
+      'Yuhuan': { title: 'Fatal Lyrist', role: 'Mage', tier: 'B' },
+      'Zhang Fei': { title: 'The Beast', role: 'Tank', tier: 'A' },
+      'Zhou Yu': { title: 'Inferno', role: 'Mage', tier: 'C' },
+      'Zhuangzi': { title: 'Dreamwanderer', role: 'Tank', tier: 'B' },
+      'Zilong': { title: 'Fearless Spear', role: 'Assassin', tier: 'C' },
+      'Ziya': { title: 'Divine Enforcer', role: 'Mage', tier: 'A' }
     };
 
     Object.keys(HEROES).forEach(id => {
@@ -182,7 +190,7 @@
       h.id = id;
       let enc = encodeURIComponent(id);
       
-      // FIX: It now looks in "Hero_portraits" (Capital H)
+      // TARGETING Hero_portraits (Capital H)
       h.imgPng = `Hero_portraits/${enc}.png`;
       h.imgJpg = `Hero_portraits/${enc}.jpg`;
       
@@ -222,8 +230,7 @@
           content.innerHTML = heroes.map(h => `
             <div class="hero-card" onclick="showView('herodetail', '${h.id}')">
               <div class="hero-avatar">
-                <img src="${h.imgPng}" 
-                     onerror="if(this.src.includes('.png')){this.src='${h.imgJpg}';}else{this.src='${h.fallback}';}">
+                <img src="${h.imgPng}" onerror="if(this.src.includes('.png')){this.src='${h.imgJpg}';}else{this.src='${h.fallback}';}">
               </div>
               <div class="hero-title-main">${h.title}</div>
               <div class="hero-name-blue">${h.id}</div>
@@ -236,6 +243,7 @@
 
     function renderHeroDetail(id) {
       const h = HEROES[id];
+      const fullUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1) + h.imgPng;
       document.getElementById('hero-detail-content').innerHTML = `
         <div class="hero-detail-header">
           <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
@@ -256,6 +264,10 @@
             <div class="stat-box"><span class="stat-lbl">Pick Rate</span><span class="stat-val" style="color:#60a5fa">${h.pickRate}%</span></div>
             <div class="stat-box"><span class="stat-lbl">Ban Rate</span><span class="stat-val" style="color:#ef4444">${h.banRate}%</span></div>
           </div>
+          <div class="debug-box">
+            <b>DIAGNOSTICS:</b> If image is missing, the code is trying to load:<br>
+            <span style="color:#fff;">${fullUrl}</span>
+          </div>
         </div>
       `;
     }
@@ -266,12 +278,10 @@
       btn.classList.add('active');
       renderAllTiers();
     }
-
     function filterHeroes() {
       currentSearch = document.getElementById('search-input').value.toLowerCase();
       renderAllTiers();
     }
-
     window.onload = renderAllTiers;
   </script>
 </body>

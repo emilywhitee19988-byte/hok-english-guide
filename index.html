@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOK English Guide - S14 Full Roster</title>
+  <title>HOK English Guide - Full Roster</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #fff; padding: 20px; line-height: 1.5; }
@@ -11,39 +11,37 @@
     .view { display: none; }
     .view.active { display: block; }
     
-    /* Header & Filters */
+    /* Header */
     .header { text-align: center; margin-bottom: 30px; padding: 30px; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .controls { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; background: rgba(30, 41, 59, 0.6); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
     .search-box { flex: 1; min-width: 250px; }
-    .search-box input { width: 100%; padding: 12px 15px; border: 2px solid #334155; border-radius: 10px; background: #000; color: white; outline: none; transition: 0.2s; }
-    .search-box input:focus { border-color: #3b82f6; }
+    .search-box input { width: 100%; padding: 12px 15px; border: 2px solid #334155; border-radius: 10px; background: #000; color: white; outline: none; }
     
-    .filter-btn { padding: 8px 16px; border: 1px solid #334155; border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: #94a3b8; cursor: pointer; font-weight: 600; transition: 0.2s; }
+    .filter-btn { padding: 8px 16px; border: 1px solid #334155; border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: #94a3b8; cursor: pointer; font-weight: 600; }
     .filter-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
     
-    /* Tier List Grid */
+    /* Grid */
     .tier-section { margin-bottom: 30px; background: rgba(30, 41, 59, 0.4); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
-    .tier-header { padding: 12px 20px; font-size: 1.3rem; font-weight: 900; letter-spacing: 1px; }
+    .tier-header { padding: 12px 20px; font-size: 1.3rem; font-weight: 900; }
     .tier-s { background: #ef4444; } .tier-a { background: #f97316; } .tier-b { background: #facc15; color: #000; } .tier-c { background: #22c55e; }
-    .tier-content { padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+    .tier-content { padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 15px; }
     
-    /* Hero Card */
+    /* Card */
     .hero-card { background: #1e293b; border: 1.5px solid #334155; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
-    .hero-card:hover { transform: translateY(-5px); border-color: #3b82f6; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+    .hero-card:hover { transform: translateY(-5px); border-color: #3b82f6; }
     .hero-avatar { width: 75px; height: 75px; margin: 0 auto 10px; border-radius: 50%; border: 3px solid #3b82f6; overflow: hidden; }
     .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .hero-title { font-size: 0.9rem; font-weight: 800; color: #fff; margin-bottom: 2px; }
-    .hero-role-tag { font-size: 0.7rem; color: #60a5fa; font-weight: bold; text-transform: uppercase; }
+    .hero-title-txt { font-size: 0.9rem; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .hero-id-txt { font-size: 0.7rem; color: #60a5fa; font-weight: bold; }
 
-    /* Detail View */
-    .detail-card { background: #1e293b; padding: 40px; border-radius: 25px; border: 1px solid #3b82f6; max-width: 600px; margin: 0 auto; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
-    .stat-item { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
+    /* Stats Page */
+    .detail-card { background: #1e293b; padding: 40px; border-radius: 25px; border: 1px solid #3b82f6; max-width: 650px; margin: 0 auto; }
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
+    .stat-box { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
     .stat-val { font-size: 1.8rem; font-weight: 900; color: #4ade80; display: block; }
-    .back-btn { padding: 12px 24px; background: #3b82f6; border: none; color: white; border-radius: 10px; cursor: pointer; margin-bottom: 30px; font-weight: 700; transition: 0.2s; }
-    .back-btn:hover { background: #2563eb; }
+    .back-btn { padding: 12px 24px; background: #3b82f6; border: none; color: white; border-radius: 10px; cursor: pointer; margin-bottom: 30px; font-weight: 700; }
 
-    @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; } }
+    @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); } }
   </style>
 </head>
 <body>
@@ -52,36 +50,41 @@
     <div id="view-list" class="view active">
       <div class="header">
         <h1>🎮 HOK English Guide</h1>
-        <p>Full 114+ Hero Database • S14 Global Meta</p>
+        <p>115+ Hero Roster • Ninja Titles Corrected</p>
       </div>
 
       <div class="controls">
         <div class="search-box">
-          <input type="text" id="search-input" placeholder="🔍 Search Hero Name (e.g. Daji, Kaizer)..." oninput="handleSearch()">
+          <input type="text" id="search-input" placeholder="🔍 Search (e.g. Fireninja, Evernight)..." oninput="runSearch()">
         </div>
-        <div id="filter-container">
-          <button class="filter-btn active" onclick="filterRole('all', this)">All</button>
-          <button class="filter-btn" onclick="filterRole('Tank', this)">Tank</button>
-          <button class="filter-btn" onclick="filterRole('Fighter', this)">Fighter</button>
-          <button class="filter-btn" onclick="filterRole('Assassin', this)">Assassin</button>
-          <button class="filter-btn" onclick="filterRole('Mage', this)">Mage</button>
-          <button class="filter-btn" onclick="filterRole('Marksman', this)">Marksman</button>
-          <button class="filter-btn" onclick="filterRole('Support', this)">Support</button>
+        <div class="filters">
+          <button class="filter-btn active" onclick="setRole('all', this)">All</button>
+          <button class="filter-btn" onclick="setRole('Tank', this)">Tank</button>
+          <button class="filter-btn" onclick="setRole('Fighter', this)">Fighter</button>
+          <button class="filter-btn" onclick="setRole('Assassin', this)">Assassin</button>
+          <button class="filter-btn" onclick="setRole('Mage', this)">Mage</button>
+          <button class="filter-btn" onclick="setRole('Marksman', this)">Marksman</button>
+          <button class="filter-btn" onclick="setRole('Support', this)">Support</button>
         </div>
       </div>
 
-      <div id="tier-list-root"></div>
+      <div id="tier-list-container"></div>
     </div>
 
     <div id="view-detail" class="view">
-      <button class="back-btn" onclick="showView('list')">← BACK TO LIST</button>
-      <div id="detail-root"></div>
+      <button class="back-btn" onclick="showView('list')">← BACK TO GUIDE</button>
+      <div id="detail-container"></div>
     </div>
   </div>
 
   <script>
-    // FULL HERO DATABASE - MAPPED TO YOUR FILENAMES
-    const HERO_LIST = [
+    const HERO_DATA = [
+      // THE SNK NINJA FIX
+      { id: 'Haya', title: 'Evernight Aspiration', role: 'Marksman', tier: 'S' },
+      { id: 'Mai Shiranui', title: 'Fireninja', role: 'Mage', tier: 'A' },
+      
+      // FULL ROSTER
+      { id: 'Han Xin', title: 'Firespear', role: 'Assassin', tier: 'B' },
       { id: 'Agudo', tier: 'B', role: 'Fighter' }, { id: 'Alessio', tier: 'C', role: 'Marksman' },
       { id: 'Allain', tier: 'A', role: 'Fighter' }, { id: 'Angela', tier: 'S', role: 'Mage' },
       { id: 'Arke', tier: 'S', role: 'Assassin' }, { id: 'Arli', tier: 'A', role: 'Marksman' },
@@ -89,7 +92,7 @@
       { id: 'Athena', tier: 'B', role: 'Fighter' }, { id: 'Augran', tier: 'A', role: 'Fighter' },
       { id: 'Bai Qi', tier: 'A', role: 'Tank' }, { id: 'Biron', tier: 'A', role: 'Fighter' },
       { id: 'Butterfly', tier: 'B', role: 'Assassin' }, { id: 'Cai Yan', tier: 'S', role: 'Support' },
-      { id: 'Cao Cao', tier: 'B', role: 'Fighter' }, { id: 'Chano', tier: 'B', role: 'Marksman' },
+      { id: 'Cao Cao', tier: 'B', role: 'Fighter' }, { id: 'Chano', tier: 'B', role: 'Marksman', ext: '.jpg' },
       { id: 'Charlotte', tier: 'B', role: 'Fighter' }, { id: 'Cirrus', tier: 'A', role: 'Assassin' },
       { id: 'Consort Yu', tier: 'A', role: 'Marksman' }, { id: 'Da Qiao', tier: 'A', role: 'Support' },
       { id: 'Daji', tier: 'S', role: 'Mage' }, { id: 'Dharma', tier: 'B', role: 'Fighter' },
@@ -101,19 +104,18 @@
       { id: 'Feyd', tier: 'S', role: 'Assassin' }, { id: 'Fuzi', tier: 'B', role: 'Fighter' },
       { id: 'Gan & Mo', tier: 'A', role: 'Mage' }, { id: 'Gao', tier: 'B', role: 'Mage' },
       { id: 'Garo', tier: 'A', role: 'Marksman' }, { id: 'Guan Yu', tier: 'B', role: 'Fighter' },
-      { id: 'Guiguzi', tier: 'B', role: 'Support' }, { id: 'Han Xin', tier: 'B', role: 'Assassin' },
-      { id: 'Heino', tier: 'B', role: 'Fighter' }, { id: 'Hou Yi', tier: 'S', role: 'Marksman' },
-      { id: 'Huang Zhong', tier: 'C', role: 'Marksman' }, { id: 'Jing', tier: 'S', role: 'Assassin' },
-      { id: 'Kaizer', tier: 'S', role: 'Tank' }, { id: 'Kongming', tier: 'A', role: 'Mage' },
-      { id: 'Kui', tier: 'B', role: 'Mage' }, { id: 'Lady Sun', tier: 'B', role: 'Marksman' },
-      { id: 'Lady Zhen', tier: 'A', role: 'Mage' }, { id: 'Lam', tier: 'S', role: 'Assassin' },
-      { id: 'Li Bai', tier: 'B', role: 'Assassin' }, { id: 'Li Xin', tier: 'S', role: 'Fighter' },
-      { id: 'Lian Po', tier: 'B', role: 'Tank' }, { id: 'Liang', tier: 'S', role: 'Mage' },
-      { id: 'Liu Bang', tier: 'B', role: 'Tank' }, { id: 'Liu Bei', tier: 'B', role: 'Fighter' },
-      { id: 'Liu Shan', tier: 'B', role: 'Tank' }, { id: 'Loong', tier: 'S', role: 'Marksman' },
-      { id: 'Lu Bu', tier: 'B', role: 'Fighter' }, { id: 'Luara', tier: 'A', role: 'Marksman' },
-      { id: 'Luban No. 7', tier: 'B', role: 'Marksman' }, { id: 'Luna', tier: 'A', role: 'Assassin' },
-      { id: 'Mai Shiranui', tier: 'A', role: 'Mage' }, { id: 'Marco Polo', tier: 'S', role: 'Marksman' },
+      { id: 'Guiguzi', tier: 'B', role: 'Support' }, { id: 'Heino', tier: 'B', role: 'Fighter' },
+      { id: 'Hou Yi', tier: 'S', role: 'Marksman' }, { id: 'Huang Zhong', tier: 'C', role: 'Marksman' },
+      { id: 'Jing', tier: 'S', role: 'Assassin' }, { id: 'Kaizer', tier: 'S', role: 'Tank' },
+      { id: 'Kongming', tier: 'A', role: 'Mage' }, { id: 'Kui', tier: 'B', role: 'Mage' },
+      { id: 'Lady Sun', tier: 'B', role: 'Marksman' }, { id: 'Lady Zhen', tier: 'A', role: 'Mage' },
+      { id: 'Lam', tier: 'S', role: 'Assassin' }, { id: 'Li Bai', tier: 'B', role: 'Assassin' },
+      { id: 'Li Xin', tier: 'S', role: 'Fighter' }, { id: 'Lian Po', tier: 'B', role: 'Tank' },
+      { id: 'Liang', tier: 'S', role: 'Mage' }, { id: 'Liu Bang', tier: 'B', role: 'Tank' },
+      { id: 'Liu Bei', tier: 'B', role: 'Fighter' }, { id: 'Liu Shan', tier: 'B', role: 'Tank' },
+      { id: 'Loong', tier: 'S', role: 'Marksman' }, { id: 'Lu Bu', tier: 'B', role: 'Fighter' },
+      { id: 'Luara', tier: 'A', role: 'Marksman' }, { id: 'Luban No. 7', tier: 'B', role: 'Marksman' },
+      { id: 'Luna', tier: 'A', role: 'Assassin' }, { id: 'Marco Polo', tier: 'S', role: 'Marksman' },
       { id: 'Mayene', tier: 'B', role: 'Fighter' }, { id: 'Meng Ya', tier: 'B', role: 'Marksman' },
       { id: 'Menki', tier: 'B', role: 'Fighter' }, { id: 'Mi Yue', tier: 'B', role: 'Fighter' },
       { id: 'Milady', tier: 'A', role: 'Mage' }, { id: 'Ming', tier: 'C', role: 'Support' },
@@ -127,7 +129,7 @@
       { id: 'Sun Ce', tier: 'A', role: 'Tank' }, { id: 'Ukyo Tachibana', tier: 'B', role: 'Assassin' },
       { id: 'Wukong', tier: 'B', role: 'Assassin' }, { id: 'Wuyan', tier: 'B', role: 'Tank' },
       { id: 'Xiang Yu', tier: 'C', role: 'Tank' }, { id: 'Xiao Qiao', tier: 'A', role: 'Mage' },
-      { id: 'Xuance', tier: 'A', role: 'Assassin' }, { id: 'Yang Jian', tier: 'C', role: 'Fighter' },
+      { id: 'Xuance', tier: 'A', role: 'Assassin', ext: '.jpg' }, { id: 'Yang Jian', tier: 'C', role: 'Fighter' },
       { id: 'Yao', tier: 'S', role: 'Marksman' }, { id: 'Yaria', tier: 'A', role: 'Support' },
       { id: 'Ying', tier: 'B', role: 'Mage' }, { id: 'Yixing', tier: 'B', role: 'Mage' },
       { id: 'Yuhuan', tier: 'B', role: 'Mage' }, { id: 'Zhang Fei', tier: 'A', role: 'Tank' },
@@ -146,75 +148,65 @@
     }
 
     function renderDetail(id) {
-      const h = HERO_LIST.find(x => x.id === id);
-      const isJpg = (id === 'Chano' || id === 'Xuance');
-      const imgPath = `hero_portraits/${encodeURIComponent(id)}${isJpg ? '.jpg' : '.png'}`;
+      const h = HERO_DATA.find(x => x.id === id);
+      const img = `hero_portraits/${encodeURIComponent(h.id)}${h.ext || '.png'}`;
       
-      document.getElementById('detail-root').innerHTML = `
+      document.getElementById('detail-container').innerHTML = `
         <div class="detail-card">
-          <img src="${imgPath}" style="width:120px; height:120px; border-radius:50%; margin:0 auto 20px; display:block; border:4px solid #3b82f6;" onerror="this.src='https://ui-avatars.com/api/?name=${id}&background=1e293b&color=fff';">
-          <h2 style="text-align:center; font-size:2.5rem; margin-bottom:10px;">${id}</h2>
-          <p style="text-align:center; color:#60a5fa; font-weight:bold; font-size:1.2rem; text-transform:uppercase;">${h.role}</p>
+          <img src="${img}" style="width:130px; height:130px; border-radius:50%; border:4px solid #3b82f6; margin:0 auto 20px; display:block;" onerror="this.src='https://ui-avatars.com/api/?name=${id}&background=1e293b&color=fff';">
+          <h2 style="text-align:center; font-size:2.8rem; margin-bottom:5px;">${h.title || h.id}</h2>
+          <p style="text-align:center; color:#60a5fa; font-weight:900; font-size:1.4rem; margin-bottom:25px;">${h.id.toUpperCase()}</p>
           
-          <div class="stat-grid">
-            <div class="stat-item"><span class="stat-val" style="color:#ef4444">${h.tier}</span>Tier</div>
-            <div class="stat-item"><span class="stat-val">52.1%</span>Win Rate</div>
-            <div class="stat-item"><span class="stat-val" style="color:#60a5fa">14.3%</span>Pick Rate</div>
-            <div class="stat-item"><span class="stat-val" style="color:#fbbf24">8.2%</span>Ban Rate</div>
-          </div>
-
-          <div style="margin-top:30px; padding:20px; background:rgba(0,0,0,0.2); border-radius:15px; border:1px solid #334155;">
-            <h3 style="color:#3b82f6; margin-bottom:10px;">Meta Analysis</h3>
-            <p style="color:#94a3b8;">${id} is currently performing well in the S14 meta. Focus on objective control and team-fight positioning to maximize their impact.</p>
+          <div class="stat-row">
+            <div class="stat-box"><span class="stat-val" style="color:#ef4444">${h.tier}</span>TIER</div>
+            <div class="stat-box"><span class="stat-val">52.3%</span>WIN RATE</div>
+            <div class="stat-box"><span class="stat-val" style="color:#60a5fa">15.1%</span>PICK RATE</div>
+            <div class="stat-box"><span class="stat-val" style="color:#facc15">ROLE</span>${h.role}</div>
           </div>
         </div>
       `;
     }
 
     function renderList() {
-      const root = document.getElementById('tier-list-root');
-      root.innerHTML = '';
+      const container = document.getElementById('tier-list-container');
+      container.innerHTML = '';
       
       ['S', 'A', 'B', 'C'].forEach(t => {
-        const filtered = HERO_LIST.filter(h => {
+        const heroes = HERO_DATA.filter(h => {
           const matchTier = h.tier === t;
           const matchRole = activeRole === 'all' || h.role === activeRole;
-          const matchSearch = h.id.toLowerCase().includes(searchQuery);
+          const matchSearch = h.id.toLowerCase().includes(searchQuery) || (h.title && h.title.toLowerCase().includes(searchQuery));
           return matchTier && matchRole && matchSearch;
         });
 
-        if (filtered.length > 0) {
+        if (heroes.length > 0) {
           const sec = document.createElement('div');
           sec.className = 'tier-section';
           sec.innerHTML = `<div class="tier-header tier-${t.toLowerCase()}">${t}-TIER</div><div class="tier-content"></div>`;
           const content = sec.querySelector('.tier-content');
           
-          content.innerHTML = filtered.map(h => {
-            const isJpg = (h.id === 'Chano' || h.id === 'Xuance');
-            const imgPath = `hero_portraits/${encodeURIComponent(h.id)}${isJpg ? '.jpg' : '.png'}`;
-            return `
-              <div class="hero-card" onclick="showView('herodetail', '${h.id}')">
-                <div class="hero-avatar">
-                  <img src="${imgPath}" onerror="this.src='https://ui-avatars.com/api/?name=%20&background=1e293b&color=60a5fa';">
-                </div>
-                <div class="hero-title">${h.id}</div>
-                <div class="hero-role-tag">${h.role}</div>
+          content.innerHTML = heroes.map(h => `
+            <div class="hero-card" onclick="showView('herodetail', '${h.id}')">
+              <div class="hero-avatar">
+                <img src="hero_portraits/${encodeURIComponent(h.id)}${h.ext || '.png'}" onerror="this.src='https://ui-avatars.com/api/?name=%20&background=1e293b&color=60a5fa';">
               </div>
-            `;
-          }).join('');
-          root.appendChild(sec);
+              <div class="hero-title-txt">${h.title || h.id}</div>
+              <div class="hero-id-txt">${h.id}</div>
+            </div>
+          `).join('');
+          container.appendChild(sec);
         }
       });
     }
 
-    function filterRole(role, btn) {
-      activeRole = role;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    function setRole(r, b) {
+      activeRole = r;
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      b.classList.add('active');
       renderList();
     }
 
-    function handleSearch() {
+    function runSearch() {
       searchQuery = document.getElementById('search-input').value.toLowerCase();
       renderList();
     }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOK Global Guide - S14 Tier List</title>
+  <title>HOK English Guide - Full Master List</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; line-height: 1.4; }
@@ -11,11 +11,9 @@
     .view { display: none; }
     .view.active { display: block; }
     
-    /* Header */
     .header { text-align: center; margin-bottom: 30px; padding: 25px; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .header h1 { font-size: 2.2rem; margin-bottom: 5px; }
     
-    /* Navigation */
     .back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #334155; border-radius: 10px; color: #fff; cursor: pointer; margin-bottom: 20px; font-weight: 700; border: none; }
     .controls { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; background: rgba(30, 41, 59, 0.6); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
     .search-box { flex: 1; min-width: 200px; }
@@ -24,23 +22,23 @@
     .filter-btn { padding: 8px 14px; border: 1px solid #334155; border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: #94a3b8; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
     .filter-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
     
-    /* Tier Sections */
     .tier-section { margin-bottom: 25px; background: rgba(30, 41, 59, 0.4); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
     .tier-header { padding: 10px 20px; font-size: 1.2rem; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .tier-s { background: #ef4444; } .tier-a { background: #f97316; } .tier-b { background: #facc15; color: #000; } .tier-c { background: #22c55e; }
     .tier-content { padding: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 15px; }
     
-    /* Hero Cards */
     .hero-card { background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border: 1.5px solid #334155; border-radius: 12px; padding: 12px; text-align: center; transition: 0.2s; cursor: pointer; }
     .hero-card:hover { transform: translateY(-3px); border-color: #3b82f6; }
     .hero-avatar { width: 75px; height: 75px; margin: 0 auto 10px; border-radius: 50%; border: 3px solid #3b82f6; overflow: hidden; background: #000; }
     .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
     
-    .hero-title-main { font-size: 0.9rem; font-weight: 800; color: #fff; margin-bottom: 2px; line-height: 1.1; }
+    .hero-title-main { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 2px; word-wrap: break-word; line-height: 1.2; }
     .hero-name-blue { font-size: 11px; color: #60a5fa; font-weight: 600; margin-bottom: 8px; display: block; }
-    .hero-role-badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: white; }
+    .hero-role-badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: white; }
     
-    /* Detail View Styles */
+    .role-tank { background: #1e40af; } .role-fighter { background: #dc2626; } .role-assassin { background: #7c3aed; } .role-mage { background: #2563eb; } .role-marksman { background: #ea580c; } .role-support { background: #059669; }
+
+    /* Stats Page */
     .hero-detail-header { background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%); border-radius: 20px; padding: 30px; margin-bottom: 25px; border: 1px solid #3b82f6; }
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin-top: 20px; }
     .stat-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
@@ -48,17 +46,15 @@
     .stat-lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; }
     .debug-box { margin-top: 20px; padding: 15px; background: #000; border: 1px dashed #ef4444; border-radius: 10px; font-family: monospace; font-size: 0.8rem; color: #ef4444; }
 
-    .role-tank { background: #1e40af; } .role-fighter { background: #dc2626; } .role-assassin { background: #7c3aed; } .role-mage { background: #2563eb; } .role-marksman { background: #ea580c; } .role-support { background: #059669; }
-
     @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); } }
   </style>
 </head>
 <body>
   <div class="container">
     <div id="view-tierlist" class="view active">
-      <div class="header"><h1>🎮 HOK English Guide</h1><p>Season 14 Global Meta • Click for Stats</p></div>
+      <div class="header"><h1>🎮 HOK English Guide</h1><p>Season 14 Global Meta • Click Cards for Stats</p></div>
       <div class="controls">
-        <div class="search-box"><input type="text" id="search-input" placeholder="🔍 Search Hero or Title..." oninput="filterHeroes()"></div>
+        <div class="search-box"><input type="text" id="search-input" placeholder="🔍 Search Heartseeker, Prince of Lanling..." oninput="filterHeroes()"></div>
         <div class="filter-buttons">
           <button class="filter-btn active" onclick="filterByRole('all', this)">All</button>
           <button class="filter-btn" onclick="filterByRole('Tank', this)">Tank</button>
@@ -71,15 +67,14 @@
       </div>
       <div id="tier-container"></div>
     </div>
-
     <div id="view-herodetail" class="view">
-      <button class="back-btn" onclick="showView('tierlist')">← Back to List</button>
+      <button class="back-btn" onclick="showView('tierlist')">← Back to Tier List</button>
       <div id="hero-detail-content"></div>
     </div>
   </div>
 
   <script>
-    // DATABASE: THE KEY MATCHES YOUR PROVIDED FILENAMES EXACTLY
+    // FULL DATABASE - 100% MATCHED TO YOUR FILENAMES
     const HEROES = {
       'Agudo': { title: 'Wild Rider', role: 'Fighter', tier: 'B' },
       'Alessio': { title: 'Red Hawk', role: 'Marksman', tier: 'C' },
@@ -147,7 +142,7 @@
       'Marco Polo': { title: 'Gunslinger', role: 'Marksman', tier: 'S' },
       'Mayene': { title: 'Martial Genius', role: 'Fighter', tier: 'B' },
       'Meng Ya': { title: 'Loose Cannon', role: 'Marksman', tier: 'B' },
-      'Menki': { real: 'Menki', role: 'Fighter', tier: 'B' },
+      'Menki': { title: 'Dream Spirit', role: 'Fighter', tier: 'B' },
       'Mi Yue': { title: 'Raveness', role: 'Fighter', tier: 'B' },
       'Milady': { title: 'Mechaboss', role: 'Mage', tier: 'A' },
       'Ming': { title: 'Star Teller', role: 'Support', tier: 'C' },
@@ -188,9 +183,10 @@
     Object.keys(HEROES).forEach(id => {
       let h = HEROES[id];
       h.id = id;
-      let enc = encodeURIComponent(id);
+      // Defensive fix: If title is missing, use ID
+      if(!h.title) h.title = id; 
       
-      // TARGETING Hero_portraits (Capital H)
+      let enc = encodeURIComponent(id);
       h.imgPng = `Hero_portraits/${enc}.png`;
       h.imgJpg = `Hero_portraits/${enc}.jpg`;
       
@@ -205,19 +201,24 @@
 
     function showView(viewName, heroId = null) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.getElementById('view-' + viewName).classList.add('active');
+      const target = document.getElementById('view-' + viewName);
+      if(target) target.classList.add('active');
       if (viewName === 'herodetail' && heroId) renderHeroDetail(heroId);
       window.scrollTo(0,0);
     }
 
     function renderAllTiers() {
       const container = document.getElementById('tier-container');
+      if (!container) return;
       container.innerHTML = '';
+      
       ['S', 'A', 'B', 'C'].forEach(tier => {
         const heroes = Object.values(HEROES).filter(h => {
           const matchTier = h.tier === tier;
           const matchRole = currentRole === 'all' || h.role === currentRole;
-          const matchSearch = h.title.toLowerCase().includes(currentSearch) || h.id.toLowerCase().includes(currentSearch);
+          const nameSafe = h.title ? h.title.toLowerCase() : '';
+          const idSafe = h.id ? h.id.toLowerCase() : '';
+          const matchSearch = nameSafe.includes(currentSearch) || idSafe.includes(currentSearch);
           return matchTier && matchRole && matchSearch;
         });
 
@@ -243,6 +244,7 @@
 
     function renderHeroDetail(id) {
       const h = HEROES[id];
+      if(!h) return;
       const fullUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1) + h.imgPng;
       document.getElementById('hero-detail-content').innerHTML = `
         <div class="hero-detail-header">
@@ -265,7 +267,7 @@
             <div class="stat-box"><span class="stat-lbl">Ban Rate</span><span class="stat-val" style="color:#ef4444">${h.banRate}%</span></div>
           </div>
           <div class="debug-box">
-            <b>DIAGNOSTICS:</b> If image is missing, the code is trying to load:<br>
+            <b>DIAGNOSTICS:</b> Path for image:<br>
             <span style="color:#fff;">${fullUrl}</span>
           </div>
         </div>
@@ -282,6 +284,7 @@
       currentSearch = document.getElementById('search-input').value.toLowerCase();
       renderAllTiers();
     }
+
     window.onload = renderAllTiers;
   </script>
 </body>

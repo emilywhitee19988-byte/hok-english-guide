@@ -32,13 +32,12 @@
     .hero-avatar { width: 75px; height: 75px; margin: 0 auto 10px; border-radius: 50%; border: 3px solid #3b82f6; overflow: hidden; background: #000; }
     .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
     
-    .hero-title-main { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 2px; word-wrap: break-word; line-height: 1.2; }
+    .hero-title-main { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 2px; line-height: 1.2; }
     .hero-name-blue { font-size: 11px; color: #60a5fa; font-weight: 600; margin-bottom: 8px; display: block; }
     .hero-role-badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: white; }
     
     .role-tank { background: #1e40af; } .role-fighter { background: #dc2626; } .role-assassin { background: #7c3aed; } .role-mage { background: #2563eb; } .role-marksman { background: #ea580c; } .role-support { background: #059669; }
 
-    /* Stats Page */
     .hero-detail-header { background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%); border-radius: 20px; padding: 30px; margin-bottom: 25px; border: 1px solid #3b82f6; }
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin-top: 20px; }
     .stat-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
@@ -51,9 +50,9 @@
 <body>
   <div class="container">
     <div id="view-tierlist" class="view active">
-      <div class="header"><h1>🎮 HOK English Guide</h1><p>Full 114+ Hero Roster • Detail Stats Fixed</p></div>
+      <div class="header"><h1>🎮 HOK English Guide</h1><p>Full 114+ Hero Roster • Stats & Images Fixed</p></div>
       <div class="controls">
-        <div class="search-box"><input type="text" id="search-input" placeholder="🔍 Search Heartseeker, Prince of Lanling..." oninput="filterHeroes()"></div>
+        <div class="search-box"><input type="text" id="search-input" placeholder="🔍 Search Name (e.g. Daji, Alessio)..." oninput="filterHeroes()"></div>
         <div class="filter-buttons">
           <button class="filter-btn active" onclick="filterByRole('all', this)">All</button>
           <button class="filter-btn" onclick="filterByRole('Tank', this)">Tank</button>
@@ -73,7 +72,7 @@
   </div>
 
   <script>
-    // DATABASE: The key matches your provided filenames EXACTLY
+    // FULL DATABASE: MAPPED TO YOUR 104 FILENAMES
     const HEROES = {
       'Agudo': { title: 'Wild Rider', role: 'Fighter', tier: 'B' },
       'Alessio': { title: 'Red Hawk', role: 'Marksman', tier: 'C' },
@@ -182,21 +181,19 @@
     Object.keys(HEROES).forEach(id => {
       let h = HEROES[id];
       h.id = id;
-      if(!h.title) h.title = id; 
-      
       let enc = encodeURIComponent(id);
-      // FIXED: Specifically targeting your lowercase folder name "hero_portraits"
-      h.imgPng = `hero_portraits/${enc}.png`;
-      h.imgJpg = `hero_portraits/${enc}.jpg`;
+      
+      // HYBRID FIX: It tries "Hero_portraits" THEN "hero_portraits"
+      h.imgPng = `./Hero_portraits/${enc}.png`;
+      h.imgJpg = `./Hero_portraits/${enc}.jpg`;
+      h.altPng = `./hero_portraits/${enc}.png`;
+      h.altJpg = `./hero_portraits/${enc}.jpg`;
       
       h.winRate = (48.5 + Math.random() * 6).toFixed(1);
       h.pickRate = (2 + Math.random() * 18).toFixed(1);
       h.banRate = (h.tier === 'S' ? 15 + Math.random() * 30 : Math.random() * 4).toFixed(1);
       h.fallback = `https://ui-avatars.com/api/?name=%20&background=1e293b&color=60a5fa`;
     });
-
-    let currentRole = 'all';
-    let currentSearch = '';
 
     function showView(viewName, heroId = null) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -228,7 +225,7 @@
           content.innerHTML = heroes.map(h => `
             <div class="hero-card" onclick="showView('herodetail', '${h.id}')">
               <div class="hero-avatar">
-                <img src="${h.imgPng}" onerror="if(this.src.includes('.png')){this.src='${h.imgJpg}';}else{this.src='${h.fallback}';}">
+                <img src="${h.imgPng}" onerror="handleImgError(this, '${h.imgJpg}', '${h.altPng}', '${h.altJpg}', '${h.fallback}')">
               </div>
               <div class="hero-title-main">${h.title}</div>
               <div class="hero-name-blue">${h.id}</div>
@@ -239,6 +236,13 @@
       });
     }
 
+    function handleImgError(img, imgJpg, altPng, altJpg, fallback) {
+      if (img.src.includes('Hero_portraits') && img.src.includes('.png')) { img.src = imgJpg; }
+      else if (img.src.includes('Hero_portraits') && img.src.includes('.jpg')) { img.src = altPng; }
+      else if (img.src.includes('hero_portraits') && img.src.includes('.png')) { img.src = altJpg; }
+      else { img.src = fallback; }
+    }
+
     function renderHeroDetail(id) {
       const h = HEROES[id];
       if(!h) return;
@@ -246,7 +250,7 @@
         <div class="hero-detail-header">
           <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
             <div style="width:110px; height:110px; border-radius:50%; overflow:hidden; border:4px solid #fff;">
-              <img src="${h.imgPng}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='${h.imgJpg}'; this.onerror=function(){this.src='${h.fallback}';};">
+              <img src="${h.imgPng}" style="width:100%; height:100%; object-fit:cover;" onerror="handleImgError(this, '${h.imgJpg}', '${h.altPng}', '${h.altJpg}', '${h.fallback}')">
             </div>
             <div>
               <div style="font-size:2.4rem; font-weight:900;">${h.title}</div>
@@ -266,6 +270,8 @@
       `;
     }
 
+    let currentRole = 'all';
+    let currentSearch = '';
     function filterByRole(role, btn) {
       currentRole = role;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));

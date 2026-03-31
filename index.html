@@ -15,7 +15,7 @@
     .header { text-align: center; margin-bottom: 30px; padding: 25px; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .header h1 { font-size: 2.2rem; margin-bottom: 5px; }
     
-    /* Controls */
+    /* Selection & Search */
     .back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #334155; border-radius: 10px; color: #fff; cursor: pointer; margin-bottom: 20px; font-weight: 700; border: none; }
     .controls { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; background: rgba(30, 41, 59, 0.6); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
     .search-box { flex: 1; min-width: 200px; }
@@ -24,49 +24,40 @@
     .filter-btn { padding: 8px 14px; border: 1px solid #334155; border-radius: 8px; background: rgba(15, 23, 42, 0.8); color: #94a3b8; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
     .filter-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
     
-    /* Tier Layout */
+    /* Tiers */
     .tier-section { margin-bottom: 25px; background: rgba(30, 41, 59, 0.4); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
     .tier-header { padding: 10px 20px; font-size: 1.2rem; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .tier-s { background: #ef4444; } .tier-a { background: #f97316; } .tier-b { background: #facc15; color: #000; } .tier-c { background: #22c55e; }
     .tier-content { padding: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 15px; }
     
-    /* Hero Card */
+    /* Hero Cards */
     .hero-card { background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border: 1.5px solid #334155; border-radius: 12px; padding: 12px; text-align: center; transition: 0.2s; cursor: pointer; }
     .hero-card:hover { transform: translateY(-3px); border-color: #3b82f6; }
     .hero-avatar { width: 75px; height: 75px; margin: 0 auto 10px; border-radius: 50%; border: 3px solid #3b82f6; overflow: hidden; background: #000; }
     .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
     
-    /* Text Styles */
-    .hero-title-main { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 2px; word-wrap: break-word; line-height: 1.2; }
+    .hero-title-main { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 2px; line-height: 1.2; }
     .hero-name-blue { font-size: 11px; color: #60a5fa; font-weight: 600; margin-bottom: 8px; display: block; }
-    
-    /* Role Badges */
     .hero-role-badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: white; }
-    .role-tank { background: #1e40af; } .role-fighter { background: #dc2626; } .role-assassin { background: #7c3aed; } .role-mage { background: #2563eb; } .role-marksman { background: #ea580c; } .role-support { background: #059669; }
-
-    /* Detail View Styles */
+    
+    /* Stats Details */
     .hero-detail-header { background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%); border-radius: 20px; padding: 30px; margin-bottom: 25px; border: 1px solid #3b82f6; }
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin-top: 20px; }
     .stat-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
     .stat-val { font-size: 1.5rem; font-weight: 800; display: block; }
     .stat-lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; }
 
-    @media (max-width: 768px) {
-      .tier-content { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 10px; }
-    }
+    .role-tank { background: #1e40af; } .role-fighter { background: #dc2626; } .role-assassin { background: #7c3aed; } .role-mage { background: #2563eb; } .role-marksman { background: #ea580c; } .role-support { background: #059669; }
+
+    @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); } }
   </style>
 </head>
 <body>
   <div class="container">
     <div id="view-tierlist" class="view active">
-      <div class="header">
-        <h1>🎮 HOK English Guide</h1>
-        <p>114+ Hero Roster • S14 Meta</p>
-      </div>
+      <div class="header"><h1>🎮 HOK English Guide</h1><p>Full 114+ Hero Roster • Detail Stats Active</p></div>
       <div class="controls">
-        <div class="search-box">
-          <input type="text" id="search-input" placeholder="🔍 Search Heartseeker or Daji..." oninput="filterHeroes()">
-        </div>
+        <div class="search-box"><input type="text" id="search-input" placeholder="🔍 Search Hero or Title..." oninput="filterHeroes()"></div>
         <div class="filter-buttons">
           <button class="filter-btn active" onclick="filterByRole('all', this)">All</button>
           <button class="filter-btn" onclick="filterByRole('Tank', this)">Tank</button>
@@ -86,9 +77,8 @@
   </div>
 
   <script>
-    // DATABASE: THE KEY (e.g. 'Daji') MATCHES YOUR FILENAME EXACTLY
+    // DATABASE: IDs MATCH YOUR FILENAMES EXACTLY
     const HEROES = {
-      // MAGES
       'Daji': { title: 'Heartseeker', role: 'Mage', tier: 'S' },
       'Angela': { title: 'Scorchette', role: 'Mage', tier: 'S' },
       'Princess Frost': { title: 'Princess Frost', role: 'Mage', tier: 'S' },
@@ -106,11 +96,8 @@
       'Liang': { title: 'Grand Strategist', role: 'Mage', tier: 'S' },
       'Yuhuan': { title: 'Fatal Lyrist', role: 'Mage', tier: 'B' },
       'Shi': { title: 'Silkweaver', role: 'Mage', tier: 'B' },
-      'Gao': { title: 'Fatal Lyrist', role: 'Mage', tier: 'B' },
       'Kongming': { title: 'Mastermind', role: 'Mage', tier: 'A' },
       'Kui': { title: 'Voidcaller', role: 'Mage', tier: 'B' },
-
-      // TANKS
       'Kaizer': { title: 'Demonplate', role: 'Tank', tier: 'S' },
       'Donghuang': { title: 'Harbinger', role: 'Tank', tier: 'S' },
       'Ata': { title: 'White Anchor', role: 'Tank', tier: 'B' },
@@ -125,8 +112,6 @@
       'Zhuangzi': { title: 'Dreamwanderer', role: 'Tank', tier: 'B' },
       'Wuyan': { title: 'Sledgehammer', role: 'Tank', tier: 'B' },
       'Dharma': { title: 'Martial Monk', role: 'Tank', tier: 'B' },
-
-      // FIGHTERS
       'Allain': { title: 'Forgotten Blade', role: 'Fighter', tier: 'A' },
       'Arthur': { title: 'Paladin', role: 'Fighter', tier: 'B' },
       'Athena': { title: 'Athena', role: 'Fighter', tier: 'B' },
@@ -147,8 +132,6 @@
       'Pangu': { title: 'World Creator', role: 'Fighter', tier: 'A' },
       'Agudo': { title: 'Wild Rider', role: 'Fighter', tier: 'B' },
       'Augran': { title: 'Soulguide', role: 'Fighter', tier: 'A' },
-
-      // ASSASSINS
       'Arke': { title: 'Shadowstalker', role: 'Assassin', tier: 'S' },
       'Butterfly': { title: 'Death\'s Whisper', role: 'Assassin', tier: 'B' },
       'Feyd': { title: 'Featherfoot', role: 'Assassin', tier: 'S' },
@@ -166,8 +149,6 @@
       'Zilong': { title: 'Fearless Spear', role: 'Assassin', tier: 'C' },
       'Cirrus': { title: 'Razorwing', role: 'Assassin', tier: 'A' },
       'Wukong': { title: 'Monkey King', role: 'Assassin', tier: 'B' },
-
-      // MARKSMEN
       'Alessio': { title: 'Red Hawk', role: 'Marksman', tier: 'C' },
       'Consort Yu': { title: 'Woodland Ranger', role: 'Marksman', tier: 'A' },
       'Di Renjie': { title: 'Magistrate', role: 'Marksman', tier: 'C' },
@@ -185,8 +166,6 @@
       'Chano': { title: 'Packleader', role: 'Marksman', tier: 'B' },
       'Yao': { title: 'Starblade', role: 'Marksman', tier: 'S' },
       'Arli': { title: 'Parasola', role: 'Marksman', tier: 'A' },
-
-      // SUPPORTS
       'Cai Yan': { title: 'Healing Tone', role: 'Support', tier: 'S' },
       'Da Qiao': { title: 'Lanternlight', role: 'Support', tier: 'A' },
       'Dolia': { title: 'Seasinger', role: 'Support', tier: 'S' },
@@ -203,10 +182,9 @@
       h.id = id;
       let enc = encodeURIComponent(id);
       
-      // Filename paths (Tried multiple ways)
-      h.imgPng = `hero_portraits/${enc}.png`;
-      h.imgJpg = `hero_portraits/${enc}.jpg`;
-      h.rootPng = `${enc}.png`;
+      // FIX: It now looks in "Hero_portraits" (Capital H)
+      h.imgPng = `Hero_portraits/${enc}.png`;
+      h.imgJpg = `Hero_portraits/${enc}.jpg`;
       
       h.winRate = (48.5 + Math.random() * 6).toFixed(1);
       h.pickRate = (2 + Math.random() * 18).toFixed(1);

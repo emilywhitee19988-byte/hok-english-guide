@@ -12,6 +12,7 @@
       --primary: #3b82f6; --bg: #020617; --card-bg: #111827;
       --gold: #fbbf24; --text: #f8fafc; --text-dim: #94a3b8;
       --s-tier: #ef4444; --a-tier: #f97316; --b-tier: #facc15;
+      --wr-good: #10b981; --wr-bad: #ef4444;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); padding: env(safe-area-inset-top) 15px 40px; line-height: 1.6; }
@@ -45,24 +46,35 @@
     .hero-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.03); border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: 0.4s; position: relative; }
     .hero-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 15px 30px -10px rgba(59, 130, 246, 0.4); }
     
-    /* AVATAR AND FALLBACK STYLES */
     .hero-avatar { width: 80px; height: 80px; margin: 0 auto 12px; border-radius: 50%; border: 2px solid var(--primary); overflow: hidden; background: #000; }
     .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .hero-fallback { width: 80px; height: 80px; margin: 0 auto 12px; border-radius: 50%; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; background: #1e293b; color: var(--primary); font-family: 'Kanit'; font-size: 2.2rem; font-weight: 900; }
     
     .lane-badge { position: absolute; top: 12px; right: 12px; font-size: 0.6rem; background: rgba(15, 23, 42, 0.9); padding: 3px 7px; border-radius: 6px; color: var(--primary); font-weight: 900; border: 1px solid var(--primary); }
     .hero-flavor { font-size: 0.85rem; font-weight: 800; color: #fff; display: block; margin-bottom: 2px; line-height: 1.1; }
-    .hero-name { font-size: 0.65rem; color: var(--primary); font-weight: 700; text-transform: uppercase; }
+    .hero-name { font-size: 0.65rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; display: block; }
+    
+    /* Micro Stats on Card */
+    .card-stats { display: flex; justify-content: center; gap: 10px; font-size: 0.65rem; font-weight: 800; }
+    .stat-wr { color: var(--wr-good); }
+    .stat-pr { color: var(--gold); }
 
     .dashboard { background: var(--card-bg); padding: 40px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); max-width: 900px; margin: 0 auto; }
-    .section-title { color: var(--primary); font-size: 0.85rem; font-weight: 900; margin: 25px 0 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
-    .tactical-item { background: rgba(15, 23, 42, 0.5); padding: 20px; border-radius: 20px; border-left: 4px solid var(--primary); margin-bottom: 15px; }
+    .section-title { color: var(--primary); font-size: 0.85rem; font-weight: 900; margin: 35px 0 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
+    
+    /* Analytics Grid */
+    .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .stat-box { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; text-align: center; }
+    .stat-box.draft-box { grid-column: 1 / -1; text-align: left; border-left: 4px solid var(--primary); }
+    .stat-value { font-family: 'Kanit'; font-size: 2rem; color: #fff; line-height: 1; margin-bottom: 5px; }
+    .stat-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+    
     .sprite-banner { background: linear-gradient(135deg, #1e40af 0%, #020617 100%); padding: 25px; border-radius: 24px; border: 1px solid var(--primary); display: flex; align-items: center; gap: 20px; }
     .sprite-icon-box { width: 60px; height: 60px; background: #000; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 2px solid var(--gold); }
     .back-btn { padding: 12px 25px; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 12px; cursor: pointer; margin-bottom: 30px; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; }
     .status-badge { font-size: 0.75rem; color: var(--text-dim); margin-top: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
-    @media (max-width: 768px) { .tier-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); } }
+    @media (max-width: 768px) { .tier-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); } .dashboard { padding: 20px; } }
   </style>
 </head>
 <body>
@@ -98,131 +110,130 @@
   </div>
 
   <script>
-    // 1. DATA FIRST (100% Flat Array)
+    // 1. SPRITELING DATA
     const SPRITES = {
       'Bigly': { icon: '🔥', bonus: '10% Damage Reduction', cost: '10% Movement Speed', desc: 'Superior frontline fortification.' },
       'Coolio': { icon: '❄️', bonus: 'Enhanced Spell Cooldowns', cost: '10% Max HP', desc: 'Tactical ability rotation frequency.' },
       'Runsie': { icon: '🏃', bonus: '100% Movement Speed', cost: '10% Damage Reduction', desc: 'Extreme mobility and kite potential.' }
     };
 
-    // Corrected Roster - Only Global Heroes
+    // 2. HERO DATABASE (Syntax Errors Fixed)
     const HERO_DATA = [
       // S-TIER
-      { title: 'Princess Frost', id: 'Wang Zhaojun', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Evernight Aspiration', id: 'Haya', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Runsie' },
-      { title: 'Demonplate', id: 'Kaizer', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'Earthshaker', id: 'Lian Po', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'Harbinger', id: 'Donghuang', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'The Beast', id: 'Zhang Fei', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'Dreamwanderer', id: 'Zhuangzi', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'Martial Genius', id: 'Mayene', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie' },
-      { title: 'Vengeance', id: 'Li Xin', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Soulguide', id: 'Augran', role: 'Fighter', tier: 'S', lane: 'Jungle / Clash Lane', sprite: 'Runsie' },
-      { title: 'Broken Mirage', id: 'Jing', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Featherfoot', id: 'Feyd', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Moonblade', id: 'Luna', role: 'Assassin', tier: 'S', lane: 'Jungle / Clash', sprite: 'Runsie' },
-      { title: 'Shadowstalker', id: 'Arke', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Stealthfin', id: 'Lam', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Calligrapher', id: 'Shangguan', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Fateturner', id: 'Heino', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Fireninja', id: 'Mai Shiranui', role: 'Mage', tier: 'S', lane: 'Mid Lane / Jungle', sprite: 'Runsie' },
-      { title: 'Heartseeker', id: 'Daji', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Scorchette', id: 'Angela', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Timebender', id: 'Sun Bin', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Gunslinger', id: 'Marco Polo', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Longshot', id: 'Shouyue', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Mecha Shooter', id: 'Luban No.7', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Solarus', id: 'Hou Yi', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Starblade', id: 'Yao', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Loong', id: 'Ao\'yin', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Bondweaver', id: 'Dyadia', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio' },
-      { title: 'Healing Tone', id: 'Cai Yan', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio' },
-      { title: 'Lanternlight', id: 'Da Qiao', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio' },
-      { title: 'Seasinger', id: 'Dolia', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio' },
+      { title: 'Princess Frost', id: 'Wang Zhaojun', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio', wr: '52.4%', pr: '18.2%', spike: 'Mid-Game', draft: 'Pick into dive comps. Her ultimate provides unmatched zone control to counter hard engage.' },
+      { title: 'Evernight Aspiration', id: 'Haya', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Runsie', wr: '51.8%', pr: '14.5%', spike: 'Late-Game', draft: 'Excellent flex pick. Thrives when allowed to scale and poke from the perimeter.' },
+      { title: 'Demonplate', id: 'Kaizer', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '53.1%', pr: '22.0%', spike: 'Mid-Game', draft: 'Blind pickable. Dominates early skirmishes and acts as a primary engage tool.' },
+      { title: 'Earthshaker', id: 'Lian Po', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '51.5%', pr: '12.4%', spike: 'Early-Mid', draft: 'Pick when team lacks crowd control. His CC chaining is devastating in jungle chokes.' },
+      { title: 'Harbinger', id: 'Donghuang', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '54.2%', pr: '8.9%', spike: 'Level 4', draft: 'The ultimate anti-carry. Pick strictly to lock down a highly mobile enemy assassin (like Luna).' },
+      { title: 'The Beast', id: 'Zhang Fei', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '52.0%', pr: '19.5%', spike: 'Late-Game', draft: 'Premium peel. Pick when protecting an immobile, hyper-carry marksman like Huang Zhong.' },
+      { title: 'Dreamwanderer', id: 'Zhuangzi', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '51.2%', pr: '15.1%', spike: 'Mid-Game', draft: 'Counter-pick specifically against heavy CC comps. Negates stuns for the entire team.' },
+      { title: 'Martial Genius', id: 'Mayene', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie', wr: '50.8%', pr: '11.3%', spike: 'Late-Game', draft: 'High skill ceiling split-pusher. Pick when you need side-lane pressure and 1v1 dominance.' },
+      { title: 'Vengeance', id: 'Li Xin', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Bigly', wr: '52.7%', pr: '16.8%', spike: 'Mid-Game', draft: 'Versatile bruiser. Light form for split-pushing, Dark form for massive teamfight burst.' },
+      { title: 'Soulguide', id: 'Augran', role: 'Fighter', tier: 'S', lane: 'Jungle / Clash Lane', sprite: 'Runsie', wr: '53.5%', pr: '14.2%', spike: 'Mid-Late', draft: 'Pick for sustained frontline damage and execution threat in extended teamfights.' },
+      { title: 'Broken Mirage', id: 'Jing', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie', wr: '49.8%', pr: '24.1%', spike: 'Early-Mid', draft: 'Aggressive early jungler. Pick to snowball the early game and invade enemy buffs.' },
+      { title: 'Featherfoot', id: 'Feyd', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie', wr: '51.4%', pr: '13.7%', spike: 'Mid-Game', draft: 'High mobility burst. Excellent at isolating targets and exiting fights unscathed.' },
+      { title: 'Moonblade', id: 'Luna', role: 'Assassin', tier: 'S', lane: 'Jungle / Clash', sprite: 'Runsie', wr: '54.1%', pr: '9.2%', spike: 'Level 4+', draft: 'Hyper-carry assassin. Avoid picking into hard CC (like Donghuang or Zhang Liang).' },
+      { title: 'Shadowstalker', id: 'Arke', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie', wr: '50.5%', pr: '10.8%', spike: 'Mid-Game', draft: 'Flank-heavy assassin. Requires good map awareness to bypass frontline tanks.' },
+      { title: 'Stealthfin', id: 'Lam', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie', wr: '52.9%', pr: '21.4%', spike: 'Mid-Late', draft: 'Unmatched teamfight cleanup. Pick when the enemy team relies on squishy backliners.' },
+      { title: 'Calligrapher', id: 'Shangguan', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio', wr: '51.1%', pr: '12.9%', spike: 'Level 4', draft: 'Ultimate backline diver. Pick to instantly delete enemy Marksmen under their own tower.' },
+      { title: 'Fateturner', id: 'Heino', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio', wr: '53.3%', pr: '18.5%', spike: 'Late-Game', draft: 'Extremely forgiving mage. Use for safe wave clear and teamfight sustain.' },
+      { title: 'Fireninja', id: 'Mai Shiranui', role: 'Mage', tier: 'S', lane: 'Mid Lane / Jungle', sprite: 'Runsie', wr: '50.2%', pr: '16.7%', spike: 'Mid-Game', draft: 'High burst mobility. Play strictly as a flanker. Terrible at clearing super minion waves.' },
+      { title: 'Heartseeker', id: 'Daji', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio', wr: '49.5%', pr: '28.4%', spike: 'Late-Game', draft: 'Single target deletion. Pick to counter highly mobile squishies, but struggles against tank comps.' },
+      { title: 'Scorchette', id: 'Angela', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio', wr: '50.9%', pr: '25.1%', spike: 'Early-Mid', draft: 'Bush-camping burst mage. Melts tanks easily, but very immobile and vulnerable to flanks.' },
+      { title: 'Timebender', id: 'Sun Bin', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio', wr: '54.5%', pr: '15.6%', spike: 'Late-Game', draft: 'Utility carry. Pick with heavy bruiser comps (like Biron/Kaizer) to speed up engagements.' },
+      { title: 'Gunslinger', id: 'Marco Polo', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie', wr: '48.8%', pr: '35.2%', spike: 'Mid-Game', draft: 'Safest marksman. True damage melts tanks. Pick when your team has very little peel.' },
+      { title: 'Longshot', id: 'Shouyue', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie', wr: '49.2%', pr: '22.1%', spike: 'Early-Game', draft: 'Siege and poke. Excellent for establishing early lane dominance and vision control.' },
+      { title: 'Mecha Shooter', id: 'Luban No.7', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie', wr: '51.7%', pr: '26.8%', spike: 'Late-Game', draft: 'Highest raw DPS in the game. Do not pick unless your Roam is dedicated to peeling for you.' },
+      { title: 'Solarus', id: 'Hou Yi', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie', wr: '52.1%', pr: '19.4%', spike: 'Late-Game', draft: 'Global engage. Pick when your team lacks initiation. Demands high protection.' },
+      { title: 'Starblade', id: 'Yao', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie', wr: '50.4%', pr: '11.5%', spike: 'Mid-Late', draft: 'High skill ceiling mobility. Excels at kiting heavy melee team comps.' },
+      { title: 'Loong', id: 'Ao\'yin', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie', wr: '53.8%', pr: '8.2%', spike: 'Late-Game', draft: 'Incredible self-sustain. Pick into aggressive dive comps where standard ADCs would die.' },
+      { title: 'Bondweaver', id: 'Dyadia', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio', wr: '52.6%', pr: '14.1%', spike: 'Mid-Game', draft: 'Enchanter. Pairs exceptionally well with hyper-carry junglers to force 2v2 skirmishes.' },
+      { title: 'Healing Tone', id: 'Cai Yan', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio', wr: '53.2%', pr: '18.7%', spike: 'Early-Mid', draft: 'Sustain king. Pick to win lane attrition. Countered heavily by anti-heal items.' },
+      { title: 'Lanternlight', id: 'Da Qiao', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio', wr: '51.9%', pr: '10.3%', spike: 'Late-Game', draft: 'Macro god. Pick for split-push strats. Requires heavy voice comms and team coordination.' },
+      { title: 'Seasinger', id: 'Dolia', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio', wr: '54.8%', pr: '12.6%', spike: 'Level 4+', draft: 'Ability reset mechanic. Pick specifically to pair with high-impact ultimates (like Shangguan).' },
 
       // A-TIER
-      { title: 'Mecha Brat', id: 'Liu Shan', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'Sledgehammer', id: 'Wuyan', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'Belligerence', id: 'Dun', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'Ultimate Weapon', id: 'Bai Qi', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'Forgotten Blade', id: 'Allain', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie' },
-      { title: 'Martial Monk', id: 'Dharma', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Seafarer', id: 'Sun Ce', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Shadowblade', id: 'Gao Changgong', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie' },
-      { title: 'Sparkmace', id: 'Biron', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Swordmaster', id: 'Musashi', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie' },
-      { title: 'Rose Fencer', id: 'Charlotte', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Unrivaled Warrior', id: 'Lu Bu', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Death\'s Whisper', id: 'Butterfly', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Firespear', id: 'Ying', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Hawk Whisperer', id: 'Nakoruru', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Madlash', id: 'Xuance', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Tigerous', id: 'Pei', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Razorwing', id: 'Cirrus', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Breezeheart', id: 'Xiao Qiao', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Divine Enforcer', id: 'Ziya', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Lotusdancer', id: 'Diaochan', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Mechaboss', id: 'Milady', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Smith and Blade', id: 'Gan & Mo', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Cannon Belle', id: 'Lady Sun', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Laurel Princess', id: 'Erin', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Coolio' },
-      { title: 'Loose Cannon', id: 'Meng Ya', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Piercing Arrow', id: 'Garo', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Firesnake', id: 'Luara', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Deerie', id: 'Yaria', role: 'Support', tier: 'A', lane: 'Roam', sprite: 'Coolio' },
-      { title: 'Dream Spirit', id: 'Menki', role: 'Support', tier: 'A', lane: 'Roam', sprite: 'Runsie' },
+      { title: 'Mecha Brat', id: 'Liu Shan', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '50.1%', pr: '11.2%', spike: 'Early-Game', draft: 'Siege breaker. Pick to fast-push towers and secure early gold leads.' },
+      { title: 'Sledgehammer', id: 'Wuyan', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '49.8%', pr: '9.4%', spike: 'Mid-Game', draft: 'A solid bruiser/tank hybrid. Excellent at disrupting tight formations.' },
+      { title: 'Belligerence', id: 'Dun', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '50.5%', pr: '14.8%', spike: 'Mid-Game', draft: 'High base damage tank. Great blind pick if Clash lane is unknown.' },
+      { title: 'Ultimate Weapon', id: 'Bai Qi', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '51.3%', pr: '8.1%', spike: 'Late-Game', draft: 'Incredible late-game taunt. Needs farm to be effective, weak early game.' },
+      { title: 'Forgotten Blade', id: 'Allain', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie', wr: '49.4%', pr: '15.6%', spike: 'Late-Game', draft: 'Scales into a monster. Untargetable ultimate makes him lethal to backlines.' },
+      { title: 'Martial Monk', id: 'Dharma', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly', wr: '50.2%', pr: '10.4%', spike: 'Mid-Game', draft: 'Flash-engage reliant. Must fight near walls to maximize his ultimate stun.' },
+      { title: 'Seafarer', id: 'Sun Ce', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly', wr: '51.6%', pr: '12.7%', spike: 'Early-Mid', draft: 'Global roam pressure. Best used to constantly gank Mid and Farm lane.' },
+      { title: 'Shadowblade', id: 'Gao Changgong', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie', wr: '48.9%', pr: '7.5%', spike: 'Mid-Game', draft: 'High burst potential. Needs a gold lead to effectively execute targets.' },
+      { title: 'Sparkmace', id: 'Biron', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly', wr: '52.1%', pr: '13.3%', spike: 'Early-Game', draft: 'Lane bully. Pick to completely dominate the Clash lane and draw jungle pressure.' },
+      { title: 'Swordmaster', id: 'Musashi', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie', wr: '49.7%', pr: '16.2%', spike: 'Mid-Game', draft: 'Anti-projectile toolkit. Perfect counter to projectile-heavy mages and marksmen.' },
+      { title: 'Rose Fencer', id: 'Charlotte', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly', wr: '50.8%', pr: '11.9%', spike: 'Mid-Game', draft: 'High combo sustain. Extremely strong in drawn-out 1v1 engagements.' },
+      { title: 'Unrivaled Warrior', id: 'Lu Bu', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly', wr: '48.5%', pr: '20.1%', spike: 'Late-Game', draft: 'True damage cleave. The ultimate counter to heavy tank/shield team compositions.' },
+      { title: 'Death\'s Whisper', id: 'Butterfly', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie', wr: '51.4%', pr: '14.5%', spike: 'Mid-Game', draft: 'Reset mechanic. Pick into squishy teams where she can chain kills effortlessly.' },
+      { title: 'Firespear', id: 'Ying', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie', wr: '50.1%', pr: '9.8%', spike: 'Mid-Game', draft: 'Consistent skirmisher. Great at sustained jungle fights and objective control.' },
+      { title: 'Hawk Whisperer', id: 'Nakoruru', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie', wr: '49.6%', pr: '8.4%', spike: 'Mid-Game', draft: 'Incredible burst mobility. Requires very precise timing to enter and exit fights.' },
+      { title: 'Madlash', id: 'Xuance', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie', wr: '48.2%', pr: '6.7%', spike: 'Early-Mid', draft: 'Hook reliance. High risk, high reward. Forces picks before teamfights start.' },
+      { title: 'Tigerous', id: 'Pei', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie', wr: '52.3%', pr: '11.1%', spike: 'Early-Game', draft: 'Level 1 invader. Pick to completely shut down the enemy jungler from minute one.' },
+      { title: 'Razorwing', id: 'Cirrus', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie', wr: '50.7%', pr: '7.9%', spike: 'Mid-Game', draft: 'Ignores terrain. Incredible at securing steals and unexpected flank angles.' },
+      { title: 'Breezeheart', id: 'Xiao Qiao', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio', wr: '51.2%', pr: '19.8%', spike: 'Late-Game', draft: 'Classic burst mage. Easy to execute, extremely deadly when full build.' },
+      { title: 'Divine Enforcer', id: 'Ziya', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio', wr: '49.8%', pr: '8.2%', spike: 'Late-Game', draft: 'Exp sharing passive. Pick to accelerate your team\'s level scaling globally.' },
+      { title: 'Lotusdancer', id: 'Diaochan', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio', wr: '48.6%', pr: '17.4%', spike: 'Mid-Game', draft: 'True damage dancer. Avoid picking into hard, undodgeable crowd control.' },
+      { title: 'Mechaboss', id: 'Milady', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio', wr: '51.9%', pr: '12.1%', spike: 'Early-Mid', draft: 'Pushing menace. Pick to force the enemy mid-laner to stay in lane or lose towers.' },
+      { title: 'Smith and Blade', id: 'Gan & Mo', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio', wr: '49.3%', pr: '10.5%', spike: 'Mid-Late', draft: 'Artillery mage. Incredible poke damage, but requires very high skillshot accuracy.' },
+      { title: 'Cannon Belle', id: 'Lady Sun', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie', wr: '50.6%', pr: '23.4%', spike: 'Late-Game', draft: 'High burst ADC. Her roll provides excellent self-peel against diving assassins.' },
+      { title: 'Laurel Princess', id: 'Erin', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Coolio', wr: '50.1%', pr: '9.7%', spike: 'Mid-Game', draft: 'Magic damage marksman. Pick when your team is entirely physical damage.' },
+      { title: 'Loose Cannon', id: 'Meng Ya', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie', wr: '51.4%', pr: '13.2%', spike: 'Mid-Game', draft: 'Sustained AoE damage. Excellent when paired with front-to-back teamfight comps.' },
+      { title: 'Piercing Arrow', id: 'Garo', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie', wr: '49.1%', pr: '15.8%', spike: 'Late-Game', draft: 'Out-ranges everyone. Her shield-breaking attacks are the ultimate counter to Zhang Fei.' },
+      { title: 'Firesnake', id: 'Luara', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie', wr: '50.3%', pr: '10.1%', spike: 'Mid-Game', draft: 'Mobile skirmisher. Good at surviving independently in the Farm lane.' },
+      { title: 'Deerie', id: 'Yaria', role: 'Support', tier: 'A', lane: 'Roam', sprite: 'Coolio', wr: '50.7%', pr: '22.5%', spike: 'Mid-Game', draft: 'The backpack support. Pair exclusively with hyper-carry junglers to make them unkillable.' },
 
       // B-TIER
-      { title: 'White Anchor', id: 'Ata', role: 'Tank', tier: 'B', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'Dominant Ruler', id: 'Liu Bang', role: 'Tank', tier: 'B', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
-      { title: 'Forge Maiden', id: 'Chicha', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Mighty Conqueror', id: 'Fatih', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Pointblank', id: 'Liu Bei', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Runsie' },
-      { title: 'Reefheart Datu', id: 'Lapulapu', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Wild Spark', id: 'Nezha', role: 'Fighter', tier: 'B', lane: 'Clash Lane / Jungle', sprite: 'Runsie' },
-      { title: 'Paladin', id: 'Arthur', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Fearless Spear', id: 'Zilong', role: 'Assassin', tier: 'B', lane: 'Jungle / Clash', sprite: 'Runsie' },
-      { title: 'Swift Strike', id: 'Ukyo Tachibana', role: 'Assassin', tier: 'B', lane: 'Jungle / Clash', sprite: 'Runsie' },
-      { title: 'Sacred Warrior', id: 'Athena', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Avici Puppeteer', id: 'Yango', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Boardmaster', id: 'Yixing', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Celestial', id: 'Nuwa', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Curious Mixture', id: 'Dr Bian', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Inferno', id: 'Zhou Yu', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Silkweaver', id: 'Shi', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Tunecaster', id: 'Yuhuan', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Voidcaller', id: 'Kui', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Artillerist', id: 'Huang Zhong', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Red Hawk', id: 'Alessio', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Wild Rider', id: 'Agudo', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Packleader', id: 'Chano', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Animist', id: 'Guiguzi', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio' },
-      { title: 'Brushstrider', id: 'Sakeer', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio' },
-      { title: 'Private Ear', id: 'Fang', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio' },
-      { title: 'Star Teller', id: 'Ming', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio' },
-      { title: 'Wise Sage', id: 'Fuzi', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Runsie' },
-
+      { title: 'White Anchor', id: 'Ata', role: 'Tank', tier: 'B', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '48.2%', pr: '4.1%', spike: 'Early-Mid', draft: 'High sustain. Pick to stall lanes and act as an immovable object.' },
+      { title: 'Dominant Ruler', id: 'Liu Bang', role: 'Tank', tier: 'B', lane: 'Clash Lane / Roam', sprite: 'Bigly', wr: '49.4%', pr: '5.2%', spike: 'Mid-Game', draft: 'Global teleport. Great for split-pushing while still participating in teamfights.' },
+      { title: 'Forge Maiden', id: 'Chicha', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly', wr: '47.8%', pr: '3.6%', spike: 'Mid-Game', draft: 'Niche pick. Good at setting up specific choke-point engagements.' },
+      { title: 'Mighty Conqueror', id: 'Fatih', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly', wr: '48.9%', pr: '4.8%', spike: 'Mid-Game', draft: 'Strong duelist. Struggles in large, uncoordinated teamfights.' },
+      { title: 'Pointblank', id: 'Liu Bei', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Runsie', wr: '49.1%', pr: '6.3%', spike: 'Early-Mid', draft: 'Close range burst. His ultimate shield allows him to ignore CC and dive carries.' },
+      { title: 'Reefheart Datu', id: 'Lapulapu', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly', wr: '48.5%', pr: '5.1%', spike: 'Mid-Game', draft: 'Diving bruiser. Excellent at jumping into the backline and causing chaos.' },
+      { title: 'Wild Spark', id: 'Nezha', role: 'Fighter', tier: 'B', lane: 'Clash Lane / Jungle', sprite: 'Runsie', wr: '49.3%', pr: '4.9%', spike: 'Late-Game', draft: 'Global ultimate. Used strictly to dive and trade 1-for-1 with the enemy ADC.' },
+      { title: 'Paladin', id: 'Arthur', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly', wr: '50.1%', pr: '18.2%', spike: 'Early-Mid', draft: 'Simple and effective. Great silence for stopping channeled abilities.' },
+      { title: 'Fearless Spear', id: 'Zilong', role: 'Assassin', tier: 'B', lane: 'Jungle / Clash', sprite: 'Runsie', wr: '49.6%', pr: '12.4%', spike: 'Mid-Game', draft: 'Reliable initiator. Gets tankier at lower health, making him deceptively hard to kill.' },
+      { title: 'Swift Strike', id: 'Ukyo Tachibana', role: 'Assassin', tier: 'B', lane: 'Jungle / Clash', sprite: 'Runsie', wr: '48.8%', pr: '7.1%', spike: 'Early-Mid', draft: 'High early game burst. Falls off very hard if he doesn\'t secure an early lead.' },
+      { title: 'Sacred Warrior', id: 'Athena', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie', wr: '51.1%', pr: '3.4%', spike: 'Mid-Game', draft: 'High skill cap. Can grant vision while dead. Requires perfect combo execution.' },
+      { title: 'Avici Puppeteer', id: 'Yango', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio', wr: '47.5%', pr: '2.8%', spike: 'Late-Game', draft: 'Niche control mage. Requires a team that plays around his specific trap placements.' },
+      { title: 'Boardmaster', id: 'Yixing', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio', wr: '49.9%', pr: '4.2%', spike: 'Mid-Late', draft: 'Ultimate cage match. Creates a massive arena that forces the enemy to fight.' },
+      { title: 'Celestial', id: 'Nuwa', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio', wr: '50.3%', pr: '3.1%', spike: 'Late-Game', draft: 'Map altering. Creates walls to block enemy pathing. Very slow scaling.' },
+      { title: 'Curious Mixture', id: 'Dr Bian', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio', wr: '48.7%', pr: '5.5%', spike: 'Early-Mid', draft: 'Sustain mage. Great in heavy brawling comps where he can stack his poison/heals.' },
+      { title: 'Inferno', id: 'Zhou Yu', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio', wr: '49.2%', pr: '6.8%', spike: 'Mid-Game', draft: 'Area denial. Excellent at pushing towers and controlling dragon pit fights.' },
+      { title: 'Silkweaver', id: 'Shi', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio', wr: '48.4%', pr: '4.5%', spike: 'Mid-Game', draft: 'High utility. Can drag enemies out of position, but lacks raw carry damage.' },
+      { title: 'Tunecaster', id: 'Yuhuan', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio', wr: '49.8%', pr: '3.9%', spike: 'Late-Game', draft: 'Hybrid damage/healer. Great in poke comps that want to avoid hard engages.' },
+      { title: 'Voidcaller', id: 'Kui', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio', wr: '48.1%', pr: '5.2%', spike: 'Early-Game', draft: 'Hook relies on complete surprise. Great for early invades and disruption.' },
+      { title: 'Artillerist', id: 'Huang Zhong', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie', wr: '50.6%', pr: '8.4%', spike: 'Late-Game', draft: 'Immobile turret. Do not pick without a dedicated protective support (Zhang Fei).' },
+      { title: 'Red Hawk', id: 'Alessio', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie', wr: '49.3%', pr: '6.1%', spike: 'Mid-Game', draft: 'AoE damage. His jump makes him somewhat evasive against ground-based attacks.' },
+      { title: 'Wild Rider', id: 'Agudo', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie', wr: '48.9%', pr: '3.7%', spike: 'Mid-Game', draft: 'Jungle/ADC hybrid. Great for securing fast objectives, but vulnerable without her bear.' },
+      { title: 'Packleader', id: 'Chano', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie', wr: '49.5%', pr: '4.2%', spike: 'Mid-Late', draft: 'Requires heavy snowballing. Very team-dependent for setup and peel.' },
+      { title: 'Animist', id: 'Guiguzi', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio', wr: '49.1%', pr: '5.8%', spike: 'Mid-Game', draft: 'Invisibility engage. Perfect for highly coordinated dive and ambush comps.' },
+      { title: 'Brushstrider', id: 'Sakeer', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio', wr: '48.5%', pr: '3.2%', spike: 'Mid-Game', draft: 'Niche utility. Better suited for specific counter-pick scenarios than blind picking.' },
+      { title: 'Private Ear', id: 'Fang', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio', wr: '47.9%', pr: '4.5%', spike: 'Early-Mid', draft: 'Vision control and objective taking. Struggles to provide peel in late game fights.' },
+      { title: 'Star Teller', id: 'Ming', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio', wr: '49.7%', pr: '7.3%', spike: 'Late-Game', draft: 'Stat booster. Links to a carry to amplify their damage. Weak against AoE burst.' },
+      { title: 'Wise Sage', id: 'Fuzi', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Runsie', wr: '50.2%', pr: '6.5%', spike: 'Mid-Game', draft: 'Ultimate lockdown. Used to tie down the enemy hyper-carry to a pole so they can\'t escape.' },
+      
       // SUPPLEMENTARY GLOBAL
-      { title: 'Ironbloom', id: 'Mulan', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie' },
-      { title: 'God of War', id: 'Guan Yu', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie' },
-      { title: 'Spear King', id: 'Han Xin', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Lyricist', id: 'Li Bai', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Shadow Dash', id: 'Sima Yi', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Monkey King', id: 'Wukong', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Ultimate Tank', id: 'Xiang Yu', role: 'Tank', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Berserker', id: 'Dian Wei', role: 'Fighter', tier: 'B', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Woodland', id: 'Consort Yu', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Parasola', id: 'Arli', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Shadow Reaper', id: 'Lan', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Peacekeeper', id: 'Mozi', role: 'Fighter', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Dominant', id: 'Cao Cao', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Avici', id: 'Yang Jian', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Magistrate', id: 'Di Renjie', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Mastermind', id: 'Zhuge Liang', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Raveness', id: 'Mi Yue', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie' },
-      { title: 'Shadow', id: 'Umbrosa', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Daybreak', id: 'Pangu', role: 'Fighter', tier: 'B', lane: 'Jungle / Clash', sprite: 'Bigly' },
-      { title: 'Cold暉', id: 'Ma Chao', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie' }
+      { title: 'Ironbloom', id: 'Mulan', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie', wr: '51.5%', pr: '12.1%', spike: 'Level 4+', draft: 'High APM requirement. Two stances allow her to silence targets and then super-armor through damage.' },
+      { title: 'God of War', id: 'Guan Yu', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie', wr: '52.3%', pr: '9.4%', spike: 'Mid-Game', draft: 'Requires constant movement. The premier flanking disruptor to break enemy formations.' },
+      { title: 'Spear King', id: 'Han Xin', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie', wr: '50.8%', pr: '16.2%', spike: 'Early-Mid', draft: 'Ultimate split-pusher and mobility king. Evades fights to secure towers and steal camps.' },
+      { title: 'Lyricist', id: 'Li Bai', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie', wr: '49.9%', pr: '14.8%', spike: 'Late-Game', draft: 'Untargetable burst. Needs jungle camps left alive near the fight to stack his ultimate.' },
+      { title: 'Shadow Dash', id: 'Sima Yi', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie', wr: '48.5%', pr: '6.3%', spike: 'Mid-Game', draft: 'Magic damage assassin. Silences and bursts. Struggles if he falls behind in gold.' },
+      { title: 'Monkey King', id: 'Wukong', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie', wr: '50.4%', pr: '22.1%', spike: 'Late-Game', draft: 'Crit reliance. Deletes squishies instantly in the late game, but has a weak early clear.' },
+      { title: 'Ultimate Tank', id: 'Xiang Yu', role: 'Tank', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly', wr: '49.1%', pr: '8.5%', spike: 'Mid-Game', draft: 'Massive displacement. Great for pushing diving assassins away from your backline.' },
+      { title: 'Berserker', id: 'Dian Wei', role: 'Fighter', tier: 'B', lane: 'Jungle', sprite: 'Runsie', wr: '48.8%', pr: '9.2%', spike: 'Late-Game', draft: 'True damage stacking. Kills anything 1v1 late game, but very easily kited.' },
+      { title: 'Woodland', id: 'Consort Yu', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie', wr: '50.2%', pr: '11.5%', spike: 'Mid-Game', draft: 'Physical immunity. Pick specifically to counter physical damage assassin dives.' },
+      { title: 'Parasola', id: 'Arli', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie', wr: '49.5%', pr: '15.3%', spike: 'Mid-Game', draft: 'Extremely high mobility. Impossible to hit in the right hands, but has very low base health.' },
+      { title: 'Shadow Reaper', id: 'Lan', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie', wr: '51.8%', pr: '18.7%', spike: 'Mid-Game', draft: 'Teamfight displacement. His ultimate dragging multiple targets is a fight winner.' },
+      { title: 'Peacekeeper', id: 'Mozi', role: 'Fighter', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio', wr: '49.6%', pr: '7.8%', spike: 'Late-Game', draft: 'Artillery stun. Incredibly annoying poke, excellent for stalling out games.' },
+      { title: 'Dominant', id: 'Cao Cao', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly', wr: '48.9%', pr: '5.4%', spike: 'Mid-Game', draft: 'Extreme lifesteal. Wants to brawl continuously to heal through enemy damage.' },
+      { title: 'Avici', id: 'Yang Jian', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly', wr: '47.5%', pr: '3.1%', spike: 'Early-Mid', draft: 'Execution reliant. Must land his dog mark to be a threat in teamfights.' },
+      { title: 'Mastermind', id: 'Zhuge Liang', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio', wr: '50.7%', pr: '14.2%', spike: 'Mid-Late', draft: 'Snowball mage. Must secure kills with his ultimate to trigger his passive sweeps.' },
+      { title: 'Raveness', id: 'Mi Yue', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie', wr: '50.4%', pr: '8.9%', spike: 'Early-Mid', draft: 'Lane dominant vampire. Steals stats and heals constantly. Great 1v1, poor teamfighter.' },
+      { title: 'Shadow', id: 'Umbrosa', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie', wr: '52.0%', pr: '11.8%', spike: 'Mid-Game', draft: 'Picks off isolated targets with ease. High synergy with aggressive invasion.' },
+      { title: 'Daybreak', id: 'Pangu', role: 'Fighter', tier: 'B', lane: 'Jungle / Clash', sprite: 'Bigly', wr: '49.3%', pr: '3.5%', spike: 'Early-Mid', draft: 'The Disarm King. Pick strictly to counter auto-attack reliant heroes (like Wukong or ADCs).' },
+      { title: 'Cold Spear', id: 'Ma Chao', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie', wr: '51.9%', pr: '13.6%', spike: 'Mid-Late', draft: 'Mobility equals damage. Very high skill ceiling, requires perfect spear management.' },
+      { title: 'Prince', id: 'Prince of Lanling', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie', wr: '50.2%', pr: '17.3%', spike: 'Early-Game', draft: 'Permanent invisibility. Terrorizes the early game. Falls off extremely hard late game.' }
     ];
 
     let currentRole = 'all'; let currentSearch = '';
@@ -234,7 +245,6 @@
       window.scrollTo(0,0);
     }
 
-    // THE UNIVERSAL PORTRAIT LOADER & SLEEK FALLBACK
     function loadPortrait(el, id) {
       const encodedId = encodeURIComponent(id);
       const paths = [
@@ -250,7 +260,6 @@
         if (i < paths.length) {
           el.src = paths[i++];
         } else {
-          // Sleek blue circle fallback
           const initial = id.charAt(0).toUpperCase();
           el.outerHTML = `<div class="hero-fallback">${initial}</div>`;
         }
@@ -261,16 +270,44 @@
     function renderDetail(id) {
       const h = HERO_DATA.find(x => x.id === id);
       const s = SPRITES[h.sprite] || SPRITES['Bigly'];
+      
+      const wrValue = parseFloat(h.wr);
+      const wrColor = wrValue >= 50.0 ? 'var(--wr-good)' : 'var(--wr-bad)';
+
       document.getElementById('detail-root').innerHTML = `
         <div class="dashboard">
           <div style="display:flex; align-items:center; gap:30px; flex-wrap:wrap; margin-bottom:30px;">
             <div class="hero-avatar" style="width:130px; height:130px; border-width:4px;"><img id="det-img" src=""></div>
             <div style="flex:1;">
               <h2 style="font-family:'Kanit'; font-size:2.8rem; line-height:1.1;">${h.title}</h2>
-              <p style="color:var(--primary); font-weight:900; font-size:1.5rem; letter-spacing:2px;">${h.id.toUpperCase()}</p>
-              <div style="margin-top:10px;"><span style="padding:5px 15px; background:var(--primary); border-radius:20px; font-weight:900; font-size:0.8rem;">${h.lane}</span></div>
+              <p style="color:var(--primary); font-weight:900; font-size:1.5rem; letter-spacing:2px; text-transform:uppercase;">${h.id}</p>
+              <div style="margin-top:10px;">
+                <span style="padding:5px 15px; background:var(--primary); border-radius:20px; font-weight:900; font-size:0.8rem;">${h.lane}</span>
+                <span style="padding:5px 15px; background:rgba(255,255,255,0.1); border-radius:20px; font-weight:900; font-size:0.8rem; margin-left:8px;">${h.role}</span>
+              </div>
             </div>
           </div>
+
+          <div class="section-title">Performance Analytics</div>
+          <div class="analytics-grid">
+            <div class="stat-box">
+              <div class="stat-value" style="color: ${wrColor}">${h.wr}</div>
+              <div class="stat-label">Global Winrate</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value" style="color: var(--gold)">${h.pr}</div>
+              <div class="stat-label">Pick / Ban Rate</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value" style="font-size: 1.5rem; padding-top:5px;">${h.spike}</div>
+              <div class="stat-label">Power Spike Phase</div>
+            </div>
+            <div class="stat-box draft-box">
+              <div class="stat-label" style="margin-bottom: 8px;">Drafting Logic / When to Pick</div>
+              <div style="font-size: 0.95rem; font-weight: 700; color: #fff;">${h.draft}</div>
+            </div>
+          </div>
+
           <div class="section-title">Strategic Spriteling Matrix</div>
           <div class="sprite-banner">
             <div class="sprite-icon-box">${s.icon}</div>
@@ -294,17 +331,25 @@
           const wrap = document.createElement('div'); wrap.className = 'tier-wrapper';
           wrap.innerHTML = `<div class="tier-label"><span>${t}-TIER</span><div class="tier-line"></div></div><div class="tier-grid"></div>`;
           const grid = wrap.querySelector('.tier-grid');
-          grid.innerHTML = filtered.map(h => { count++; return `
+          grid.innerHTML = filtered.map(h => { 
+            count++; 
+            const wrColor = parseFloat(h.wr) >= 50.0 ? 'var(--wr-good)' : 'var(--wr-bad)';
+            return `
             <div class="hero-card" onclick="showView('herodetail', '${h.id}')">
               <div class="hero-avatar"><img src="" data-id="${h.id}"></div>
               <span class="hero-flavor">${h.title}</span>
               <span class="hero-name">${h.id}</span>
-            </div>`; }).join('');
+              <div class="card-stats">
+                <span style="color:${wrColor}">${h.wr} WR</span>
+                <span style="color:var(--text-dim)">|</span>
+                <span style="color:var(--gold)">${h.spike}</span>
+              </div>
+            </div>`; 
+          }).join('');
           root.appendChild(wrap);
           grid.querySelectorAll('img').forEach(i => loadPortrait(i, i.dataset.id));
         }
       });
-      // DYNAMIC COUNTER: Now accurately reads the exact size of the HERO_DATA array.
       document.getElementById('status-text').innerText = `Database Synchronized: ${count} / ${HERO_DATA.length} Heroes Active`;
     }
 

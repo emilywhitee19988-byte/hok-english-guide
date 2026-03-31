@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOK English Guide - Final Master List</title>
+  <title>HOK English Guide - Master Tier List</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; line-height: 1.4; }
@@ -36,28 +36,37 @@
     .hero-avatar { width: 75px; height: 75px; margin: 0 auto 10px; border-radius: 50%; border: 3px solid #3b82f6; overflow: hidden; background: #000; }
     .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
     
+    /* Text Styles */
     .hero-title-main { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 2px; word-wrap: break-word; line-height: 1.2; }
     .hero-name-blue { font-size: 11px; color: #60a5fa; font-weight: 600; margin-bottom: 8px; display: block; }
     
+    /* Role Badges */
     .hero-role-badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: white; }
     .role-tank { background: #1e40af; } .role-fighter { background: #dc2626; } .role-assassin { background: #7c3aed; } .role-mage { background: #2563eb; } .role-marksman { background: #ea580c; } .role-support { background: #059669; }
 
-    /* Detail View */
+    /* Detail View Styles */
     .hero-detail-header { background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%); border-radius: 20px; padding: 30px; margin-bottom: 25px; border: 1px solid #3b82f6; }
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; margin-top: 20px; }
     .stat-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
     .stat-val { font-size: 1.5rem; font-weight: 800; display: block; }
     .stat-lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; }
 
-    @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); } }
+    @media (max-width: 768px) {
+      .tier-content { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 10px; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div id="view-tierlist" class="view active">
-      <div class="header"><h1>🎮 HOK English Guide</h1><p>Full 114+ Hero Roster • Detail Stats Enabled</p></div>
+      <div class="header">
+        <h1>🎮 HOK English Guide</h1>
+        <p>114+ Hero Roster • S14 Meta</p>
+      </div>
       <div class="controls">
-        <div class="search-box"><input type="text" id="search-input" placeholder="🔍 Search Hero or Title..." oninput="filterHeroes()"></div>
+        <div class="search-box">
+          <input type="text" id="search-input" placeholder="🔍 Search Heartseeker or Daji..." oninput="filterHeroes()">
+        </div>
         <div class="filter-buttons">
           <button class="filter-btn active" onclick="filterByRole('all', this)">All</button>
           <button class="filter-btn" onclick="filterByRole('Tank', this)">Tank</button>
@@ -71,13 +80,13 @@
       <div id="tier-container"></div>
     </div>
     <div id="view-herodetail" class="view">
-      <button class="back-btn" onclick="showView('tierlist')">← Back</button>
+      <button class="back-btn" onclick="showView('tierlist')">← Back to List</button>
       <div id="hero-detail-content"></div>
     </div>
   </div>
 
   <script>
-    // DATABASE MAPPED TO YOUR FILENAMES
+    // DATABASE: THE KEY (e.g. 'Daji') MATCHES YOUR FILENAME EXACTLY
     const HEROES = {
       // MAGES
       'Daji': { title: 'Heartseeker', role: 'Mage', tier: 'S' },
@@ -175,6 +184,7 @@
       'Luara': { title: 'Sandstorm', role: 'Marksman', tier: 'A' },
       'Chano': { title: 'Packleader', role: 'Marksman', tier: 'B' },
       'Yao': { title: 'Starblade', role: 'Marksman', tier: 'S' },
+      'Arli': { title: 'Parasola', role: 'Marksman', tier: 'A' },
 
       // SUPPORTS
       'Cai Yan': { title: 'Healing Tone', role: 'Support', tier: 'S' },
@@ -191,19 +201,21 @@
     Object.keys(HEROES).forEach(id => {
       let h = HEROES[id];
       h.id = id;
-      let encoded = encodeURIComponent(id);
+      let enc = encodeURIComponent(id);
       
-      // Filename logic
-      h.imgPng = `hero_portraits/${encoded}.png`;
-      h.imgJpg = `hero_portraits/${encoded}.jpg`;
-      h.rootPng = `${encoded}.png`; // Try root if folder fails
-      h.rootJpg = `${encoded}.jpg`; // Try root if folder fails
+      // Filename paths (Tried multiple ways)
+      h.imgPng = `hero_portraits/${enc}.png`;
+      h.imgJpg = `hero_portraits/${enc}.jpg`;
+      h.rootPng = `${enc}.png`;
       
-      h.winRate = (48.5 + Math.random() * 5).toFixed(1);
-      h.pickRate = (3 + Math.random() * 15).toFixed(1);
-      h.banRate = (h.tier === 'S' ? 20 + Math.random() * 30 : Math.random() * 5).toFixed(1);
+      h.winRate = (48.5 + Math.random() * 6).toFixed(1);
+      h.pickRate = (2 + Math.random() * 18).toFixed(1);
+      h.banRate = (h.tier === 'S' ? 15 + Math.random() * 30 : Math.random() * 4).toFixed(1);
       h.fallback = `https://ui-avatars.com/api/?name=%20&background=1e293b&color=60a5fa`;
     });
+
+    let currentRole = 'all';
+    let currentSearch = '';
 
     function showView(viewName, heroId = null) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -233,11 +245,7 @@
             <div class="hero-card" onclick="showView('herodetail', '${h.id}')">
               <div class="hero-avatar">
                 <img src="${h.imgPng}" 
-                     onerror="
-                      if(this.src.includes('hero_portraits/') && this.src.includes('.png')) { this.src='${h.imgJpg}'; }
-                      else if(this.src.includes('hero_portraits/') && this.src.includes('.jpg')) { this.src='${h.rootPng}'; }
-                      else if(!this.src.includes('hero_portraits/') && this.src.includes('.png')) { this.src='${h.rootJpg}'; }
-                      else { this.src='${h.fallback}'; }">
+                     onerror="if(this.src.includes('.png')){this.src='${h.imgJpg}';}else{this.src='${h.fallback}';}">
               </div>
               <div class="hero-title-main">${h.title}</div>
               <div class="hero-name-blue">${h.id}</div>
@@ -257,7 +265,7 @@
               <img src="${h.imgPng}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='${h.imgJpg}'; this.onerror=function(){this.src='${h.fallback}';};">
             </div>
             <div>
-              <div style="font-size:2.3rem; font-weight:900;">${h.title}</div>
+              <div style="font-size:2.4rem; font-weight:900;">${h.title}</div>
               <div style="color:#60a5fa; font-size:1.3rem; font-weight:700;">${h.id}</div>
               <div style="margin-top:10px;">
                 <span class="hero-role-badge role-${h.role.toLowerCase()}">${h.role}</span>
@@ -274,14 +282,13 @@
       `;
     }
 
-    let currentRole = 'all';
-    let currentSearch = '';
     function filterByRole(role, btn) {
       currentRole = role;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderAllTiers();
     }
+
     function filterHeroes() {
       currentSearch = document.getElementById('search-input').value.toLowerCase();
       renderAllTiers();

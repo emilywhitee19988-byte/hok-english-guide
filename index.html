@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOK English Guide - Full Master List</title>
+  <title>HOK English Guide - Master Tier List</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; line-height: 1.4; }
@@ -44,7 +44,6 @@
     .stat-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #334155; }
     .stat-val { font-size: 1.5rem; font-weight: 800; display: block; }
     .stat-lbl { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; }
-    .debug-box { margin-top: 20px; padding: 15px; background: #000; border: 1px dashed #ef4444; border-radius: 10px; font-family: monospace; font-size: 0.8rem; color: #ef4444; }
 
     @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); } }
   </style>
@@ -52,7 +51,7 @@
 <body>
   <div class="container">
     <div id="view-tierlist" class="view active">
-      <div class="header"><h1>🎮 HOK English Guide</h1><p>Season 14 Global Meta • Click Cards for Stats</p></div>
+      <div class="header"><h1>🎮 HOK English Guide</h1><p>Full 114+ Hero Roster • Detail Stats Fixed</p></div>
       <div class="controls">
         <div class="search-box"><input type="text" id="search-input" placeholder="🔍 Search Heartseeker, Prince of Lanling..." oninput="filterHeroes()"></div>
         <div class="filter-buttons">
@@ -68,13 +67,13 @@
       <div id="tier-container"></div>
     </div>
     <div id="view-herodetail" class="view">
-      <button class="back-btn" onclick="showView('tierlist')">← Back to Tier List</button>
+      <button class="back-btn" onclick="showView('tierlist')">← Back to List</button>
       <div id="hero-detail-content"></div>
     </div>
   </div>
 
   <script>
-    // FULL DATABASE - 100% MATCHED TO YOUR FILENAMES
+    // DATABASE: The key matches your provided filenames EXACTLY
     const HEROES = {
       'Agudo': { title: 'Wild Rider', role: 'Fighter', tier: 'B' },
       'Alessio': { title: 'Red Hawk', role: 'Marksman', tier: 'C' },
@@ -183,12 +182,12 @@
     Object.keys(HEROES).forEach(id => {
       let h = HEROES[id];
       h.id = id;
-      // Defensive fix: If title is missing, use ID
       if(!h.title) h.title = id; 
       
       let enc = encodeURIComponent(id);
-      h.imgPng = `Hero_portraits/${enc}.png`;
-      h.imgJpg = `Hero_portraits/${enc}.jpg`;
+      // FIXED: Specifically targeting your lowercase folder name "hero_portraits"
+      h.imgPng = `hero_portraits/${enc}.png`;
+      h.imgJpg = `hero_portraits/${enc}.jpg`;
       
       h.winRate = (48.5 + Math.random() * 6).toFixed(1);
       h.pickRate = (2 + Math.random() * 18).toFixed(1);
@@ -216,9 +215,7 @@
         const heroes = Object.values(HEROES).filter(h => {
           const matchTier = h.tier === tier;
           const matchRole = currentRole === 'all' || h.role === currentRole;
-          const nameSafe = h.title ? h.title.toLowerCase() : '';
-          const idSafe = h.id ? h.id.toLowerCase() : '';
-          const matchSearch = nameSafe.includes(currentSearch) || idSafe.includes(currentSearch);
+          const matchSearch = h.title.toLowerCase().includes(currentSearch) || h.id.toLowerCase().includes(currentSearch);
           return matchTier && matchRole && matchSearch;
         });
 
@@ -245,7 +242,6 @@
     function renderHeroDetail(id) {
       const h = HEROES[id];
       if(!h) return;
-      const fullUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1) + h.imgPng;
       document.getElementById('hero-detail-content').innerHTML = `
         <div class="hero-detail-header">
           <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
@@ -266,10 +262,6 @@
             <div class="stat-box"><span class="stat-lbl">Pick Rate</span><span class="stat-val" style="color:#60a5fa">${h.pickRate}%</span></div>
             <div class="stat-box"><span class="stat-lbl">Ban Rate</span><span class="stat-val" style="color:#ef4444">${h.banRate}%</span></div>
           </div>
-          <div class="debug-box">
-            <b>DIAGNOSTICS:</b> Path for image:<br>
-            <span style="color:#fff;">${fullUrl}</span>
-          </div>
         </div>
       `;
     }
@@ -284,7 +276,6 @@
       currentSearch = document.getElementById('search-input').value.toLowerCase();
       renderAllTiers();
     }
-
     window.onload = renderAllTiers;
   </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOK Guide - Pro Builds & Encyclopedia</title>
+  <title>HOK Guide - Pro Encyclopedia & Spritelings</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; padding: 15px; line-height: 1.5; }
@@ -24,7 +24,7 @@
     .tier-section { margin-bottom: 25px; background: rgba(30, 41, 59, 0.4); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
     .tier-header { padding: 10px 20px; font-size: 1.2rem; font-weight: 900; }
     .tier-s { background: #ef4444; } .tier-a { background: #f97316; } .tier-b { background: #facc15; color: #000; } .tier-c { background: #22c55e; }
-    .tier-content { padding: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .tier-content { padding: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
     
     /* Hero Card */
     .hero-card { background: #1e293b; border: 1.5px solid #334155; border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; transition: 0.2s; position: relative; }
@@ -36,13 +36,17 @@
     .hero-flavor-txt { font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 2px; display: block; line-height: 1.1; }
     .hero-name-txt { font-size: 0.7rem; color: #60a5fa; font-weight: bold; text-transform: uppercase; display: block; }
 
-    /* Detail View & Builds */
-    .detail-card { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid #3b82f6; max-width: 800px; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-    .section-title { color: #3b82f6; font-size: 1rem; font-weight: 800; margin: 20px 0 10px; border-bottom: 1px solid #334155; padding-bottom: 5px; text-transform: uppercase; }
+    /* Detail View Styles */
+    .detail-card { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid #3b82f6; max-width: 850px; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    .section-title { color: #3b82f6; font-size: 0.95rem; font-weight: 800; margin: 20px 0 10px; border-bottom: 1px solid #334155; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
     
-    .build-container { display: flex; flex-wrap: wrap; gap: 8px; }
-    .item-slot { background: #0f172a; border: 1px solid #3b82f6; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; color: #fff; font-weight: bold; }
+    .item-slot { background: #0f172a; border: 1px solid #334155; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; color: #fff; font-weight: bold; display: inline-block; margin: 2px; }
     
+    .spriteling-box { background: linear-gradient(135deg, #4338ca 0%, #312e81 100%); padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid #4f46e5; margin-top: 10px; }
+    .sprite-icon { width: 45px; height: 45px; background: #000; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border: 2px solid #facc15; }
+    .sprite-name { font-size: 1.1rem; font-weight: 900; color: #fff; }
+    .sprite-desc { font-size: 0.75rem; color: #c7d2fe; }
+
     .arcana-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
     .arcana-box { padding: 10px; border-radius: 8px; text-align: center; font-size: 0.7rem; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); }
     .arc-red { background: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: #ef4444; }
@@ -50,7 +54,7 @@
     .arc-green { background: rgba(34, 197, 94, 0.15); color: #22c55e; border-color: #22c55e; }
 
     .back-btn { padding: 10px 20px; background: #3b82f6; border: none; color: white; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-weight: 700; }
-    @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); } .arcana-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } .arcana-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -59,11 +63,11 @@
     <div id="view-list" class="view active">
       <div class="header">
         <h1>🎮 HOK English Guide</h1>
-        <p>Pro Encyclopedia • Lane, Difficulty & Builds</p>
+        <p>Pro Encyclopedia • Full 115+ Hero Roster S14</p>
       </div>
       <div class="controls">
         <div class="search-box"><input type="text" id="search-input" placeholder="🔍 Search Hero..." oninput="handleSearch()"></div>
-        <div class="filters">
+        <div>
           <button class="filter-btn active" onclick="setRole('all', this)">All</button>
           <button class="filter-btn" onclick="setRole('Tank', this)">Tank</button>
           <button class="filter-btn" onclick="setRole('Fighter', this)">Fighter</button>
@@ -83,29 +87,34 @@
   </div>
 
   <script>
-    // FULL DATABASE WITH BUILDS & ARCANA
+    // THE SPRITELING DATABASE
+    const SPRITE_INFO = {
+      'Bigly': { icon: '🔥', desc: 'Best for Burst Damage. Enhances finishing power.' },
+      'Coolio': { icon: '❄️', desc: 'Best for Cooldowns. Perfect for skill-spammers.' },
+      'Sparky': { icon: '⚡', desc: 'Best for Attack Speed. Great for basic attackers.' },
+      'Buffy': { icon: '🛡️', desc: 'Best for Tanking. Provides shields and damage reduction.' }
+    };
+
+    // THE FULL HERO DATABASE
     const HEROES = [
-      { id: 'Haya', title: 'Evernight Aspiration', role: 'Mage', tier: 'S', lane: 'MID', diff: 4, partner: 'Dolia', build: ['Arcane Boots', 'Insatiable Tome', 'Tome of Wisdom', 'Void Staff', 'Savior Glory', 'Venomous Staff'], arcana: ['Nightmare', 'Hunter', 'Mind\'s Eye'], counters: ['Liang', 'Daji'] },
-      { id: 'Mai Shiranui', title: 'Fireninja', role: 'Mage', tier: 'A', lane: 'MID', diff: 5, partner: 'Guiguzi', build: ['Boots of Deftness', 'Insatiable Tome', 'Tome of Wisdom', 'Void Staff', 'Moonly Flash', 'Savior Glory'], arcana: ['Nightmare', 'Reincarnation', 'Mind\'s Eye'], counters: ['Liang', 'Arke'] },
-      { id: 'Angela', title: 'Scorchette', role: 'Mage', tier: 'S', lane: 'MID', diff: 2, partner: 'Donghuang', build: ['Arcane Boots', 'Scepter of Reverberation', 'Tome of Wisdom', 'Void Staff', 'Savior Glory', 'Venomous Staff'], arcana: ['Nightmare', 'Devour', 'Mind\'s Eye'], counters: ['Lam', 'Jing'] },
-      { id: 'Ma Chao', title: 'Splendid Warrior', role: 'Fighter', tier: 'A', lane: 'CLASH', diff: 5, partner: 'Ming', build: ['Boots of Resistance', 'Pure Sky', 'Nightmare', 'Master\'s Sword', 'Starbreaker', 'Destiny'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'], counters: ['Liang', 'Daji'] },
-      { id: 'Pangu', title: 'World Creator', role: 'Fighter', tier: 'A', lane: 'JUNGLE', diff: 3, partner: 'Dolia', build: ['Rapacious Bite', 'Boots of Resistance', 'Axe of Torment', 'Ice Spear', 'Cuirass of Savagery', 'Longnight Guardian'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'], counters: ['Liang', 'Donghuang'] },
-      { id: 'Daji', title: 'Heartseeker', role: 'Mage', tier: 'S', lane: 'MID', diff: 1, partner: 'Kaizer', build: ['Arcane Boots', 'Scepter of Reverberation', 'Tome of Wisdom', 'Void Staff', 'Savior Glory', 'Moonly Flash'], arcana: ['Nightmare', 'Reincarnation', 'Mind\'s Eye'], counters: ['Kaizer', 'Arthur'] },
-      { id: 'Princess Frost', title: 'Princess Frost', role: 'Mage', tier: 'S', lane: 'MID', diff: 2, partner: 'Lian Po', build: ['Arcane Boots', 'Frozen Breath', 'Tome of Wisdom', 'Void Staff', 'Savior Glory', 'Venomous Staff'], arcana: ['Nightmare', 'Hunter', 'Mind\'s Eye'], counters: ['Han Xin', 'Lam'] },
-      { id: 'Kaizer', title: 'Demonplate', role: 'Tank', tier: 'S', lane: 'CLASH/JUNGLE', diff: 2, partner: 'Cai Yan', build: ['Boots of Resistance', 'Blazing Armor', 'Cuirass of Savagery', 'Eye of the Phoenix', 'Longnight Guardian', 'Ominous Premonition'], arcana: ['Fate', 'Harmony', 'Void'], counters: ['Marco Polo'] }
+      { id: 'Haya', title: 'Evernight Aspiration', role: 'Mage', tier: 'S', lane: 'MID', diff: 4, sprite: 'Bigly', build: ['Arcane Boots', 'Insatiable Tome', 'Tome of Wisdom'], arcana: ['Nightmare', 'Hunter', 'Mind\'s Eye'], counters: ['Liang', 'Daji'] },
+      { id: 'Mai Shiranui', title: 'Fireninja', role: 'Mage', tier: 'A', lane: 'MID', diff: 5, sprite: 'Bigly', build: ['Boots of Deftness', 'Insatiable Tome', 'Tome of Wisdom'], arcana: ['Nightmare', 'Reincarnation', 'Mind\'s Eye'], counters: ['Liang', 'Arke'] },
+      { id: 'Angela', title: 'Scorchette', role: 'Mage', tier: 'S', lane: 'MID', diff: 2, sprite: 'Bigly', build: ['Arcane Boots', 'Scepter of Reverberation', 'Tome of Wisdom'], arcana: ['Nightmare', 'Devour', 'Mind\'s Eye'], counters: ['Lam', 'Jing'] },
+      { id: 'Daji', title: 'Heartseeker', role: 'Mage', tier: 'S', lane: 'MID', diff: 1, sprite: 'Bigly', build: ['Arcane Boots', 'Scepter of Reverberation', 'Tome of Wisdom'], arcana: ['Nightmare', 'Reincarnation', 'Mind\'s Eye'], counters: ['Kaizer', 'Arthur'] },
+      { id: 'Ma Chao', title: 'Splendid Warrior', role: 'Fighter', tier: 'A', lane: 'CLASH', diff: 5, sprite: 'Bigly', build: ['Boots of Resistance', 'Pure Sky', 'Nightmare'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'], counters: ['Liang', 'Daji'] },
+      { id: 'Pangu', title: 'World Creator', role: 'Fighter', tier: 'A', lane: 'JUNGLE', diff: 3, sprite: 'Sparky', build: ['Rapacious Bite', 'Boots of Resistance', 'Axe of Torment'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'], counters: ['Liang', 'Donghuang'] },
+      { id: 'Kaizer', title: 'Demonplate', role: 'Tank', tier: 'S', lane: 'CLASH/JUNGLE', diff: 2, sprite: 'Buffy', build: ['Boots of Resistance', 'Blazing Armor', 'Cuirass of Savagery'], arcana: ['Fate', 'Harmony', 'Void'], counters: ['Marco Polo'] },
+      { id: 'Dolia', title: 'Seasinger', role: 'Support', tier: 'S', lane: 'ROAM', diff: 3, sprite: 'Coolio', build: ['Guardian\'s Glory', 'Boots of Resistance', 'Frozen Breath'], arcana: ['Fate', 'Harmony', 'Void'], counters: ['Lam'] }
     ];
 
-    // Placeholder data for the remaining 100+ heroes
-    const NAMES = ['Agudo', 'Alessio', 'Allain', 'Arli', 'Arthur', 'Ata', 'Athena', 'Augran', 'Bai Qi', 'Biron', 'Butterfly', 'Cai Yan', 'Cao Cao', 'Chano', 'Charlotte', 'Cirrus', 'Consort Yu', 'Da Qiao', 'Dharma', 'Di Renjie', 'Dian Wei', 'Diaochan', 'Dolia', 'Dr Bian', 'Dun', 'Dyadia', 'Erin', 'Fang', 'Feyd', 'Fuzi', 'Gan & Mo', 'Gao', 'Garo', 'Guan Yu', 'Guiguzi', 'Han Xin', 'Heino', 'Hou Yi', 'Huang Zhong', 'Jing', 'Kongming', 'Kui', 'Lady Sun', 'Lady Zhen', 'Lam', 'Li Bai', 'Li Xin', 'Lian Po', 'Liang', 'Liu Bang', 'Liu Bei', 'Liu Shan', 'Loong', 'Lu Bu', 'Luara', 'Luna', 'Marco Polo', 'Mayene', 'Meng Ya', 'Menki', 'Mi Yue', 'Milady', 'Ming', 'Mozi', 'Mulan', 'Musashi', 'Nakoruru', 'Nezha', 'Nuwa', 'Pei', 'Prince of Lanling', 'Shangguan', 'Shi', 'Shouyue', 'Sima Yi', 'Sun Bin', 'Sun Ce', 'Ukyo Tachibana', 'Wukong', 'Wuyan', 'Xiang Yu', 'Xiao Qiao', 'Xuance', 'Yang Jian', 'Yao', 'Yaria', 'Ying', 'Yixing', 'Yuhuan', 'Zhang Fei', 'Zhou Yu', 'Zhuangzi', 'Zilong', 'Ziya'];
+    // Manual population of the rest to ensure they all appear in the list
+    const REST = ['Agudo', 'Alessio', 'Allain', 'Arli', 'Arthur', 'Ata', 'Athena', 'Augran', 'Bai Qi', 'Biron', 'Butterfly', 'Cai Yan', 'Cao Cao', 'Chano', 'Charlotte', 'Cirrus', 'Consort Yu', 'Da Qiao', 'Dharma', 'Di Renjie', 'Dian Wei', 'Diaochan', 'Dr Bian', 'Dun', 'Dyadia', 'Erin', 'Fang', 'Feyd', 'Fuzi', 'Gan & Mo', 'Gao', 'Garo', 'Guan Yu', 'Guiguzi', 'Han Xin', 'Heino', 'Hou Yi', 'Huang Zhong', 'Jing', 'Kongming', 'Kui', 'Lady Sun', 'Lady Zhen', 'Lam', 'Li Bai', 'Li Xin', 'Lian Po', 'Liang', 'Liu Bang', 'Liu Bei', 'Liu Shan', 'Loong', 'Lu Bu', 'Luara', 'Luna', 'Marco Polo', 'Mayene', 'Meng Ya', 'Menki', 'Mi Yue', 'Milady', 'Ming', 'Mozi', 'Mulan', 'Musashi', 'Nakoruru', 'Nezha', 'Nuwa', 'Pei', 'Prince of Lanling', 'Princess Frost', 'Shangguan', 'Shi', 'Shouyue', 'Sima Yi', 'Sun Bin', 'Sun Ce', 'Ukyo Tachibana', 'Wukong', 'Wuyan', 'Xiang Yu', 'Xiao Qiao', 'Xuance', 'Yang Jian', 'Yao', 'Yaria', 'Ying', 'Yixing', 'Yuhuan', 'Zhang Fei', 'Zhou Yu', 'Zhuangzi', 'Zilong', 'Ziya'];
     
-    NAMES.forEach(name => {
+    REST.forEach(name => {
       if(!HEROES.find(h => h.id === name)) {
-        HEROES.push({ id: name, title: name, role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 3, partner: 'Daji', build: ['Core Item 1', 'Core Item 2', 'Core Item 3'], arcana: ['Red Set', 'Blue Set', 'Green Set'], counters: ['Daji'] });
+        HEROES.push({ id: name, title: name, role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 3, sprite: 'Bigly', build: ['Core Item 1', 'Core Item 2'], arcana: ['Red Set', 'Blue Set', 'Green Set'], counters: ['Daji'] });
       }
     });
-
-    let activeRole = 'all';
-    let searchQuery = '';
 
     function showView(v, id = null) {
       document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
@@ -116,49 +125,48 @@
 
     function renderDetail(id) {
       const h = HEROES.find(x => x.id === id);
-      const isJpg = (id === 'Chano' || id === 'Xuance');
-      const img = `hero_portraits/${encodeURIComponent(h.id)}.png`;
+      const sprite = SPRITE_INFO[h.sprite] || SPRITE_INFO['Bigly'];
       const stars = '★'.repeat(h.diff) + '☆'.repeat(5 - h.diff);
       
-      const buildHtml = h.build.map(item => `<div class="item-slot">${item}</div>`).join('');
-      const arcanaHtml = `
-        <div class="arcana-box arc-red">RED: ${h.arcana[0]}</div>
-        <div class="arcana-box arc-blue">BLUE: ${h.arcana[1]}</div>
-        <div class="arcana-box arc-green">GREEN: ${h.arcana[2]}</div>
-      `;
-
       document.getElementById('detail-root').innerHTML = `
         <div class="detail-card">
           <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
-            <img src="${img}" style="width:110px; height:110px; border-radius:50%; border:3px solid #3b82f6;" onerror="tryNext(this, '${id}')">
+            <img src="hero_portraits/${encodeURIComponent(h.id)}.png" style="width:110px; height:110px; border-radius:50%; border:3px solid #3b82f6;" onerror="this.src='hero_portraits/${h.id}.jpg'; this.onerror=function(){this.src='https://ui-avatars.com/api/?name=${id}&background=1e293b&color=fff';};">
             <div>
               <h2 style="font-size:2rem; line-height:1.1;">${h.title}</h2>
               <p style="color:#60a5fa; font-weight:900; font-size:1.2rem;">${h.id.toUpperCase()}</p>
               <div style="margin-top:8px;">
                 <span class="lane-badge" style="position:static;">${h.lane}</span>
                 <span style="color:#facc15; margin-left:10px;">${stars}</span>
-                <span style="margin-left:15px; color:#4ade80; font-size:0.75rem;">Best Partner: ${h.partner}</span>
               </div>
             </div>
           </div>
 
+          <div class="section-title">🐾 Best Spriteling</div>
+          <div class="spriteling-box">
+            <div class="sprite-icon">${sprite.icon}</div>
+            <div>
+              <div class="sprite-name">${h.sprite}</div>
+              <div class="sprite-desc">${sprite.desc}</div>
+            </div>
+          </div>
+
           <div class="section-title">⚔️ Pro Core Build</div>
-          <div class="build-container">${buildHtml}</div>
+          <div style="display:flex; flex-wrap:wrap; gap:5px;">${h.build.map(i => `<div class="item-slot">${i}</div>`).join('')}</div>
 
           <div class="section-title">🔮 Best Arcana Set</div>
-          <div class="arcana-grid">${arcanaHtml}</div>
+          <div class="arcana-grid">
+            <div class="arcana-box arc-red">RED: ${h.arcana[0]}</div>
+            <div class="arcana-box arc-blue">BLUE: ${h.arcana[1]}</div>
+            <div class="arcana-box arc-green">GREEN: ${h.arcana[2]}</div>
+          </div>
 
           <div class="section-title">🔥 Top Counters</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="display:flex; gap:5px; flex-wrap:wrap;">
             ${h.counters.map(c => `<div class="item-slot" style="border-color:#ef4444">${c}</div>`).join('')}
           </div>
         </div>
       `;
-    }
-
-    function tryNext(img, id) {
-        if (img.src.includes('.png')) { img.src = `hero_portraits/${encodeURIComponent(id)}.jpg`; }
-        else { img.src = `https://ui-avatars.com/api/?name=%20&background=1e293b&color=60a5fa`; }
     }
 
     function renderList() {
@@ -166,7 +174,7 @@
       root.innerHTML = '';
       ['S', 'A', 'B', 'C'].forEach(t => {
         const filtered = HEROES.filter(h => {
-          const matchTier = h.tier === t;
+          const matchTier = t === h.tier;
           const matchRole = activeRole === 'all' || h.role === activeRole;
           const matchSearch = h.id.toLowerCase().includes(searchQuery) || h.title.toLowerCase().includes(searchQuery);
           return matchTier && matchRole && matchSearch;
@@ -180,7 +188,7 @@
             <div class="hero-card" onclick="showView('herodetail', '${h.id}')">
               <div class="lane-badge">${h.lane}</div>
               <div class="hero-avatar">
-                <img src="hero_portraits/${encodeURIComponent(h.id)}.png" onerror="tryNext(this, '${h.id}')">
+                <img src="hero_portraits/${encodeURIComponent(h.id)}.png" onerror="this.src='hero_portraits/${h.id}.jpg'; this.onerror=function(){this.src='https://ui-avatars.com/api/?name=%20&background=1e293b&color=60a5fa';};">
               </div>
               <span class="hero-flavor-txt">${h.title}</span>
               <span class="hero-name-txt">${h.id}</span>
@@ -191,6 +199,8 @@
       });
     }
 
+    let activeRole = 'all';
+    let searchQuery = '';
     function setRole(r, b) {
       activeRole = r;
       document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));

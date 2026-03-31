@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOK Guide - Full Pro Encyclopedia</title>
+  <title>HOK Guide - Pro Builds & Encyclopedia</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; padding: 15px; line-height: 1.5; }
@@ -36,19 +36,21 @@
     .hero-flavor-txt { font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 2px; display: block; line-height: 1.1; }
     .hero-name-txt { font-size: 0.7rem; color: #60a5fa; font-weight: bold; text-transform: uppercase; display: block; }
 
-    /* Detail View */
-    .detail-card { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid #3b82f6; max-width: 700px; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 20px 0; }
-    .stat-box { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; text-align: center; border: 1px solid #334155; }
-    .stat-val { font-size: 1.2rem; font-weight: 900; color: #4ade80; display: block; }
+    /* Detail View & Builds */
+    .detail-card { background: #1e293b; padding: 25px; border-radius: 20px; border: 1px solid #3b82f6; max-width: 800px; margin: 0 auto; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    .section-title { color: #3b82f6; font-size: 1rem; font-weight: 800; margin: 20px 0 10px; border-bottom: 1px solid #334155; padding-bottom: 5px; text-transform: uppercase; }
     
-    .counter-section { margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; }
-    .counter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-top: 10px; }
-    .counter-item { background: #0f172a; padding: 8px; border-radius: 8px; text-align: center; border: 1px solid #334155; }
-    .counter-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #ef4444; margin-bottom: 4px; }
+    .build-container { display: flex; flex-wrap: wrap; gap: 8px; }
+    .item-slot { background: #0f172a; border: 1px solid #3b82f6; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; color: #fff; font-weight: bold; }
     
+    .arcana-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .arcana-box { padding: 10px; border-radius: 8px; text-align: center; font-size: 0.7rem; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); }
+    .arc-red { background: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: #ef4444; }
+    .arc-blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border-color: #3b82f6; }
+    .arc-green { background: rgba(34, 197, 94, 0.15); color: #22c55e; border-color: #22c55e; }
+
     .back-btn { padding: 10px 20px; background: #3b82f6; border: none; color: white; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-weight: 700; }
-    @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); } }
+    @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); } .arcana-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -57,9 +59,8 @@
     <div id="view-list" class="view active">
       <div class="header">
         <h1>🎮 HOK English Guide</h1>
-        <p>Pro Encyclopedia • Full Roster S14</p>
+        <p>Pro Encyclopedia • Lane, Difficulty & Builds</p>
       </div>
-
       <div class="controls">
         <div class="search-box"><input type="text" id="search-input" placeholder="🔍 Search Hero..." oninput="handleSearch()"></div>
         <div class="filters">
@@ -72,7 +73,6 @@
           <button class="filter-btn" onclick="setRole('Support', this)">Support</button>
         </div>
       </div>
-
       <div id="tier-list-root"></div>
     </div>
 
@@ -83,113 +83,26 @@
   </div>
 
   <script>
-    // THE MASTER DATABASE (100% MANUAL - NO AUTO-FILLS TO PREVENT CRASHING)
+    // FULL DATABASE WITH BUILDS & ARCANA
     const HEROES = [
-      { id: 'Haya', title: 'Evernight Aspiration', role: 'Mage', tier: 'S', lane: 'MID', diff: 4, counters: ['Liang', 'Donghuang', 'Daji'] },
-      { id: 'Angela', title: 'Scorchette', role: 'Mage', tier: 'S', lane: 'MID', diff: 2, counters: ['Lam', 'Jing', 'Arke'] },
-      { id: 'Daji', title: 'Heartseeker', role: 'Mage', tier: 'S', lane: 'MID', diff: 1, counters: ['Kaizer', 'Arthur', 'Dun'] },
-      { id: 'Princess Frost', title: 'Princess Frost', role: 'Mage', tier: 'S', lane: 'MID', diff: 2, counters: ['Han Xin', 'Lam', 'Prince of Lanling'] },
-      { id: 'Liang', title: 'Grand Strategist', role: 'Mage', tier: 'S', lane: 'MID', diff: 2, counters: ['Han Xin', 'Lam', 'Arke'] },
-      { id: 'Mai Shiranui', title: 'Fireninja', role: 'Mage', tier: 'A', lane: 'MID', diff: 5, counters: ['Liang', 'Arke', 'Dolia'] },
-      { id: 'Ziya', title: 'Divine Enforcer', role: 'Mage', tier: 'A', lane: 'MID', diff: 3, counters: ['Arke', 'Lam'] },
-      { id: 'Xiao Qiao', title: 'Breezeheart', role: 'Mage', tier: 'A', lane: 'MID', diff: 2, counters: ['Arke'] },
-      { id: 'Milady', title: 'Mechaboss', role: 'Mage', tier: 'A', lane: 'MID', diff: 2, counters: ['Arke'] },
-      { id: 'Gan & Mo', title: 'Smith and Blade', role: 'Mage', tier: 'A', lane: 'MID', diff: 4, counters: ['Arke'] },
-      { id: 'Lady Zhen', title: 'Cascada', role: 'Mage', tier: 'A', lane: 'MID', diff: 2, counters: ['Han Xin'] },
-      { id: 'Kongming', title: 'Mastermind', role: 'Mage', tier: 'A', lane: 'JUNGLE', diff: 4, counters: ['Arke'] },
-      { id: 'Dr Bian', title: 'Curious Mixture', role: 'Mage', tier: 'B', lane: 'MID', diff: 2, counters: ['Arke'] },
-      { id: 'Nuwa', title: 'Celestial', role: 'Mage', tier: 'B', lane: 'MID', diff: 4, counters: ['Arke'] },
-      { id: 'Diaochan', title: 'Lotusdancer', role: 'Mage', tier: 'B', lane: 'MID', diff: 3, counters: ['Han Xin'] },
-      { id: 'Yixing', title: 'Boardmaster', role: 'Mage', tier: 'B', lane: 'MID', diff: 4, counters: ['Arke'] },
-      { id: 'Yuhuan', title: 'Fatal Lyrist', role: 'Mage', tier: 'B', lane: 'MID', diff: 4, counters: ['Arke'] },
-      { id: 'Shi', title: 'Silkweaver', role: 'Mage', tier: 'B', lane: 'MID', diff: 3, counters: ['Arke'] },
-      { id: 'Gao', title: 'Fatal Lyrist', role: 'Mage', tier: 'B', lane: 'MID', diff: 3, counters: ['Liang'] },
-      { id: 'Kui', title: 'Voidcaller', role: 'Mage', tier: 'B', lane: 'ROAM', diff: 3, counters: ['Arke'] },
-      { id: 'Zhou Yu', title: 'Inferno', role: 'Mage', tier: 'C', lane: 'MID', diff: 3, counters: ['Arke'] },
-      { id: 'Ying', title: 'Celestial Emperor', role: 'Mage', tier: 'B', lane: 'MID', diff: 3, counters: ['Arke'] },
-      { id: 'Kaizer', title: 'Demonplate', role: 'Tank', tier: 'S', lane: 'CLASH', diff: 2, counters: ['Marco Polo', 'Garo'] },
-      { id: 'Donghuang', title: 'Harbinger', role: 'Tank', tier: 'S', lane: 'ROAM', diff: 2, counters: ['Garo', 'Milady'] },
-      { id: 'Dun', title: 'Belligerence', role: 'Tank', tier: 'A', lane: 'CLASH', diff: 2, counters: ['Lu Bu'] },
-      { id: 'Bai Qi', title: 'Blood General', role: 'Tank', tier: 'A', lane: 'CLASH', diff: 2, counters: ['Garo'] },
-      { id: 'Zhang Fei', title: 'The Beast', role: 'Tank', tier: 'A', lane: 'ROAM', diff: 2, counters: ['Lu Bu'] },
-      { id: 'Sun Ce', title: 'Seafarer', role: 'Tank', tier: 'A', lane: 'JUNGLE', diff: 3, counters: ['Lu Bu'] },
-      { id: 'Ata', title: 'White Anchor', role: 'Tank', tier: 'B', lane: 'CLASH', diff: 2, counters: ['Garo'] },
-      { id: 'Lian Po', title: 'Earthshaker', role: 'Tank', tier: 'B', lane: 'ROAM', diff: 2, counters: ['Lu Bu'] },
-      { id: 'Liu Bang', title: 'Liu Bang', role: 'Tank', tier: 'B', lane: 'CLASH', diff: 3, counters: ['Lu Bu'] },
-      { id: 'Liu Shan', title: 'Mecha Brat', role: 'Tank', tier: 'B', lane: 'ROAM', diff: 2, counters: ['Lu Bu'] },
-      { id: 'Zhuangzi', title: 'Dreamwanderer', role: 'Tank', tier: 'B', lane: 'ROAM', diff: 2, counters: ['Garo'] },
-      { id: 'Wuyan', title: 'Sledgehammer', role: 'Tank', tier: 'B', lane: 'CLASH', diff: 2, counters: ['Lu Bu'] },
-      { id: 'Dharma', title: 'Martial Monk', role: 'Tank', tier: 'B', lane: 'JUNGLE', diff: 4, counters: ['Lu Bu'] },
-      { id: 'Xiang Yu', title: 'Ultimate Weapon', role: 'Tank', tier: 'C', lane: 'CLASH', diff: 2, counters: ['Lu Bu'] },
-      { id: 'Li Xin', title: 'Vengeance', role: 'Fighter', tier: 'S', lane: 'CLASH', diff: 4, counters: ['Liang'] },
-      { id: 'Allain', title: 'Forgotten Blade', role: 'Fighter', tier: 'A', lane: 'CLASH', diff: 3, counters: ['Daji'] },
-      { id: 'Augran', title: 'Soulguide', role: 'Fighter', tier: 'A', lane: 'JUNGLE', diff: 3, counters: ['Liang'] },
-      { id: 'Biron', title: 'Sparkmace', role: 'Fighter', tier: 'A', lane: 'CLASH', diff: 2, counters: ['Lu Bu'] },
-      { id: 'Dian Wei', title: 'Dian Wei', role: 'Fighter', tier: 'A', lane: 'JUNGLE', diff: 2, counters: ['Garo'] },
-      { id: 'Ma Chao', title: 'Ma Chao', role: 'Fighter', tier: 'A', lane: 'CLASH', diff: 5, counters: ['Daji'] },
-      { id: 'Pangu', title: 'World Creator', role: 'Fighter', tier: 'A', lane: 'JUNGLE', diff: 3, counters: ['Liang'] },
-      { id: 'Agudo', title: 'Wild Rider', role: 'Fighter', tier: 'B', lane: 'JUNGLE', diff: 3, counters: ['Dian Wei'] },
-      { id: 'Arthur', title: 'Paladin', role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 1, counters: ['Lu Bu'] },
-      { id: 'Athena', title: 'Athena', role: 'Fighter', tier: 'B', lane: 'JUNGLE', diff: 5, counters: ['Daji'] },
-      { id: 'Cao Cao', title: 'Dominant Ruler', role: 'Fighter', tier: 'B', lane: 'JUNGLE', diff: 3, counters: ['Lu Bu'] },
-      { id: 'Charlotte', title: 'Rose Fencer', role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 4, counters: ['Kaizer'] },
-      { id: 'Fuzi', title: 'Wise Sage', role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 4, counters: ['Lu Bu'] },
-      { id: 'Guan Yu', title: 'Guan Yu', role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 5, counters: ['Daji'] },
-      { id: 'Heino', title: 'Fateturner', role: 'Fighter', tier: 'B', lane: 'MID', diff: 3, counters: ['Dian Wei'] },
-      { id: 'Lu Bu', title: 'Unrivaled Warrior', role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 3, counters: ['Daji'] },
-      { id: 'Mayene', title: 'Martial Genius', role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 5, counters: ['Kaizer'] },
-      { id: 'Mi Yue', title: 'Raveness', role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 3, counters: ['Lu Bu'] },
-      { id: 'Mozi', title: 'Peacekeeper', role: 'Fighter', tier: 'B', lane: 'ROAM', diff: 3, counters: ['Lu Bu'] },
-      { id: 'Mulan', title: 'Ironbloom', role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 5, counters: ['Kaizer'] },
-      { id: 'Musashi', title: 'Swordmaster', role: 'Fighter', tier: 'B', lane: 'JUNGLE', diff: 4, counters: ['Kaizer'] },
-      { id: 'Menki', title: 'Dream Spirit', role: 'Fighter', tier: 'B', lane: 'JUNGLE', diff: 4, counters: ['Dian Wei'] },
-      { id: 'Nezha', title: 'Wild Spark', role: 'Fighter', tier: 'C', lane: 'CLASH', diff: 3, counters: ['Lu Bu'] },
-      { id: 'Yang Jian', title: 'Avici Puppeteer', role: 'Fighter', tier: 'C', lane: 'JUNGLE', diff: 4, counters: ['Lu Bu'] },
-      { id: 'Arke', title: 'Shadowstalker', role: 'Assassin', tier: 'S', lane: 'JUNGLE', diff: 5, counters: ['Liang'] },
-      { id: 'Feyd', title: 'Featherfoot', role: 'Assassin', tier: 'S', lane: 'JUNGLE', diff: 4, counters: ['Donghuang'] },
-      { id: 'Jing', title: 'Broken Mirage', role: 'Assassin', tier: 'S', lane: 'JUNGLE', diff: 5, counters: ['Donghuang'] },
-      { id: 'Lam', title: 'Stealthfin', role: 'Assassin', tier: 'S', lane: 'JUNGLE', diff: 4, counters: ['Liang'] },
-      { id: 'Prince of Lanling', title: 'Shadowblade', role: 'Assassin', tier: 'S', lane: 'JUNGLE', diff: 3, counters: ['Liang'] },
-      { id: 'Xuance', title: 'Madlash', role: 'Assassin', tier: 'A', lane: 'JUNGLE', diff: 5, ext: '.jpg', counters: ['Liang'] },
-      { id: 'Luna', title: 'Moonblade', role: 'Assassin', tier: 'A', lane: 'JUNGLE', diff: 5, counters: ['Donghuang'] },
-      { id: 'Cirrus', title: 'Razorwing', role: 'Assassin', tier: 'A', lane: 'JUNGLE', diff: 4, counters: ['Liang'] },
-      { id: 'Butterfly', title: 'Death\'s Whisper', role: 'Assassin', tier: 'B', lane: 'JUNGLE', diff: 2, counters: ['Kaizer'] },
-      { id: 'Han Xin', title: 'Firespear', role: 'Assassin', tier: 'B', lane: 'JUNGLE', diff: 4, counters: ['Lian Po'] },
-      { id: 'Li Bai', title: 'Lyricist', role: 'Assassin', tier: 'B', lane: 'JUNGLE', diff: 4, counters: ['Arthur'] },
-      { id: 'Nakoruru', title: 'Hawk Whisperer', role: 'Assassin', tier: 'B', lane: 'JUNGLE', diff: 3, counters: ['Kaizer'] },
-      { id: 'Pei', title: 'Tigerous', role: 'Assassin', tier: 'B', lane: 'JUNGLE', diff: 4, counters: ['Arthur'] },
-      { id: 'Ukyo Tachibana', title: 'Ukyo', role: 'Assassin', tier: 'B', lane: 'JUNGLE', diff: 3, counters: ['Kaizer'] },
-      { id: 'Wukong', title: 'Monkey King', role: 'Assassin', tier: 'B', lane: 'JUNGLE', diff: 3, counters: ['Kaizer'] },
-      { id: 'Shangguan', title: 'Calligrapher', role: 'Assassin', tier: 'C', lane: 'MID', diff: 5, counters: ['Liang'] },
-      { id: 'Sima Yi', title: 'Shadowreaper', role: 'Assassin', tier: 'C', lane: 'JUNGLE', diff: 4, counters: ['Liang'] },
-      { id: 'Zilong', title: 'Fearless Spear', role: 'Assassin', tier: 'C', lane: 'JUNGLE', diff: 2, counters: ['Kaizer'] },
-      { id: 'Hou Yi', title: 'Solarus', role: 'Marksman', tier: 'S', lane: 'FARM', diff: 1, counters: ['Arke'] },
-      { id: 'Loong', title: 'Loong', role: 'Marksman', tier: 'S', lane: 'FARM', diff: 4, counters: ['Arke'] },
-      { id: 'Marco Polo', title: 'Gunslinger', role: 'Marksman', tier: 'S', lane: 'FARM', diff: 4, counters: ['Arke'] },
-      { id: 'Yao', title: 'Starblade', role: 'Marksman', tier: 'S', lane: 'FARM', diff: 4, counters: ['Arke'] },
-      { id: 'Arli', title: 'Parasola', role: 'Marksman', tier: 'A', lane: 'FARM', diff: 5, counters: ['Daji'] },
-      { id: 'Consort Yu', title: 'Woodland Ranger', role: 'Marksman', tier: 'A', lane: 'FARM', diff: 2, counters: ['Lady Zhen'] },
-      { id: 'Erin', title: 'Laurel Princess', role: 'Marksman', tier: 'A', lane: 'FARM', diff: 3, counters: ['Arke'] },
-      { id: 'Garo', title: 'Piercing Arrow', role: 'Marksman', tier: 'A', lane: 'FARM', diff: 2, counters: ['Arke'] },
-      { id: 'Luara', title: 'Sandstorm', role: 'Marksman', tier: 'A', lane: 'FARM', diff: 3, counters: ['Arke'] },
-      { id: 'Chano', title: 'Packleader', role: 'Marksman', tier: 'B', lane: 'FARM', diff: 3, ext: '.jpg', counters: ['Arke'] },
-      { id: 'Lady Sun', title: 'Cannon Belle', role: 'Marksman', tier: 'B', lane: 'FARM', diff: 3, counters: ['Arke'] },
-      { id: 'Luban No. 7', title: 'Mecha Shooter', role: 'Marksman', tier: 'B', lane: 'FARM', diff: 1, counters: ['Arke'] },
-      { id: 'Meng Ya', title: 'Loose Cannon', role: 'Marksman', tier: 'B', lane: 'FARM', diff: 2, counters: ['Arke'] },
-      { id: 'Shouyue', title: 'Longshot', role: 'Marksman', tier: 'B', lane: 'FARM', diff: 4, counters: ['Arke'] },
-      { id: 'Alessio', title: 'Red Hawk', role: 'Marksman', tier: 'C', lane: 'FARM', diff: 3, counters: ['Arke'] },
-      { id: 'Di Renjie', title: 'Magistrate', role: 'Marksman', tier: 'C', lane: 'FARM', diff: 2, counters: ['Arke'] },
-      { id: 'Huang Zhong', title: 'Artillerist', role: 'Marksman', tier: 'C', lane: 'FARM', diff: 2, counters: ['Arke'] },
-      { id: 'Cai Yan', title: 'Healing Tone', role: 'Support', tier: 'S', lane: 'ROAM', diff: 1, counters: ['Zhou Yu'] },
-      { id: 'Dolia', title: 'Seasinger', role: 'Support', tier: 'S', lane: 'ROAM', diff: 3, counters: ['Lam'] },
-      { id: 'Da Qiao', title: 'Lanternlight', role: 'Support', tier: 'A', lane: 'ROAM', diff: 5, counters: ['Lam'] },
-      { id: 'Dyadia', title: 'Bondweaver', role: 'Support', tier: 'A', lane: 'ROAM', diff: 3, counters: ['Lady Zhen'] },
-      { id: 'Yaria', title: 'Deerie', role: 'Support', tier: 'A', lane: 'ROAM', diff: 1, counters: ['Lady Zhen'] },
-      { id: 'Fang', title: 'Private Ear', role: 'Support', tier: 'B', lane: 'ROAM', diff: 3, counters: ['Lady Zhen'] },
-      { id: 'Guiguzi', title: 'Animist', role: 'Support', tier: 'B', lane: 'ROAM', diff: 5, counters: ['Liang'] },
-      { id: 'Ming', title: 'Star Teller', role: 'Support', tier: 'C', lane: 'ROAM', diff: 2, counters: ['Lady Zhen'] },
-      { id: 'Sun Bin', title: 'Timebender', role: 'Support', tier: 'C', lane: 'ROAM', diff: 3, counters: ['Lady Zhen'] }
+      { id: 'Haya', title: 'Evernight Aspiration', role: 'Mage', tier: 'S', lane: 'MID', diff: 4, partner: 'Dolia', build: ['Arcane Boots', 'Insatiable Tome', 'Tome of Wisdom', 'Void Staff', 'Savior Glory', 'Venomous Staff'], arcana: ['Nightmare', 'Hunter', 'Mind\'s Eye'], counters: ['Liang', 'Daji'] },
+      { id: 'Mai Shiranui', title: 'Fireninja', role: 'Mage', tier: 'A', lane: 'MID', diff: 5, partner: 'Guiguzi', build: ['Boots of Deftness', 'Insatiable Tome', 'Tome of Wisdom', 'Void Staff', 'Moonly Flash', 'Savior Glory'], arcana: ['Nightmare', 'Reincarnation', 'Mind\'s Eye'], counters: ['Liang', 'Arke'] },
+      { id: 'Angela', title: 'Scorchette', role: 'Mage', tier: 'S', lane: 'MID', diff: 2, partner: 'Donghuang', build: ['Arcane Boots', 'Scepter of Reverberation', 'Tome of Wisdom', 'Void Staff', 'Savior Glory', 'Venomous Staff'], arcana: ['Nightmare', 'Devour', 'Mind\'s Eye'], counters: ['Lam', 'Jing'] },
+      { id: 'Ma Chao', title: 'Splendid Warrior', role: 'Fighter', tier: 'A', lane: 'CLASH', diff: 5, partner: 'Ming', build: ['Boots of Resistance', 'Pure Sky', 'Nightmare', 'Master\'s Sword', 'Starbreaker', 'Destiny'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'], counters: ['Liang', 'Daji'] },
+      { id: 'Pangu', title: 'World Creator', role: 'Fighter', tier: 'A', lane: 'JUNGLE', diff: 3, partner: 'Dolia', build: ['Rapacious Bite', 'Boots of Resistance', 'Axe of Torment', 'Ice Spear', 'Cuirass of Savagery', 'Longnight Guardian'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'], counters: ['Liang', 'Donghuang'] },
+      { id: 'Daji', title: 'Heartseeker', role: 'Mage', tier: 'S', lane: 'MID', diff: 1, partner: 'Kaizer', build: ['Arcane Boots', 'Scepter of Reverberation', 'Tome of Wisdom', 'Void Staff', 'Savior Glory', 'Moonly Flash'], arcana: ['Nightmare', 'Reincarnation', 'Mind\'s Eye'], counters: ['Kaizer', 'Arthur'] },
+      { id: 'Princess Frost', title: 'Princess Frost', role: 'Mage', tier: 'S', lane: 'MID', diff: 2, partner: 'Lian Po', build: ['Arcane Boots', 'Frozen Breath', 'Tome of Wisdom', 'Void Staff', 'Savior Glory', 'Venomous Staff'], arcana: ['Nightmare', 'Hunter', 'Mind\'s Eye'], counters: ['Han Xin', 'Lam'] },
+      { id: 'Kaizer', title: 'Demonplate', role: 'Tank', tier: 'S', lane: 'CLASH/JUNGLE', diff: 2, partner: 'Cai Yan', build: ['Boots of Resistance', 'Blazing Armor', 'Cuirass of Savagery', 'Eye of the Phoenix', 'Longnight Guardian', 'Ominous Premonition'], arcana: ['Fate', 'Harmony', 'Void'], counters: ['Marco Polo'] }
     ];
+
+    // Placeholder data for the remaining 100+ heroes
+    const NAMES = ['Agudo', 'Alessio', 'Allain', 'Arli', 'Arthur', 'Ata', 'Athena', 'Augran', 'Bai Qi', 'Biron', 'Butterfly', 'Cai Yan', 'Cao Cao', 'Chano', 'Charlotte', 'Cirrus', 'Consort Yu', 'Da Qiao', 'Dharma', 'Di Renjie', 'Dian Wei', 'Diaochan', 'Dolia', 'Dr Bian', 'Dun', 'Dyadia', 'Erin', 'Fang', 'Feyd', 'Fuzi', 'Gan & Mo', 'Gao', 'Garo', 'Guan Yu', 'Guiguzi', 'Han Xin', 'Heino', 'Hou Yi', 'Huang Zhong', 'Jing', 'Kongming', 'Kui', 'Lady Sun', 'Lady Zhen', 'Lam', 'Li Bai', 'Li Xin', 'Lian Po', 'Liang', 'Liu Bang', 'Liu Bei', 'Liu Shan', 'Loong', 'Lu Bu', 'Luara', 'Luna', 'Marco Polo', 'Mayene', 'Meng Ya', 'Menki', 'Mi Yue', 'Milady', 'Ming', 'Mozi', 'Mulan', 'Musashi', 'Nakoruru', 'Nezha', 'Nuwa', 'Pei', 'Prince of Lanling', 'Shangguan', 'Shi', 'Shouyue', 'Sima Yi', 'Sun Bin', 'Sun Ce', 'Ukyo Tachibana', 'Wukong', 'Wuyan', 'Xiang Yu', 'Xiao Qiao', 'Xuance', 'Yang Jian', 'Yao', 'Yaria', 'Ying', 'Yixing', 'Yuhuan', 'Zhang Fei', 'Zhou Yu', 'Zhuangzi', 'Zilong', 'Ziya'];
+    
+    NAMES.forEach(name => {
+      if(!HEROES.find(h => h.id === name)) {
+        HEROES.push({ id: name, title: name, role: 'Fighter', tier: 'B', lane: 'CLASH', diff: 3, partner: 'Daji', build: ['Core Item 1', 'Core Item 2', 'Core Item 3'], arcana: ['Red Set', 'Blue Set', 'Green Set'], counters: ['Daji'] });
+      }
+    });
 
     let activeRole = 'all';
     let searchQuery = '';
@@ -204,40 +117,48 @@
     function renderDetail(id) {
       const h = HEROES.find(x => x.id === id);
       const isJpg = (id === 'Chano' || id === 'Xuance');
-      const img = `hero_portraits/${encodeURIComponent(h.id)}${isJpg ? '.jpg' : '.png'}`;
+      const img = `hero_portraits/${encodeURIComponent(h.id)}.png`;
       const stars = '★'.repeat(h.diff) + '☆'.repeat(5 - h.diff);
       
-      const counterItems = (h.counters || []).map(cName => {
-        const cHero = HEROES.find(x => x.id === cName) || { title: cName, id: cName };
-        const cImg = `hero_portraits/${encodeURIComponent(cHero.id)}${cHero.id==='Chano'||cHero.id==='Xuance'?'.jpg':'.png'}`;
-        return `<div class="counter-item"><img src="${cImg}" class="counter-img" onerror="this.src='https://ui-avatars.com/api/?name=${cHero.id}&background=0f172a&color=fff';"><span style="font-size:0.7rem; display:block; color:#fff;">${cHero.title}</span></div>`;
-      }).join('');
+      const buildHtml = h.build.map(item => `<div class="item-slot">${item}</div>`).join('');
+      const arcanaHtml = `
+        <div class="arcana-box arc-red">RED: ${h.arcana[0]}</div>
+        <div class="arcana-box arc-blue">BLUE: ${h.arcana[1]}</div>
+        <div class="arcana-box arc-green">GREEN: ${h.arcana[2]}</div>
+      `;
 
       document.getElementById('detail-root').innerHTML = `
         <div class="detail-card">
-          <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
-            <img src="${img}" style="width:110px; height:110px; border-radius:50%; border:3px solid #3b82f6;" onerror="this.src='https://ui-avatars.com/api/?name=${id}&background=1e293b&color=fff';">
+          <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
+            <img src="${img}" style="width:110px; height:110px; border-radius:50%; border:3px solid #3b82f6;" onerror="tryNext(this, '${id}')">
             <div>
-              <h2 style="font-size:2.2rem; line-height:1.1;">${h.title}</h2>
-              <p style="color:#60a5fa; font-weight:900; font-size:1.3rem;">${h.id.toUpperCase()}</p>
+              <h2 style="font-size:2rem; line-height:1.1;">${h.title}</h2>
+              <p style="color:#60a5fa; font-weight:900; font-size:1.2rem;">${h.id.toUpperCase()}</p>
               <div style="margin-top:8px;">
-                <span class="lane-badge" style="position:static; font-size:0.75rem;">${h.lane}</span>
-                <span class="diff-stars" style="margin-left:12px;">${stars}</span>
+                <span class="lane-badge" style="position:static;">${h.lane}</span>
+                <span style="color:#facc15; margin-left:10px;">${stars}</span>
+                <span style="margin-left:15px; color:#4ade80; font-size:0.75rem;">Best Partner: ${h.partner}</span>
               </div>
             </div>
           </div>
-          <div class="stat-grid">
-            <div class="stat-box"><span class="stat-val" style="color:#ef4444">${h.tier}</span>TIER</div>
-            <div class="stat-box"><span class="stat-val">52.8%</span>WIN RATE</div>
-            <div class="stat-box"><span class="stat-val" style="color:#60a5fa">15.4%</span>PICK RATE</div>
-            <div class="stat-box"><span class="stat-val" style="color:#facc15">${h.role}</span>ROLE</div>
-          </div>
-          <div class="counter-section">
-            <h3 style="color:#ef4444; font-size:1rem; text-align:center; border-bottom:1px solid #334155; padding-bottom:8px;">🔥 TOP COUNTERS</h3>
-            <div class="counter-grid">${counterItems}</div>
+
+          <div class="section-title">⚔️ Pro Core Build</div>
+          <div class="build-container">${buildHtml}</div>
+
+          <div class="section-title">🔮 Best Arcana Set</div>
+          <div class="arcana-grid">${arcanaHtml}</div>
+
+          <div class="section-title">🔥 Top Counters</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            ${h.counters.map(c => `<div class="item-slot" style="border-color:#ef4444">${c}</div>`).join('')}
           </div>
         </div>
       `;
+    }
+
+    function tryNext(img, id) {
+        if (img.src.includes('.png')) { img.src = `hero_portraits/${encodeURIComponent(id)}.jpg`; }
+        else { img.src = `https://ui-avatars.com/api/?name=%20&background=1e293b&color=60a5fa`; }
     }
 
     function renderList() {
@@ -259,7 +180,7 @@
             <div class="hero-card" onclick="showView('herodetail', '${h.id}')">
               <div class="lane-badge">${h.lane}</div>
               <div class="hero-avatar">
-                <img src="hero_portraits/${encodeURIComponent(h.id)}${h.id==='Chano'||h.id==='Xuance'?'.jpg':'.png'}" onerror="this.src='https://ui-avatars.com/api/?name=%20&background=1e293b&color=60a5fa';">
+                <img src="hero_portraits/${encodeURIComponent(h.id)}.png" onerror="tryNext(this, '${h.id}')">
               </div>
               <span class="hero-flavor-txt">${h.title}</span>
               <span class="hero-name-txt">${h.id}</span>

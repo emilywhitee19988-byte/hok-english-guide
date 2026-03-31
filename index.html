@@ -3,109 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Honor of Kings | Global Competitive Meta Encyclopedia</title>
+  <title>Honor of Kings | Global Strategy Database</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Kanit:wght@600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary-blue: #3b82f6;
-      --bg-dark: #0f172a;
-      --card-bg: #1e293b;
-      --accent-gold: #facc15;
-      --text-main: #e2e8f0;
-      --text-dim: #94a3b8;
+      --primary: #3b82f6; --bg: #020617; --card-bg: #111827;
+      --gold: #fbbf24; --text: #f8fafc; --text-dim: #94a3b8;
+      --s-tier: #ef4444; --a-tier: #f97316; --b-tier: #facc15;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: 'Inter', system-ui, -apple-system, sans-serif; 
-      background: var(--bg-dark); 
-      color: var(--text-main); 
-      padding: 15px; 
-      line-height: 1.6;
-    }
-
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); padding: env(safe-area-inset-top) 15px 40px; line-height: 1.6; }
     .container { max-width: 1200px; margin: 0 auto; }
-    .view { display: none; }
-    .view.active { display: block; }
+    .view { display: none; opacity: 0; }
+    .view.active { display: block; opacity: 1; transition: opacity 0.3s ease; }
     
-    /* PROFESSIONAL HEADER */
     .header { 
-      text-align: center; 
-      margin-bottom: 25px; 
-      padding: 40px 20px; 
-      background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); 
-      border-radius: 24px; 
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      text-align: center; margin-bottom: 25px; padding: 60px 20px; 
+      background: radial-gradient(circle at top, #1e3a8a 0%, #020617 100%); 
+      border-radius: 32px; border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     }
-    .header h1 { 
-      font-size: 2.2rem; 
-      letter-spacing: 2px; 
-      font-weight: 900; 
-      text-transform: uppercase;
-      background: linear-gradient(to right, #fff, var(--primary-blue));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-    }
-    .header p { color: var(--text-dim); font-size: 0.95rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+    .header h1 { font-family: 'Kanit'; font-size: clamp(2rem, 5vw, 3.5rem); text-transform: uppercase; background: linear-gradient(to bottom, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
+    .meta-tag { display: inline-block; padding: 4px 12px; background: var(--primary); color: white; font-size: 0.7rem; font-weight: 900; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; }
 
-    /* FILTERS */
-    .controls { 
-      display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; 
-      background: rgba(30, 41, 59, 0.4); padding: 12px; border-radius: 16px; 
-      backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05);
+    .nav-bar { 
+      position: sticky; top: 10px; z-index: 100; display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; 
+      background: rgba(15, 23, 42, 0.95); padding: 12px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1);
     }
     .search-box { flex: 1; min-width: 250px; }
-    .search-box input { 
-      width: 100%; padding: 14px; border: 1px solid #334155; border-radius: 12px; 
-      background: #000; color: white; outline: none; font-size: 0.9rem;
-    }
-    .filter-btn { 
-      padding: 10px 18px; border: 1px solid #334155; border-radius: 10px; 
-      background: transparent; color: var(--text-dim); cursor: pointer; 
-      font-size: 0.75rem; font-weight: 700; text-transform: uppercase; transition: 0.3s;
-    }
-    .filter-btn.active { background: var(--primary-blue); border-color: var(--primary-blue); color: white; }
+    .search-box input { width: 100%; padding: 14px; border: 1px solid #334155; border-radius: 14px; background: #000; color: white; outline: none; font-size: 0.95rem; }
+    .filter-btn { padding: 10px 18px; border: 1px solid #334155; border-radius: 10px; background: transparent; color: var(--text-dim); cursor: pointer; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; transition: 0.2s; }
+    .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-    /* TIER GRID */
-    .tier-section { margin-bottom: 30px; border-radius: 20px; overflow: hidden; background: rgba(30, 41, 59, 0.2); border: 1px solid rgba(255,255,255,0.05); }
-    .tier-header { padding: 12px 25px; font-size: 1rem; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; }
-    .tier-s { background: #ef4444; color: #fff; } 
-    .tier-a { background: #f97316; color: #fff; } 
-    .tier-b { background: #facc15; color: #000; } 
-    .tier-c { background: #22c55e; color: #fff; }
-    .tier-content { padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+    .tier-wrapper { margin-bottom: 40px; }
+    .tier-label { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; font-family: 'Kanit'; font-size: 1.1rem; font-weight: 800; }
+    .tier-line { flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+    .tier-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
     
-    /* HERO CARDS */
-    .hero-card { 
-      background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; 
-      padding: 15px; text-align: center; cursor: pointer; transition: all 0.3s; position: relative;
-    }
-    .hero-card:hover { transform: translateY(-5px); border-color: var(--primary-blue); }
-    .hero-avatar { width: 70px; height: 70px; margin: 0 auto 12px; border-radius: 50%; border: 2px solid var(--primary-blue); overflow: hidden; }
+    .hero-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.03); border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: 0.4s; position: relative; }
+    .hero-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 15px 30px -10px rgba(59, 130, 246, 0.4); }
+    
+    /* AVATAR AND FALLBACK STYLES */
+    .hero-avatar { width: 80px; height: 80px; margin: 0 auto 12px; border-radius: 50%; border: 2px solid var(--primary); overflow: hidden; background: #000; }
     .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-fallback { width: 80px; height: 80px; margin: 0 auto 12px; border-radius: 50%; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; background: #1e293b; color: var(--primary); font-family: 'Kanit'; font-size: 2.2rem; font-weight: 900; }
     
-    .lane-badge { position: absolute; top: 10px; right: 10px; font-size: 0.55rem; background: rgba(15, 23, 42, 0.9); padding: 3px 7px; border-radius: 6px; color: var(--primary-blue); font-weight: 800; border: 1px solid var(--primary-blue); }
-    .hero-flavor-txt { font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 2px; display: block; line-height: 1.1; }
-    .hero-name-txt { font-size: 0.7rem; color: var(--primary-blue); font-weight: 700; text-transform: uppercase; }
+    .lane-badge { position: absolute; top: 12px; right: 12px; font-size: 0.6rem; background: rgba(15, 23, 42, 0.9); padding: 3px 7px; border-radius: 6px; color: var(--primary); font-weight: 900; border: 1px solid var(--primary); }
+    .hero-flavor { font-size: 0.85rem; font-weight: 800; color: #fff; display: block; margin-bottom: 2px; line-height: 1.1; }
+    .hero-name { font-size: 0.65rem; color: var(--primary); font-weight: 700; text-transform: uppercase; }
 
-    /* DETAIL PANEL */
-    .detail-card { background: var(--card-bg); padding: 35px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); max-width: 850px; margin: 0 auto; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
-    .section-title { color: var(--primary-blue); font-size: 0.85rem; font-weight: 900; margin: 25px 0 12px; border-bottom: 1px solid #334155; padding-bottom: 6px; text-transform: uppercase; letter-spacing: 2px; }
-    .item-slot { background: #0f172a; border: 1px solid #334155; padding: 7px 12px; border-radius: 8px; font-size: 0.75rem; color: #fff; font-weight: 700; display: inline-block; margin: 3px; }
-    
-    .spriteling-box { background: linear-gradient(135deg, #1e40af 0%, #1e1b4b 100%); padding: 20px; border-radius: 18px; display: flex; align-items: center; gap: 20px; border: 1px solid var(--primary-blue); }
-    .sprite-icon { width: 50px; height: 50px; background: #000; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid var(--accent-gold); }
+    .dashboard { background: var(--card-bg); padding: 40px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); max-width: 900px; margin: 0 auto; }
+    .section-title { color: var(--primary); font-size: 0.85rem; font-weight: 900; margin: 25px 0 15px; border-bottom: 1px solid #334155; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 2px; }
+    .tactical-item { background: rgba(15, 23, 42, 0.5); padding: 20px; border-radius: 20px; border-left: 4px solid var(--primary); margin-bottom: 15px; }
+    .sprite-banner { background: linear-gradient(135deg, #1e40af 0%, #020617 100%); padding: 25px; border-radius: 24px; border: 1px solid var(--primary); display: flex; align-items: center; gap: 20px; }
+    .sprite-icon-box { width: 60px; height: 60px; background: #000; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 2px solid var(--gold); }
+    .back-btn { padding: 12px 25px; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 12px; cursor: pointer; margin-bottom: 30px; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; }
+    .status-badge { font-size: 0.75rem; color: var(--text-dim); margin-top: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
-    .arcana-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-    .arcana-box { padding: 12px; border-radius: 10px; text-align: center; font-size: 0.75rem; font-weight: 800; border: 1px solid rgba(255,255,255,0.05); }
-    .arc-red { background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: #ef4444; }
-    .arc-blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border-color: #3b82f6; }
-    .arc-green { background: rgba(34, 197, 94, 0.1); color: #22c55e; border-color: #22c55e; }
-
-    .back-btn { padding: 12px 24px; background: var(--primary-blue); border: none; color: white; border-radius: 10px; cursor: pointer; margin-bottom: 25px; font-weight: 700; text-transform: uppercase; font-size: 0.8rem; }
-    
-    @media (max-width: 768px) { .tier-content { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); } .arcana-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .tier-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); } }
   </style>
 </head>
 <body>
@@ -113,12 +70,15 @@
   <div class="container">
     <div id="view-list" class="view active">
       <div class="header">
-        <h1>HONOR OF KINGS</h1>
-        <p>Global Strategic Meta Repository & Competitive Encyclopedia</p>
+        <span class="meta-tag">Tactical Intelligence</span>
+        <h1>Honor of Kings</h1>
+        <p>Global Strategic Meta Repository</p>
+        <div id="status-text" class="status-badge">Establishing Uplink...</div>
       </div>
-      <div class="controls">
-        <div class="search-box"><input type="text" id="search-input" placeholder="Search Database..." oninput="handleSearch()"></div>
-        <div class="filter-wrap">
+      
+      <div class="nav-bar">
+        <div class="search-box"><input type="text" id="search-input" placeholder="Search title or hero name..." oninput="handleSearch()"></div>
+        <div style="display:flex; gap:6px;">
           <button class="filter-btn active" onclick="setRole('all', this)">All</button>
           <button class="filter-btn" onclick="setRole('Tank', this)">Tank</button>
           <button class="filter-btn" onclick="setRole('Fighter', this)">Fighter</button>
@@ -138,138 +98,137 @@
   </div>
 
   <script>
-    const SPRITE_INFO = {
-      'Bigly': { icon: '🔥', desc: 'Consumes 10% Movement Speed for 10% Damage Reduction. Ideal for frontline suppression.' },
-      'Coolio': { icon: '❄️', desc: 'Consumes 10% Health for enhanced Spell Cooldown reduction. Optimized for high-frequency ability rotation.' },
-      'Runsie': { icon: '🏃', desc: 'Consumes 10% Damage Reduction for 100% Movement Speed. Perfect for roaming, kiting, and scaling.' }
+    // 1. DATA FIRST (100% Flat Array)
+    const SPRITES = {
+      'Bigly': { icon: '🔥', bonus: '10% Damage Reduction', cost: '10% Movement Speed', desc: 'Superior frontline fortification.' },
+      'Coolio': { icon: '❄️', bonus: 'Enhanced Spell Cooldowns', cost: '10% Max HP', desc: 'Tactical ability rotation frequency.' },
+      'Runsie': { icon: '🏃', bonus: '100% Movement Speed', cost: '10% Damage Reduction', desc: 'Extreme mobility and kite potential.' }
     };
 
-    // --- ENTIRE 115 HERO ARRAY (NO PLACEHOLDERS) ---
-    const HEROES = [
+    const HERO_DATA = [
       // S-TIER
-      { id: 'Haya', title: 'Evernight Aspiration', role: 'Mage', tier: 'S', lane: 'MID', sprite: 'Coolio', build: ['Arcane Boots', 'Insatiable Tome', 'Tome of Wisdom'], arcana: ['Nightmare', 'Mind\'s Eye', 'Hunter'] },
-      { id: 'Angela', title: 'Scorchette', role: 'Mage', tier: 'S', lane: 'MID', sprite: 'Coolio', build: ['Arcane Boots', 'Scepter', 'Void Staff'], arcana: ['Nightmare', 'Mind\'s Eye', 'Devour'] },
-      { id: 'Daji', title: 'Heartseeker', role: 'Mage', tier: 'S', lane: 'MID', sprite: 'Coolio', build: ['Arcane Boots', 'Scepter', 'Void Staff'], arcana: ['Nightmare', 'Mind\'s Eye', 'Reincarnation'] },
-      { id: 'Princess Frost', title: 'Princess Frost', role: 'Mage', tier: 'S', lane: 'MID', sprite: 'Coolio', build: ['Arcane Boots', 'Frozen Breath', 'Void Staff'], arcana: ['Nightmare', 'Mind\'s Eye', 'Hunter'] },
-      { id: 'Liang', title: 'Grand Strategist', role: 'Mage', tier: 'S', lane: 'MID', sprite: 'Coolio', build: ['Arcane Boots', 'Tome of Wisdom', 'Void Staff'], arcana: ['Nightmare', 'Mind\'s Eye', 'Hunter'] },
-      { id: 'Kaizer', title: 'Demonplate', role: 'Tank', tier: 'S', lane: 'CLASH', sprite: 'Bigly', build: ['Resistance Boots', 'Blazing Armor', 'Cuirass'], arcana: ['Fate', 'Harmony', 'Void'] },
-      { id: 'Donghuang', title: 'Harbinger', role: 'Tank', tier: 'S', lane: 'ROAM', sprite: 'Bigly', build: ['Guardian Glory', 'Blazing Armor', 'Longnight'], arcana: ['Fate', 'Harmony', 'Void'] },
-      { id: 'Li Xin', title: 'Vengeance', role: 'Fighter', tier: 'S', lane: 'CLASH', sprite: 'Bigly', build: ['Resistance Boots', 'Pure Sky', 'Master Sword'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'] },
-      { id: 'Arke', title: 'Shadowstalker', role: 'Assassin', tier: 'S', lane: 'JUNGLE', sprite: 'Runsie', build: ['Rapacious Bite', 'Resistance Boots', 'Axe of Torment'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'] },
-      { id: 'Feyd', title: 'Featherfoot', role: 'Assassin', tier: 'S', lane: 'JUNGLE', sprite: 'Runsie', build: ['Rapacious Bite', 'Resistance Boots', 'Axe of Torment'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'] },
-      { id: 'Jing', title: 'Broken Mirage', role: 'Assassin', tier: 'S', lane: 'JUNGLE', sprite: 'Runsie', build: ['Rapacious Bite', 'Resistance Boots', 'Axe of Torment'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'] },
-      { id: 'Lam', title: 'Stealthfin', role: 'Assassin', tier: 'S', lane: 'JUNGLE', sprite: 'Runsie', build: ['Rapacious Bite', 'Resistance Boots', 'Axe of Torment'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'] },
-      { id: 'Prince of Lanling', title: 'Shadowblade', role: 'Assassin', tier: 'S', lane: 'JUNGLE', sprite: 'Runsie', build: ['Rapacious Bite', 'Resistance Boots', 'Axe of Torment'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'] },
-      { id: 'Hou Yi', title: 'Solarus', role: 'Marksman', tier: 'S', lane: 'FARM', sprite: 'Runsie', build: ['Doomsday', 'Daybreaker', 'Starbreaker'], arcana: ['Calamity', 'Hunter', 'Eagle Eye'] },
-      { id: 'Loong', title: 'Loong', role: 'Marksman', tier: 'S', lane: 'FARM', sprite: 'Runsie', build: ['Doomsday', 'Daybreaker', 'Starbreaker'], arcana: ['Calamity', 'Hunter', 'Eagle Eye'] },
-      { id: 'Marco Polo', title: 'Gunslinger', role: 'Marksman', tier: 'S', lane: 'FARM', sprite: 'Runsie', build: ['Doomsday', 'Daybreaker', 'Starbreaker'], arcana: ['Calamity', 'Hunter', 'Eagle Eye'] },
-      { id: 'Yao', title: 'Starblade', role: 'Marksman', tier: 'S', lane: 'FARM', sprite: 'Runsie', build: ['Doomsday', 'Daybreaker', 'Starbreaker'], arcana: ['Calamity', 'Hunter', 'Eagle Eye'] },
-      { id: 'Cai Yan', title: 'Healing Tone', role: 'Support', tier: 'S', lane: 'ROAM', sprite: 'Coolio', build: ['Guardian Glory', 'Frozen Breath'], arcana: ['Fate', 'Harmony', 'Void'] },
-      { id: 'Dolia', title: 'Seasinger', role: 'Support', tier: 'S', lane: 'ROAM', sprite: 'Coolio', build: ['Guardian Glory', 'Frozen Breath'], arcana: ['Fate', 'Harmony', 'Void'] },
+      { title: 'Princess Frost', id: 'Wang Zhaojun', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Evernight Aspiration', id: 'Haya', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Runsie' },
+      { title: 'Demonplate', id: 'Kaizer', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'Earthshaker', id: 'Lian Po', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'Harbinger', id: 'Donghuang', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'The Beast', id: 'Zhang Fei', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'Dreamwanderer', id: 'Zhuangzi', role: 'Tank', tier: 'S', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'Martial Genius', id: 'Mayene', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie' },
+      { title: 'Vengeance', id: 'Li Xin', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Soulguide', id: 'Augran', role: 'Fighter', tier: 'S', lane: 'Jungle / Clash Lane', sprite: 'Runsie' },
+      { title: 'Broken Mirage', id: 'Jing', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Featherfoot', id: 'Feyd', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Moonblade', id: 'Luna', role: 'Assassin', tier: 'S', lane: 'Jungle / Clash', sprite: 'Runsie' },
+      { title: 'Shadowstalker', id: 'Arke', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Stealthfin', id: 'Lam', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Calligrapher', id: 'Shangguan', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Fateturner', id: 'Heino', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Fireninja', id: 'Mai Shiranui', role: 'Mage', tier: 'S', lane: 'Mid Lane / Jungle', sprite: 'Runsie' },
+      { title: 'Heartseeker', id: 'Daji', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Scorchette', id: 'Angela', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Timebender', id: 'Sun Bin', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Gunslinger', id: 'Marco Polo', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Longshot', id: 'Shouyue', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Mecha Shooter', id: 'Luban No.7', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Solarus', id: 'Hou Yi', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Starblade', id: 'Yao', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Loong', id: 'Ao\'yin', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Bondweaver', id: 'Dyadia', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio' },
+      { title: 'Healing Tone', id: 'Cai Yan', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio' },
+      { title: 'Lanternlight', id: 'Da Qiao', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio' },
+      { title: 'Seasinger', id: 'Dolia', role: 'Support', tier: 'S', lane: 'Roam', sprite: 'Coolio' },
 
       // A-TIER
-      { id: 'Mai Shiranui', title: 'Fireninja', role: 'Mage', tier: 'A', lane: 'MID', sprite: 'Coolio', build: ['Arcane Boots'], arcana: ['Nightmare', 'Mind\'s Eye', 'Reincarnation'] },
-      { id: 'Ma Chao', title: 'Splendid Warrior', role: 'Fighter', tier: 'A', lane: 'CLASH', sprite: 'Runsie', build: ['Pure Sky'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'] },
-      { id: 'Pangu', title: 'World Creator', role: 'Fighter', tier: 'A', lane: 'JUNGLE', sprite: 'Bigly', build: ['Axe of Torment'], arcana: ['Mutation', 'Hunter', 'Eagle Eye'] },
-      { id: 'Ziya', title: 'Divine Enforcer', role: 'Mage', tier: 'A', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Xiao Qiao', title: 'Breezeheart', role: 'Mage', tier: 'A', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Milady', title: 'Mechaboss', role: 'Mage', tier: 'A', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Gan & Mo', title: 'Smith and Blade', role: 'Mage', tier: 'A', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Lady Zhen', title: 'Cascada', role: 'Mage', tier: 'A', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Kongming', title: 'Mastermind', role: 'Mage', tier: 'A', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Dun', title: 'Belligerence', role: 'Tank', tier: 'A', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Bai Qi', title: 'Blood General', role: 'Tank', tier: 'A', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Zhang Fei', title: 'The Beast', role: 'Tank', tier: 'A', lane: 'ROAM', sprite: 'Bigly' },
-      { id: 'Sun Ce', title: 'Seafarer', role: 'Tank', tier: 'A', lane: 'JUNGLE', sprite: 'Bigly' },
-      { id: 'Allain', title: 'Forgotten Blade', role: 'Fighter', tier: 'A', lane: 'CLASH', sprite: 'Runsie' },
-      { id: 'Augran', title: 'Soulguide', role: 'Fighter', tier: 'A', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Biron', title: 'Sparkmace', role: 'Fighter', tier: 'A', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Dian Wei', title: 'Dian Wei', role: 'Fighter', tier: 'A', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Luna', title: 'Moonblade', role: 'Assassin', tier: 'A', lane: 'JUNGLE', sprite: 'Coolio' },
-      { id: 'Cirrus', title: 'Razorwing', role: 'Assassin', tier: 'A', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Xuance', title: 'Madlash', role: 'Assassin', tier: 'A', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Arli', title: 'Parasola', role: 'Marksman', tier: 'A', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Consort Yu', title: 'Woodland Ranger', role: 'Marksman', tier: 'A', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Erin', title: 'Laurel Princess', role: 'Marksman', tier: 'A', lane: 'FARM', sprite: 'Coolio' },
-      { id: 'Garo', title: 'Piercing Arrow', role: 'Marksman', tier: 'A', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Luara', title: 'Sandstorm', role: 'Marksman', tier: 'A', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Da Qiao', title: 'Lanternlight', role: 'Support', tier: 'A', lane: 'ROAM', sprite: 'Coolio' },
-      { id: 'Dyadia', title: 'Bondweaver', role: 'Support', tier: 'A', lane: 'ROAM', sprite: 'Coolio' },
-      { id: 'Yaria', title: 'Deerie', role: 'Support', tier: 'A', lane: 'ROAM', sprite: 'Coolio' },
+      { title: 'Mecha Brat', id: 'Liu Shan', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'Sledgehammer', id: 'Wuyan', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'Belligerence', id: 'Dun', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'Ultimate Weapon', id: 'Bai Qi', role: 'Tank', tier: 'A', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'Forgotten Blade', id: 'Allain', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie' },
+      { title: 'Martial Monk', id: 'Dharma', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Seafarer', id: 'Sun Ce', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Shadowblade', id: 'Gao Changgong', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie' },
+      { title: 'Sparkmace', id: 'Biron', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Swordmaster', id: 'Musashi', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie' },
+      { title: 'Rose Fencer', id: 'Charlotte', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Unrivaled Warrior', id: 'Lu Bu', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Death\'s Whisper', id: 'Butterfly', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Firespear', id: 'Ying', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Hawk Whisperer', id: 'Nakoruru', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Madlash', id: 'Xuance', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Tigerous', id: 'Pei', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Razorwing', id: 'Cirrus', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Breezeheart', id: 'Xiao Qiao', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Divine Enforcer', id: 'Ziya', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Lotusdancer', id: 'Diaochan', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Mechaboss', id: 'Milady', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Smith and Blade', id: 'Gan & Mo', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Mastermind', id: 'Kongming', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Cannon Belle', id: 'Lady Sun', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Laurel Princess', id: 'Erin', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Coolio' },
+      { title: 'Loose Cannon', id: 'Meng Ya', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Piercing Arrow', id: 'Garo', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Firesnake', id: 'Luara', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Deerie', id: 'Yaria', role: 'Support', tier: 'A', lane: 'Roam', sprite: 'Coolio' },
+      { title: 'Dream Spirit', id: 'Menki', role: 'Support', tier: 'A', lane: 'Roam', sprite: 'Runsie' },
 
       // B-TIER
-      { id: 'Agudo', title: 'Wild Rider', role: 'Fighter', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Arthur', title: 'Paladin', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Ata', title: 'White Anchor', role: 'Tank', tier: 'B', lane: 'ROAM', sprite: 'Bigly' },
-      { id: 'Athena', title: 'Athena', role: 'Fighter', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Butterfly', title: 'Death\'s Whisper', role: 'Assassin', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Cao Cao', title: 'Dominant Ruler', role: 'Fighter', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Chano', title: 'Packleader', role: 'Marksman', tier: 'B', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Charlotte', title: 'Rose Fencer', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Dharma', title: 'Martial Monk', role: 'Tank', tier: 'B', lane: 'JUNGLE', sprite: 'Bigly' },
-      { id: 'Di Renjie', title: 'Magistrate', role: 'Marksman', tier: 'B', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Diaochan', title: 'Lotusdancer', role: 'Mage', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Dr Bian', title: 'Curious Mixture', role: 'Mage', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Fang', title: 'Private Ear', role: 'Support', tier: 'B', lane: 'ROAM', sprite: 'Coolio' },
-      { id: 'Fuzi', title: 'Wise Sage', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Runsie' },
-      { id: 'Gao', title: 'Fatal Lyrist', role: 'Mage', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Guan Yu', title: 'Guan Yu', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Runsie' },
-      { id: 'Guiguzi', title: 'Animist', role: 'Support', tier: 'B', lane: 'ROAM', sprite: 'Coolio' },
-      { id: 'Han Xin', title: 'Firespear', role: 'Assassin', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Heino', title: 'Fateturner', role: 'Fighter', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Huang Zhong', title: 'Artillerist', role: 'Marksman', tier: 'B', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Kui', title: 'Voidcaller', role: 'Mage', tier: 'B', lane: 'ROAM', sprite: 'Coolio' },
-      { id: 'Lady Sun', title: 'Cannon Belle', role: 'Marksman', tier: 'B', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Li Bai', title: 'Lyricist', role: 'Assassin', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Lian Po', title: 'Earthshaker', role: 'Tank', tier: 'B', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Liu Bang', title: 'Liu Bang', role: 'Tank', tier: 'B', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Liu Bei', title: 'Pointblank', role: 'Fighter', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Liu Shan', title: 'Mecha Brat', role: 'Tank', tier: 'B', lane: 'ROAM', sprite: 'Bigly' },
-      { id: 'Lu Bu', title: 'Unrivaled Warrior', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Luban No. 7', title: 'Mecha Shooter', role: 'Marksman', tier: 'B', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Mayene', title: 'Martial Genius', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Runsie' },
-      { id: 'Meng Ya', title: 'Loose Cannon', role: 'Marksman', tier: 'B', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Menki', title: 'Dream Spirit', role: 'Fighter', tier: 'B', lane: 'JUNGLE', sprite: 'Bigly' },
-      { id: 'Mi Yue', title: 'Raveness', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Runsie' },
-      { id: 'Mozi', title: 'Peacekeeper', role: 'Fighter', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Mulan', title: 'Ironbloom', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Runsie' },
-      { id: 'Musashi', title: 'Swordmaster', role: 'Fighter', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Nakoruru', title: 'Hawk Whisperer', role: 'Assassin', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Nuwa', title: 'Celestial', role: 'Mage', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Pei', title: 'Tigerous', role: 'Assassin', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Shi', title: 'Silkweaver', role: 'Mage', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Shouyue', title: 'Longshot', role: 'Marksman', tier: 'B', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Sun Bin', title: 'Timebender', role: 'Support', tier: 'B', lane: 'ROAM', sprite: 'Coolio' },
-      { id: 'Ukyo Tachibana', title: 'Ukyo', role: 'Assassin', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Wukong', title: 'Monkey King', role: 'Assassin', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Wuyan', title: 'Sledgehammer', role: 'Tank', tier: 'B', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Ying', title: 'Celestial Emperor', role: 'Mage', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Yixing', title: 'Boardmaster', role: 'Mage', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Yuhuan', title: 'Fatal Lyrist', role: 'Mage', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Zhang Fei', title: 'The Beast', role: 'Tank', tier: 'B', lane: 'ROAM', sprite: 'Bigly' },
-      { id: 'Zhuangzi', title: 'Dreamwanderer', role: 'Tank', tier: 'B', lane: 'ROAM', sprite: 'Bigly' },
-      { id: 'Ao\'yin', title: 'Ao\'yin', role: 'Marksman', tier: 'B', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Umbrosa', title: 'Umbrosa', role: 'Assassin', tier: 'B', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Garuda', title: 'Garuda', role: 'Marksman', tier: 'B', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Sakeer', title: 'Sakeer', role: 'Marksman', tier: 'B', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Flowborn', title: 'Flowborn', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Lapulapu', title: 'Lapulapu', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Chicha', title: 'Chicha', role: 'Mage', tier: 'B', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Fatih', title: 'Fatih', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Yango', title: 'Yango', role: 'Fighter', tier: 'B', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Wang Zhaojun', title: 'Wang Zhaojun', role: 'Mage', tier: 'B', lane: 'MID', sprite: 'Coolio' },
+      { title: 'White Anchor', id: 'Ata', role: 'Tank', tier: 'B', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'Dominant Ruler', id: 'Liu Bang', role: 'Tank', tier: 'B', lane: 'Clash Lane / Roam', sprite: 'Bigly' },
+      { title: 'Forge Maiden', id: 'Chicha', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Mighty Conqueror', id: 'Fatih', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Pointblank', id: 'Liu Bei', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Runsie' },
+      { title: 'Reefheart Datu', id: 'Lapulapu', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Wild Spark', id: 'Nezha', role: 'Fighter', tier: 'B', lane: 'Clash Lane / Jungle', sprite: 'Runsie' },
+      { title: 'Paladin', id: 'Arthur', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Fearless Spear', id: 'Zilong', role: 'Assassin', tier: 'B', lane: 'Jungle / Clash', sprite: 'Runsie' },
+      { title: 'Swift Strike', id: 'Ukyo Tachibana', role: 'Assassin', tier: 'B', lane: 'Jungle / Clash', sprite: 'Runsie' },
+      { title: 'Sacred Warrior', id: 'Athena', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Avici Puppeteer', id: 'Yango', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Boardmaster', id: 'Yixing', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Celestial', id: 'Nuwa', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Curious Mixture', id: 'Dr Bian', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Inferno', id: 'Zhou Yu', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Silkweaver', id: 'Shi', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Tunecaster', id: 'Yuhuan', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Voidcaller', id: 'Kui', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Artillerist', id: 'Huang Zhong', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Red Hawk', id: 'Alessio', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Wild Rider', id: 'Agudo', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Packleader', id: 'Chano', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Animist', id: 'Guiguzi', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio' },
+      { title: 'Brushstrider', id: 'Sakeer', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio' },
+      { title: 'Private Ear', id: 'Fang', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio' },
+      { title: 'Star Teller', id: 'Ming', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Coolio' },
+      { title: 'Wise Sage', id: 'Fuzi', role: 'Support', tier: 'B', lane: 'Roam', sprite: 'Runsie' },
 
-      // C-TIER
-      { id: 'Alessio', title: 'Red Hawk', role: 'Marksman', tier: 'C', lane: 'FARM', sprite: 'Runsie' },
-      { id: 'Xiang Yu', title: 'Ultimate Weapon', role: 'Tank', tier: 'C', lane: 'CLASH', sprite: 'Bigly' },
-      { id: 'Ming', title: 'Star Teller', role: 'Support', tier: 'C', lane: 'ROAM', sprite: 'Coolio' },
-      { id: 'Nezha', title: 'Wild Spark', role: 'Fighter', tier: 'C', lane: 'CLASH', sprite: 'Runsie' },
-      { id: 'Yang Jian', title: 'Avici Puppeteer', role: 'Fighter', tier: 'C', lane: 'JUNGLE', sprite: 'Bigly' },
-      { id: 'Shangguan', title: 'Calligrapher', role: 'Assassin', tier: 'C', lane: 'MID', sprite: 'Coolio' },
-      { id: 'Sima Yi', title: 'Shadowreaper', role: 'Assassin', tier: 'C', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Zilong', title: 'Fearless Spear', role: 'Assassin', tier: 'C', lane: 'JUNGLE', sprite: 'Runsie' },
-      { id: 'Zhou Yu', title: 'Inferno', role: 'Mage', tier: 'C', lane: 'MID', sprite: 'Coolio' }
+      // SUPPLEMENTARY GLOBAL
+      { title: 'Ironbloom', id: 'Mulan', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie' },
+      { title: 'God of War', id: 'Guan Yu', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie' },
+      { title: 'Spear King', id: 'Han Xin', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Lyricist', id: 'Li Bai', role: 'Assassin', tier: 'A', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Shadow Dash', id: 'Sima Yi', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Monkey King', id: 'Wukong', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Ultimate Tank', id: 'Xiang Yu', role: 'Tank', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Berserker', id: 'Dian Wei', role: 'Fighter', tier: 'B', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Woodland', id: 'Consort Yu', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Parasola', id: 'Arli', role: 'Marksman', tier: 'S', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Shadow Reaper', id: 'Lan', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Peacekeeper', id: 'Mozi', role: 'Fighter', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Dominant', id: 'Cao Cao', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Avici', id: 'Yang Jian', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Founder', id: 'Liu Bang', role: 'Tank', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
+      { title: 'Mastermind', id: 'Zhuge Liang', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Lunar', id: 'Chang\'e', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Magistrate', id: 'Di Renjie', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Star Dash', id: 'Lady Sun 2', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
+      { title: 'Phantom', id: 'Gao 2', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Shadow', id: 'Umbrosa', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Viper', id: 'Yin', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie' },
+      { title: 'Raveness', id: 'Mi Yue', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie' }
     ];
+
+    let currentRole = 'all'; let currentSearch = '';
 
     function showView(v, id = null) {
       document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
@@ -278,77 +237,82 @@
       window.scrollTo(0,0);
     }
 
-    function renderDetail(id) {
-      const h = HEROES.find(x => x.id === id);
-      const sprite = SPRITE_INFO[h.sprite] || SPRITE_INFO['Bigly'];
+    // THE UNIVERSAL PORTRAIT LOADER & SLEEK FALLBACK
+    function loadPortrait(el, id) {
+      const encodedId = encodeURIComponent(id);
+      const paths = [
+        `hero_portraits/${id}.png`, 
+        `hero_portraits/${encodedId}.png`, 
+        `hero_portraits/${id.toLowerCase()}.png`, 
+        `hero_portraits/${id.replace(/ /g, '').toLowerCase()}.png`,
+        `hero_portraits/${id}.jpg`
+      ];
       
+      let i = 0;
+      el.onerror = () => {
+        if (i < paths.length) {
+          el.src = paths[i++];
+        } else {
+          // Sleek blue circle fallback
+          const initial = id.charAt(0).toUpperCase();
+          el.outerHTML = `<div class="hero-fallback">${initial}</div>`;
+        }
+      };
+      el.src = paths[i++];
+    }
+
+    function renderDetail(id) {
+      const h = HERO_DATA.find(x => x.id === id);
+      const s = SPRITES[h.sprite] || SPRITES['Bigly'];
       document.getElementById('detail-root').innerHTML = `
-        <div class="detail-card">
-          <div style="display:flex; align-items:center; gap:25px; flex-wrap:wrap; margin-bottom:25px;">
-            <img src="hero_portraits/${encodeURIComponent(h.id)}.png" style="width:115px; height:115px; border-radius:50%; border:3px solid var(--primary-blue);" onerror="this.src='hero_portraits/${h.id}.jpg'; this.onerror=function(){this.src='https://ui-avatars.com/api/?name=${id}&background=1e293b&color=fff';};">
-            <div>
-              <h2 style="font-size:2.5rem; line-height:1.1;">${h.title}</h2>
-              <p style="color:var(--primary-blue); font-weight:900; font-size:1.4rem;">${h.id.toUpperCase()}</p>
-              <div style="margin-top:10px;"><span class="lane-badge" style="position:static;">${h.lane}</span></div>
+        <div class="dashboard">
+          <div style="display:flex; align-items:center; gap:30px; flex-wrap:wrap; margin-bottom:30px;">
+            <div class="hero-avatar" style="width:130px; height:130px; border-width:4px;"><img id="det-img" src=""></div>
+            <div style="flex:1;">
+              <h2 style="font-family:'Kanit'; font-size:2.8rem; line-height:1.1;">${h.title}</h2>
+              <p style="color:var(--primary); font-weight:900; font-size:1.5rem; letter-spacing:2px;">${h.id.toUpperCase()}</p>
+              <div style="margin-top:10px;"><span style="padding:5px 15px; background:var(--primary); border-radius:20px; font-weight:900; font-size:0.8rem;">${h.lane}</span></div>
             </div>
           </div>
-          <div class="section-title">Strategic Spriteling Assignment</div>
-          <div class="spriteling-box">
-            <div class="sprite-icon">${sprite.icon}</div>
+          <div class="section-title">Strategic Spriteling Matrix</div>
+          <div class="sprite-banner">
+            <div class="sprite-icon-box">${s.icon}</div>
             <div>
-              <div style="font-size:1.2rem; font-weight:900; color:#fff;">${h.sprite} Protocol</div>
-              <div style="font-size:0.8rem; color:#c7d2fe;">${sprite.desc}</div>
+              <div style="font-size:1.3rem; font-weight:900;">${h.sprite} Protocol</div>
+              <div style="font-size:0.9rem; color:var(--gold); font-weight:700;">Bonus: ${s.bonus} | Cost: ${s.cost}</div>
+              <div style="font-size:0.8rem; color:var(--text-dim); margin-top:5px;">${s.desc}</div>
             </div>
-          </div>
-          <div class="section-title">Tactical Gear Setup</div>
-          <div style="display:flex; flex-wrap:wrap; gap:6px;">${(h.build || ['Standard Tactical Setup']).map(i => `<div class="item-slot">${i}</div>`).join('')}</div>
-          <div class="section-title">Optimal Arcana matrix</div>
-          <div class="arcana-grid">
-            <div class="arcana-box arc-red">RED: ${(h.arcana || ['Set'])[0]}</div>
-            <div class="arcana-box arc-blue">BLUE: ${(h.arcana || ['Set'])[1]}</div>
-            <div class="arcana-box arc-green">GREEN: ${(h.arcana || ['Set'])[2]}</div>
           </div>
         </div>
       `;
+      loadPortrait(document.getElementById('det-img'), h.id);
     }
 
     function renderList() {
       const root = document.getElementById('tier-list-root');
-      root.innerHTML = '';
-      ['S', 'A', 'B', 'C'].forEach(t => {
-        const filtered = HEROES.filter(h => h.tier === t && (activeRole === 'all' || h.role === activeRole) && (h.id.toLowerCase().includes(searchQuery) || h.title.toLowerCase().includes(searchQuery)));
+      root.innerHTML = ''; let count = 0;
+      ['S', 'A', 'B'].forEach(t => {
+        const filtered = HERO_DATA.filter(h => h.tier === t && (currentRole === 'all' || h.role.includes(currentRole)) && (h.id.toLowerCase().includes(currentSearch) || h.title.toLowerCase().includes(currentSearch)));
         if (filtered.length > 0) {
-          const sec = document.createElement('div');
-          sec.className = 'tier-section';
-          sec.innerHTML = `<div class="tier-header tier-${t.toLowerCase()}">${t}-TIER COMPETITIVE META</div><div class="tier-content"></div>`;
-          const content = sec.querySelector('.tier-content');
-          content.innerHTML = filtered.map(h => `
+          const wrap = document.createElement('div'); wrap.className = 'tier-wrapper';
+          wrap.innerHTML = `<div class="tier-label"><span>${t}-TIER</span><div class="tier-line"></div></div><div class="tier-grid"></div>`;
+          const grid = wrap.querySelector('.tier-grid');
+          grid.innerHTML = filtered.map(h => { count++; return `
             <div class="hero-card" onclick="showView('herodetail', '${h.id}')">
-              <div class="lane-badge">${h.lane}</div>
-              <div class="hero-avatar">
-                <img src="hero_portraits/${encodeURIComponent(h.id)}.png" onerror="this.src='hero_portraits/${h.id}.jpg'; this.onerror=function(){this.src='https://ui-avatars.com/api/?name=%20&background=1e293b&color=60a5fa';};">
-              </div>
-              <span class="hero-flavor-txt">${h.title}</span>
-              <span class="hero-name-txt">${h.id}</span>
-            </div>
-          `).join('');
-          root.appendChild(sec);
+              <div class="hero-avatar"><img src="" data-id="${h.id}"></div>
+              <span class="hero-flavor">${h.title}</span>
+              <span class="hero-name">${h.id}</span>
+            </div>`; }).join('');
+          root.appendChild(wrap);
+          grid.querySelectorAll('img').forEach(i => loadPortrait(i, i.dataset.id));
         }
       });
+      document.getElementById('status-text').innerText = `Database Synchronized: ${count} / 112 Heroes Active`;
     }
 
-    let activeRole = 'all';
-    let searchQuery = '';
-    function setRole(role, btn) {
-      activeRole = role;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderList();
-    }
-    function handleSearch() {
-      searchQuery = document.getElementById('search-input').value.toLowerCase();
-      renderList();
-    }
+    function setRole(r, b) { currentRole = r; document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); b.classList.add('active'); renderList(); }
+    function handleSearch() { currentSearch = document.getElementById('search-input').value.toLowerCase(); renderList(); }
+
     window.onload = renderList;
   </script>
 </body>

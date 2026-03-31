@@ -105,6 +105,7 @@
       'Runsie': { icon: '🏃', bonus: '100% Movement Speed', cost: '10% Damage Reduction', desc: 'Extreme mobility and kite potential.' }
     };
 
+    // Corrected Roster - Only Global Heroes
     const HERO_DATA = [
       // S-TIER
       { title: 'Princess Frost', id: 'Wang Zhaojun', role: 'Mage', tier: 'S', lane: 'Mid Lane', sprite: 'Coolio' },
@@ -163,7 +164,6 @@
       { title: 'Lotusdancer', id: 'Diaochan', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
       { title: 'Mechaboss', id: 'Milady', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
       { title: 'Smith and Blade', id: 'Gan & Mo', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Mastermind', id: 'Kongming', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
       { title: 'Cannon Belle', id: 'Lady Sun', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
       { title: 'Laurel Princess', id: 'Erin', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Coolio' },
       { title: 'Loose Cannon', id: 'Meng Ya', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
@@ -217,15 +217,12 @@
       { title: 'Peacekeeper', id: 'Mozi', role: 'Fighter', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
       { title: 'Dominant', id: 'Cao Cao', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
       { title: 'Avici', id: 'Yang Jian', role: 'Fighter', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Founder', id: 'Liu Bang', role: 'Tank', tier: 'B', lane: 'Clash Lane', sprite: 'Bigly' },
-      { title: 'Mastermind', id: 'Zhuge Liang', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
-      { title: 'Lunar', id: 'Chang\'e', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
       { title: 'Magistrate', id: 'Di Renjie', role: 'Marksman', tier: 'A', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Star Dash', id: 'Lady Sun 2', role: 'Marksman', tier: 'B', lane: 'Farm Lane', sprite: 'Runsie' },
-      { title: 'Phantom', id: 'Gao 2', role: 'Mage', tier: 'B', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Mastermind', id: 'Zhuge Liang', role: 'Mage', tier: 'A', lane: 'Mid Lane', sprite: 'Coolio' },
+      { title: 'Raveness', id: 'Mi Yue', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie' },
       { title: 'Shadow', id: 'Umbrosa', role: 'Assassin', tier: 'S', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Viper', id: 'Yin', role: 'Assassin', tier: 'B', lane: 'Jungle', sprite: 'Runsie' },
-      { title: 'Raveness', id: 'Mi Yue', role: 'Fighter', tier: 'A', lane: 'Clash Lane', sprite: 'Runsie' }
+      { title: 'Daybreak', id: 'Pangu', role: 'Fighter', tier: 'B', lane: 'Jungle / Clash', sprite: 'Bigly' },
+      { title: 'Cold暉', id: 'Ma Chao', role: 'Fighter', tier: 'S', lane: 'Clash Lane', sprite: 'Runsie' }
     ];
 
     let currentRole = 'all'; let currentSearch = '';
@@ -307,7 +304,8 @@
           grid.querySelectorAll('img').forEach(i => loadPortrait(i, i.dataset.id));
         }
       });
-      document.getElementById('status-text').innerText = `Database Synchronized: ${count} / 112 Heroes Active`;
+      // DYNAMIC COUNTER: Now accurately reads the exact size of the HERO_DATA array.
+      document.getElementById('status-text').innerText = `Database Synchronized: ${count} / ${HERO_DATA.length} Heroes Active`;
     }
 
     function setRole(r, b) { currentRole = r; document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); b.classList.add('active'); renderList(); }

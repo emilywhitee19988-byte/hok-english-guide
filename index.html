@@ -79,6 +79,9 @@
     .draft-slot.active { border-color: var(--gold); background: rgba(251, 191, 36, 0.1); }
     .my-role-badge { position: absolute; top: -8px; left: -8px; background: var(--gold); color: #000; font-size: 0.65rem; font-weight: 900; padding: 3px 8px; border-radius: 8px; z-index: 5;}
     .slot-role-label { position: absolute; right: 12px; bottom: 8px; font-size: 0.55rem; color: #475569; font-weight: 900; text-transform: uppercase; }
+    
+    .clear-slot-btn { position: absolute; top: -8px; right: -8px; background: var(--s-tier); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; z-index: 10; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5); transition: 0.2s; }
+    .clear-slot-btn:hover { transform: scale(1.15); }
 
     .pool-panel { flex-grow: 1; background: var(--card-bg); border-radius: 24px; padding: 25px; border: 1px solid rgba(255,255,255,0.05); }
     .pool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 15px; max-height: 800px; overflow-y: auto; }
@@ -255,9 +258,9 @@
       return {e:5, m:5, l:5};
     }
 
-    // EXACT 114 HERO COMPRESSED DATABASE
+    // THE ABSOLUTE MASTER DATABASE - SOURCED FROM SCREENSHOTS
     const HERO_DATA=[
-    {title:'Princess Frost',id:'Wang Zhaojun',role:'Mage',tier:'A',lane:'Mid Lane',spike:'Mid-Game',traits:['control','cc'],wr:'50.4%',pr:'14.2%'},
+    {title:'Princess Frost',id:'Wang Zhaojun',role:'Mage',tier:'A',lane:'Mid Lane / Roam',spike:'Mid-Game',traits:['control','cc'],wr:'50.4%',pr:'14.2%'},
     {title:'Evernight Aspiration',id:'Haya',role:'Mage',tier:'A',lane:'Mid Lane',spike:'Late-Game',traits:['poke'],wr:'51.1%',pr:'11.5%'},
     {title:'Calligrapher',id:'Shangguan',role:'Mage',tier:'C',lane:'Mid Lane',spike:'Level 4',traits:['burst','dive'],wr:'47.8%',pr:'4.2%'},
     {title:'Fateturner',id:'Heino',role:'Mage',tier:'C',lane:'Mid Lane / Clash Lane',spike:'Late-Game',traits:['sustain'],wr:'46.5%',pr:'5.1%'},
@@ -265,9 +268,9 @@
     {title:'Heartseeker',id:'Daji',role:'Mage',tier:'S',lane:'Mid Lane',spike:'Late-Game',traits:['burst'],wr:'54.7%',pr:'22.1%'},
     {title:'Scorchette',id:'Angela',role:'Mage',tier:'S',lane:'Mid Lane',spike:'Early-Mid',traits:['burst','aoe'],wr:'53.3%',pr:'19.8%'},
     {title:'Timebender',id:'Sun Bin',role:'Support',tier:'C',lane:'Roam',spike:'Late-Game',traits:['utility'],wr:'47.9%',pr:'7.4%'},
-    {title:'Mastermind',id:'Zhuge Liang',role:'Mage',tier:'B',lane:'Mid Lane',spike:'Mid-Late',traits:['burst','execute'],wr:'48.5%',pr:'9.2%'},
+    {title:'Mastermind',id:'Kongming',role:'Mage',tier:'B',lane:'Mid Lane / Jungle',spike:'Mid-Late',traits:['burst','execute'],wr:'48.5%',pr:'9.2%'},
     {title:'Breezeheart',id:'Xiao Qiao',role:'Mage',tier:'A',lane:'Mid Lane',spike:'Late-Game',traits:['burst'],wr:'50.9%',pr:'15.3%'},
-    {title:'Lotusdancer',id:'Diaochan',role:'Mage',tier:'C',lane:'Mid Lane',spike:'Mid-Game',traits:['true_damage'],wr:'46.8%',pr:'8.1%'},
+    {title:'Lotusdancer',id:'Diaochan',role:'Mage',tier:'C',lane:'Mid Lane / Clash Lane',spike:'Mid-Game',traits:['true_damage'],wr:'46.8%',pr:'8.1%'},
     {title:'Mechaboss',id:'Milady',role:'Mage',tier:'A',lane:'Mid Lane',spike:'Early-Mid',traits:['push'],wr:'51.4%',pr:'10.5%'},
     {title:'Divine Enforcer',id:'Ziya',role:'Mage',tier:'B',lane:'Mid Lane / Roam',spike:'Late-Game',traits:['utility'],wr:'49.1%',pr:'6.3%'},
     {title:'Smith and Blade',id:'Gan & Mo',role:'Mage',tier:'C',lane:'Mid Lane',spike:'Mid-Late',traits:['poke'],wr:'47.1%',pr:'5.5%'},
@@ -276,58 +279,57 @@
     {title:'Celestial',id:'Nuwa',role:'Mage',tier:'B',lane:'Mid Lane',spike:'Late-Game',traits:['range'],wr:'49.3%',pr:'4.1%'},
     {title:'Curious Mixture',id:'Dr Bian',role:'Mage',tier:'C',lane:'Mid Lane',spike:'Early-Mid',traits:['healer'],wr:'46.4%',pr:'2.9%'},
     {title:'Inferno',id:'Zhou Yu',role:'Mage',tier:'C',lane:'Mid Lane',spike:'Mid-Game',traits:['control'],wr:'47.5%',pr:'4.7%'},
-    {title:'Silkweaver',id:'Shi',role:'Mage',tier:'C',lane:'Mid Lane',spike:'Mid-Game',traits:['control'],wr:'46.9%',pr:'3.4%'},
-    {title:'Tunecaster',id:'Yuhuan',role:'Mage',tier:'C',lane:'Mid Lane / Jungle',spike:'Late-Game',traits:['sustain'],wr:'47.6%',pr:'5.8%'},
+    {title:'Silkweaver',id:'Shi',role:'Mage',tier:'C',lane:'Mid Lane / Roam',spike:'Mid-Game',traits:['control'],wr:'46.9%',pr:'3.4%'},
+    {title:'Tunecaster',id:'Yuhuan',role:'Mage',tier:'C',lane:'Mid Lane / Jungle / Roam',spike:'Late-Game',traits:['sustain'],wr:'47.6%',pr:'5.8%'},
     {title:'Demonplate',id:'Kaizer',role:'Tank',tier:'S',lane:'Clash Lane / Jungle',spike:'Mid-Game',traits:['sustain','tank'],wr:'52.5%',pr:'18.4%'},
     {title:'Earthshaker',id:'Lian Po',role:'Tank',tier:'A',lane:'Clash Lane / Roam',spike:'Early-Mid',traits:['cc','tank'],wr:'50.2%',pr:'11.2%'},
     {title:'Harbinger',id:'Donghuang',role:'Tank',tier:'A',lane:'Clash Lane / Roam',spike:'Level 4',traits:['lockdown','sustain'],wr:'51.1%',pr:'14.5%'},
     {title:'The Beast',id:'Zhang Fei',role:'Tank',tier:'C',lane:'Roam',spike:'Late-Game',traits:['shield','tank'],wr:'47.3%',pr:'8.6%'},
-    {title:'Dreamwanderer',id:'Zhuangzi',role:'Tank',tier:'B',lane:'Roam',spike:'Mid-Game',traits:['cc_immune'],wr:'48.7%',pr:'9.1%'},
+    {title:'Dreamwanderer',id:'Zhuangzi',role:'Tank',tier:'B',lane:'Clash Lane / Roam',spike:'Mid-Game',traits:['cc_immune'],wr:'48.7%',pr:'9.1%'},
     {title:'Mecha Brat',id:'Liu Shan',role:'Tank',tier:'C',lane:'Roam',spike:'Early-Game',traits:['cc','push'],wr:'46.8%',pr:'6.2%'},
     {title:'Sledgehammer',id:'Wuyan',role:'Tank',tier:'C',lane:'Clash Lane / Jungle',spike:'Mid-Game',traits:['cc'],wr:'51.3%',pr:'0.4%'},
-    {title:'Belligerence',id:'Dun',role:'Tank',tier:'A',lane:'Clash Lane / Jungle',spike:'Mid-Game',traits:['tank'],wr:'50.6%',pr:'12.3%'},
+    {title:'Belligerence',id:'Dun',role:'Tank',tier:'A',lane:'Clash Lane / Jungle / Roam',spike:'Mid-Game',traits:['tank'],wr:'50.6%',pr:'12.3%'},
     {title:'Ultimate Weapon',id:'Bai Qi',role:'Tank',tier:'C',lane:'Clash Lane',spike:'Late-Game',traits:['tank'],wr:'47.1%',pr:'5.7%'},
     {title:'White Anchor',id:'Ata',role:'Tank',tier:'B',lane:'Clash Lane / Jungle',spike:'Early-Mid',traits:['sustain'],wr:'48.9%',pr:'4.8%'},
     {title:'Dominant Ruler',id:'Liu Bang',role:'Tank',tier:'C',lane:'Clash Lane / Roam',spike:'Mid-Game',traits:['global','shield'],wr:'46.5%',pr:'3.9%'},
-    {title:'Ultimate Tank',id:'Xiang Yu',role:'Tank',tier:'B',lane:'Clash Lane',spike:'Mid-Game',traits:['cc','tank'],wr:'49.2%',pr:'7.5%'},
+    {title:'Unyielding Overlord',id:'Xiang Yu',role:'Tank',tier:'B',lane:'Clash Lane / Roam',spike:'Mid-Game',traits:['cc','tank'],wr:'49.2%',pr:'7.5%'},
     {title:'Soulguide',id:'Augran',role:'Fighter',tier:'S',lane:'Jungle / Clash Lane',spike:'Mid-Late',traits:['execute'],wr:'55.1%',pr:'24.2%'},
     {title:'Unrivaled Warrior',id:'Lu Bu',role:'Fighter',tier:'B',lane:'Clash Lane',spike:'Late-Game',traits:['true_damage'],wr:'48.4%',pr:'16.8%'},
     {title:'Sparkmace',id:'Biron',role:'Fighter',tier:'A',lane:'Clash Lane',spike:'Early-Game',traits:['shield'],wr:'50.7%',pr:'9.6%'},
     {title:'Ironbloom',id:'Mulan',role:'Fighter',tier:'C',lane:'Clash Lane',spike:'Level 4+',traits:['burst'],wr:'47.4%',pr:'8.2%'},
-    {title:'God of War',id:'Guan Yu',role:'Fighter',tier:'C',lane:'Clash Lane',spike:'Mid-Game',traits:['mobility'],wr:'46.7%',pr:'6.1%'},
+    {title:'War Saint',id:'Guan Yu',role:'Fighter',tier:'C',lane:'Clash Lane / Roam',spike:'Mid-Game',traits:['mobility'],wr:'46.7%',pr:'6.1%'},
     {title:'Vengeance',id:'Li Xin',role:'Fighter',tier:'S',lane:'Clash Lane',spike:'Mid-Game',traits:['sustain'],wr:'52.1%',pr:'15.4%'},
     {title:'Cold Spear',id:'Ma Chao',role:'Fighter',tier:'C',lane:'Clash Lane',spike:'Mid-Late',traits:['mobility'],wr:'47.8%',pr:'5.3%'},
-    {title:'Martial Genius',id:'Mayene',role:'Fighter',tier:'C',lane:'Clash Lane',spike:'Late-Game',traits:['mobility'],wr:'46.2%',pr:'4.5%'},
+    {title:'Martial Genius',id:'Mayene',role:'Fighter',tier:'C',lane:'Clash Lane / Jungle',spike:'Late-Game',traits:['mobility'],wr:'46.2%',pr:'4.5%'},
     {title:'Forgotten Blade',id:'Allain',role:'Fighter',tier:'C',lane:'Clash Lane',spike:'Late-Game',traits:['true_damage'],wr:'47.9%',pr:'7.8%'},
-    {title:'Martial Monk',id:'Dharma',role:'Fighter',tier:'C',lane:'Clash Lane',spike:'Mid-Game',traits:['cc'],wr:'46.6%',pr:'3.2%'},
+    {title:'Peaceful Fist',id:'Dharma',role:'Fighter',tier:'C',lane:'Clash Lane / Jungle',spike:'Mid-Game',traits:['cc'],wr:'46.6%',pr:'3.2%'},
     {title:'Seafarer',id:'Sun Ce',role:'Fighter',tier:'B',lane:'Clash Lane / Jungle',spike:'Early-Mid',traits:['engage'],wr:'49.4%',pr:'10.1%'},
     {title:'Shadowblade',id:'Gao Changgong',role:'Fighter',tier:'A',lane:'Jungle',spike:'Mid-Game',traits:['burst'],wr:'51.2%',pr:'13.7%'},
-    {title:'Sword Saint',id:'Ukyo Tachibana',role:'Assassin',tier:'B',lane:'Clash Lane / Jungle',spike:'Early-Mid',traits:['burst'],wr:'48.8%',pr:'8.9%'},
-    {title:'Rose Fencer',id:'Charlotte',role:'Fighter',tier:'B',lane:'Clash Lane',spike:'Mid-Game',traits:['sustain'],wr:'49.1%',pr:'9.4%'},
-    {title:'Raveness',id:'Mi Yue',role:'Fighter',tier:'B',lane:'Clash Lane',spike:'Early-Mid',traits:['sustain'],wr:'48.3%',pr:'6.5%'},
-    {title:'Paladin',id:'Arthur',role:'Fighter',tier:'A',lane:'Clash Lane',spike:'Early-Mid',traits:['silence'],wr:'54.2%',pr:'18.5%'},
-    {title:'Forge Maiden',id:'Chicha',role:'Fighter',tier:'S',lane:'Clash Lane',spike:'Mid-Game',traits:['cc'],wr:'52.8%',pr:'14.1%'},
-    {title:'Mighty Conqueror',id:'Fatih',role:'Fighter',tier:'B',lane:'Clash Lane',spike:'Mid-Game',traits:['sustain'],wr:'48.6%',pr:'5.2%'},
+    {title:'Swift Strike',id:'Ukyo Tachibana',role:'Assassin',tier:'B',lane:'Clash Lane / Jungle',spike:'Early-Mid',traits:['burst'],wr:'48.8%',pr:'8.9%'},
+    {title:'Rose Fencer',id:'Charlotte',role:'Fighter',tier:'B',lane:'Clash Lane / Jungle',spike:'Mid-Game',traits:['sustain'],wr:'49.1%',pr:'9.4%'},
+    {title:'Raveness',id:'Mi Yue',role:'Fighter',tier:'B',lane:'Clash Lane / Jungle',spike:'Early-Mid',traits:['sustain'],wr:'48.3%',pr:'6.5%'},
+    {title:'Paladin',id:'Arthur',role:'Fighter',tier:'A',lane:'Clash Lane / Jungle',spike:'Early-Mid',traits:['silence'],wr:'54.2%',pr:'18.5%'},
+    {title:'Forge Maiden',id:'Chicha',role:'Fighter',tier:'S',lane:'Clash Lane / Farm Lane / Jungle',spike:'Mid-Game',traits:['cc'],wr:'52.8%',pr:'14.1%'},
+    {title:'Mighty Conqueror',id:'Fatih',role:'Fighter',tier:'B',lane:'Clash Lane / Jungle',spike:'Mid-Game',traits:['sustain'],wr:'48.6%',pr:'5.2%'},
     {title:'Pointblank',id:'Liu Bei',role:'Fighter',tier:'B',lane:'Jungle',spike:'Early-Mid',traits:['burst'],wr:'49.3%',pr:'7.1%'},
-    {title:'Reefheart Datu',id:'Lapulapu',role:'Fighter',tier:'C',lane:'Roam',spike:'Mid-Game',traits:['shield'],wr:'47.2%',pr:'4.3%'},
+    {title:'Reefheart Datu',id:'Lapulapu',role:'Fighter',tier:'C',lane:'Clash Lane / Roam',spike:'Mid-Game',traits:['shield'],wr:'47.2%',pr:'4.3%'},
     {title:'Wild Spark',id:'Nezha',role:'Fighter',tier:'A',lane:'Clash Lane / Jungle',spike:'Late-Game',traits:['global'],wr:'51.5%',pr:'11.8%'},
     {title:'Dominant',id:'Cao Cao',role:'Fighter',tier:'B',lane:'Clash Lane',spike:'Mid-Game',traits:['sustain'],wr:'48.5%',pr:'6.7%'},
-    {title:'Avici',id:'Yang Jian',role:'Fighter',tier:'C',lane:'Clash Lane',spike:'Early-Mid',traits:['execute'],wr:'46.9%',pr:'3.5%'},
+    {title:'Trilight',id:'Yang Jian',role:'Fighter',tier:'C',lane:'Clash Lane / Jungle',spike:'Early-Mid',traits:['execute'],wr:'46.9%',pr:'3.5%'},
     {title:'Daybreak',id:'Pangu',role:'Fighter',tier:'B',lane:'Clash Lane',spike:'Early-Mid',traits:['disarm'],wr:'49.0%',pr:'4.9%'},
     {title:'Peacekeeper',id:'Mozi',role:'Fighter',tier:'B',lane:'Mid Lane / Roam',spike:'Late-Game',traits:['poke','cc'],wr:'48.7%',pr:'8.8%'},
     {title:'Berserker',id:'Dian Wei',role:'Fighter',tier:'A',lane:'Jungle',spike:'Late-Game',traits:['true_damage'],wr:'50.8%',pr:'12.5%'},
     {title:'Broken Mirage',id:'Jing',role:'Assassin',tier:'C',lane:'Jungle',spike:'Early-Mid',traits:['burst','dive'],wr:'47.4%',pr:'9.3%'},
     {title:'Moonblade',id:'Luna',role:'Assassin',tier:'C',lane:'Jungle',spike:'Level 4+',traits:['magic_dps'],wr:'46.8%',pr:'7.2%'},
     {title:'Stealthfin',id:'Lam',role:'Assassin',tier:'A',lane:'Jungle',spike:'Mid-Late',traits:['dive'],wr:'54.9%',pr:'31.5%'},
-    {title:'Spear King',id:'Han Xin',role:'Assassin',tier:'C',lane:'Jungle',spike:'Early-Mid',traits:['mobility'],wr:'47.1%',pr:'15.6%'},
-    {title:'Shadow Reaper',id:'Lan',role:'Assassin',tier:'A',lane:'Jungle',spike:'Mid-Game',traits:['cc'],wr:'51.3%',pr:'14.8%'},
+    {title:'Windspear',id:'Han Xin',role:'Assassin',tier:'C',lane:'Jungle',spike:'Early-Mid',traits:['mobility'],wr:'47.1%',pr:'15.6%'},
     {title:'Featherfoot',id:'Feyd',role:'Assassin',tier:'B',lane:'Jungle',spike:'Mid-Game',traits:['burst'],wr:'49.2%',pr:'8.5%'},
     {title:'Shadowstalker',id:'Arke',role:'Assassin',tier:'A',lane:'Jungle',spike:'Mid-Game',traits:['flank'],wr:'50.6%',pr:'11.4%'},
     {title:'Shadow',id:'Umbrosa',role:'Assassin',tier:'B',lane:'Clash Lane',spike:'Mid-Game',traits:['invis'],wr:'48.4%',pr:'6.9%'},
     {title:'Prince',id:'Prince of Lanling',role:'Assassin',tier:'A',lane:'Jungle',spike:'Early-Game',traits:['invis'],wr:'50.9%',pr:'16.2%'},
     {title:'Lyricist',id:'Li Bai',role:'Assassin',tier:'B',lane:'Jungle',spike:'Late-Game',traits:['untargetable'],wr:'48.6%',pr:'13.1%'},
     {title:'Death\'s Whisper',id:'Butterfly',role:'Assassin',tier:'C',lane:'Jungle',spike:'Mid-Game',traits:['reset'],wr:'47.7%',pr:'10.5%'},
-    {title:'Firespear',id:'Ying',role:'Assassin',tier:'S',lane:'Jungle',spike:'Mid-Game',traits:['cc'],wr:'52.4%',pr:'17.3%'},
+    {title:'Firespear',id:'Yun Ying',role:'Assassin',tier:'S',lane:'Jungle',spike:'Mid-Game',traits:['cc'],wr:'52.4%',pr:'17.3%'},
     {title:'Hawk Whisperer',id:'Nakoruru',role:'Assassin',tier:'C',lane:'Jungle',spike:'Mid-Game',traits:['burst'],wr:'46.5%',pr:'5.8%'},
     {title:'Madlash',id:'Xuance',role:'Assassin',tier:'C',lane:'Jungle',spike:'Early-Mid',traits:['control'],wr:'47.3%',pr:'4.2%'},
     {title:'Tigerous',id:'Pei',role:'Assassin',tier:'B',lane:'Jungle',spike:'Early-Game',traits:['early_pressure'],wr:'49.1%',pr:'8.7%'},
@@ -335,7 +337,7 @@
     {title:'Monkey King',id:'Wukong',role:'Assassin',tier:'S',lane:'Jungle',spike:'Late-Game',traits:['crit'],wr:'51.8%',pr:'21.4%'},
     {title:'Fearless Spear',id:'Zilong',role:'Assassin',tier:'C',lane:'Jungle',spike:'Mid-Game',traits:['sustain'],wr:'47.6%',pr:'9.8%'},
     {title:'Sacred Warrior',id:'Athena',role:'Assassin',tier:'C',lane:'Jungle',spike:'Mid-Game',traits:['execute'],wr:'46.2%',pr:'2.5%'},
-    {title:'Silent Reaper',id:'Sima Yi',role:'Assassin',tier:'C',lane:'Mid Lane / Jungle',spike:'Mid-Game',traits:['silence'],wr:'47.5%',pr:'6.4%'},
+    {title:'Shadowreaper',id:'Sima Yi',role:'Assassin',tier:'C',lane:'Mid Lane / Jungle',spike:'Mid-Game',traits:['silence'],wr:'47.5%',pr:'6.4%'},
     {title:'Starblade',id:'Yao',role:'Assassin',tier:'B',lane:'Clash Lane / Jungle',spike:'Mid-Late',traits:['kite'],wr:'48.5%',pr:'7.9%'},
     {title:'Gunslinger',id:'Marco Polo',role:'Marksman',tier:'S',lane:'Farm Lane',spike:'Mid-Game',traits:['true_damage'],wr:'53.6%',pr:'26.7%'},
     {title:'Mecha Shooter',id:'Luban No.7',role:'Marksman',tier:'B',lane:'Farm Lane',spike:'Late-Game',traits:['high_dps'],wr:'49.4%',pr:'20.1%'},
@@ -349,25 +351,31 @@
     {title:'Loose Cannon',id:'Meng Ya',role:'Marksman',tier:'C',lane:'Farm Lane',spike:'Mid-Game',traits:['aoe'],wr:'47.4%',pr:'8.6%'},
     {title:'Piercing Arrow',id:'Garo',role:'Marksman',tier:'A',lane:'Farm Lane',spike:'Late-Game',traits:['range'],wr:'51.1%',pr:'14.7%'},
     {title:'Firesnake',id:'Luara',role:'Marksman',tier:'A',lane:'Farm Lane',spike:'Mid-Game',traits:['mobility'],wr:'50.8%',pr:'12.1%'},
-    {title:'Woodland',id:'Consort Yu',role:'Marksman',tier:'A',lane:'Farm Lane',spike:'Mid-Game',traits:['anti_phys'],wr:'50.3%',pr:'13.4%'},
+    {title:'Woodland Ranger',id:'Consort Yu',role:'Marksman',tier:'A',lane:'Farm Lane',spike:'Mid-Game',traits:['anti_phys'],wr:'50.3%',pr:'13.4%'},
     {title:'Artillerist',id:'Huang Zhong',role:'Marksman',tier:'C',lane:'Farm Lane',spike:'Late-Game',traits:['range'],wr:'47.6%',pr:'7.9%'},
     {title:'Red Hawk',id:'Alessio',role:'Marksman',tier:'C',lane:'Farm Lane',spike:'Mid-Game',traits:['aoe'],wr:'46.9%',pr:'6.3%'},
-    {title:'Wild Rider',id:'Agudo',role:'Marksman',tier:'C',lane:'Jungle',spike:'Mid-Game',traits:['utility'],wr:'47.1%',pr:'3.8%'},
-    {title:'Packleader',id:'Chano',role:'Marksman',tier:'C',lane:'Farm Lane',spike:'Mid-Late',traits:['sustain'],wr:'46.5%',pr:'5.1%'},
+    {title:'Wild Rider',id:'Agudo',role:'Marksman',tier:'C',lane:'Farm Lane / Jungle',spike:'Mid-Game',traits:['utility'],wr:'47.1%',pr:'3.8%'},
+    {title:'Packleader',id:'Chano',role:'Marksman',tier:'C',lane:'Farm Lane / Jungle',spike:'Mid-Late',traits:['sustain'],wr:'46.5%',pr:'5.1%'},
     {title:'Seasinger',id:'Dolia',role:'Support',tier:'S',lane:'Roam',spike:'Level 4+',traits:['refresh'],wr:'52.7%',pr:'25.6%'},
     {title:'Healing Tone',id:'Cai Yan',role:'Support',tier:'S',lane:'Roam',spike:'Early-Mid',traits:['healer'],wr:'51.9%',pr:'19.4%'},
     {title:'Bondweaver',id:'Dyadia',role:'Support',tier:'A',lane:'Roam',spike:'Mid-Game',traits:['healer'],wr:'50.4%',pr:'14.2%'},
     {title:'Lanternlight',id:'Da Qiao',role:'Support',tier:'B',lane:'Roam / Mid Lane',spike:'Late-Game',traits:['global'],wr:'49.2%',pr:'11.8%'},
     {title:'Deerie',id:'Yaria',role:'Support',tier:'A',lane:'Roam',spike:'Mid-Game',traits:['shield'],wr:'53.8%',pr:'25.3%'},
-    {title:'Dream Spirit',id:'Menki',role:'Support',tier:'C',lane:'Jungle',spike:'Mid-Game',traits:['tank'],wr:'47.5%',pr:'4.1%'},
+    {title:'Dream Spirit',id:'Menki',role:'Support',tier:'C',lane:'Clash Lane / Jungle',spike:'Mid-Game',traits:['tank'],wr:'47.5%',pr:'4.1%'},
     {title:'Animist',id:'Guiguzi',role:'Support',tier:'C',lane:'Roam',spike:'Mid-Game',traits:['invis'],wr:'46.8%',pr:'5.6%'},
     {title:'Brushstrider',id:'Sakeer',role:'Support',tier:'C',lane:'Roam',spike:'Mid-Game',traits:['control'],wr:'47.2%',pr:'3.5%'},
-    {title:'Private Ear',id:'Fang',role:'Support',tier:'C',lane:'Farm Lane',spike:'Early-Mid',traits:['poke'],wr:'47.9%',pr:'8.3%'},
+    {title:'Private Ear',id:'Fang',role:'Support',tier:'C',lane:'Farm Lane / Jungle',spike:'Early-Mid',traits:['poke'],wr:'47.9%',pr:'8.3%'},
     {title:'Star Teller',id:'Ming',role:'Support',tier:'C',lane:'Roam',spike:'Late-Game',traits:['buff'],wr:'46.4%',pr:'7.1%'},
     {title:'Wise Sage',id:'Fuzi',role:'Support',tier:'B',lane:'Clash Lane',spike:'Mid-Game',traits:['control'],wr:'48.8%',pr:'9.5%'},
     {title:'Voidcaller',id:'Kui',role:'Mage',tier:'B',lane:'Roam',spike:'Early-Game',traits:['cc'],wr:'49.5%',pr:'12.8%'},
-    {title:'Wordbinder',id:'Zhang Liang',role:'Mage',tier:'B',lane:'Mid Lane / Roam',spike:'Mid-Game',traits:['cc','control'],wr:'48.9%',pr:'8.4%'},
-    {title:'Strategist',id:'Kongming',role:'Mage',tier:'B',lane:'Mid Lane / Jungle',spike:'Mid-Late',traits:['burst','mobility'],wr:'49.1%',pr:'10.2%'}
+    {title:'Tomemaster',id:'Zhang Liang',role:'Mage',tier:'B',lane:'Mid Lane / Roam',spike:'Mid-Game',traits:['cc','control'],wr:'49.5%',pr:'5.2%'},
+    {title:'Cascada',id:'Hai Yue',role:'Mage',tier:'A',lane:'Mid Lane',spike:'Mid-Late',traits:['control','burst'],wr:'51.2%',pr:'8.1%'},
+    {title:'Fatal Lyrist',id:'Gao',role:'Mage',tier:'B',lane:'Mid Lane',spike:'Mid-Game',traits:['aoe','sustain'],wr:'48.3%',pr:'6.2%'},
+    {title:'Majestic Guardian',id:'Garuda',role:'Mage',tier:'A',lane:'Mid Lane',spike:'Late-Game',traits:['poke','range'],wr:'51.8%',pr:'12.3%'},
+    {title:'Arcane Heart',id:'Flowborn',role:'Mage',tier:'A',lane:'Mid Lane',spike:'Mid-Game',traits:['control','poke'],wr:'50.1%',pr:'7.5%'},
+    {title:'Nightplume',id:'Ying',role:'Fighter',tier:'A',lane:'Clash Lane / Jungle',spike:'Mid-Game',traits:['burst','mobility'],wr:'51.5%',pr:'11.4%'},
+    {title:'Steady Will',id:'Steady Will',role:'Marksman',tier:'B',lane:'Farm Lane',spike:'Mid-Game',traits:['mobility'],wr:'49.6%',pr:'8.2%'},
+    {title:'Swordmaster',id:'Musashi',role:'Fighter',tier:'S',lane:'Jungle',spike:'Mid-Game',traits:['anti_projectile'],wr:'51.9%',pr:'16.5%'}
     ];
 
     const HEROES = HERO_DATA.map(h => ({
@@ -552,6 +560,13 @@
       renderDraftBoard();
     }
 
+    function clearSlot(team, type, key) {
+       if(type === 'pick') draftState[team][key] = null;
+       else (team === 'ally' ? draftState.allyBans : draftState.enemyBans)[key] = null;
+       suggestedPickIds = [];
+       renderDraftBoard();
+    }
+
     function handleHeroPoolClick(id) {
       if(!activeDraftSlot) { draftState.ally[draftState.myRole] = id; }
       else {
@@ -638,7 +653,9 @@
         const isActive = activeDraftSlot && activeDraftSlot.team === team && activeDraftSlot.type === 'pick' && activeDraftSlot.key === role;
         const isMe = team === 'ally' && draftState.myRole === role;
         const avatar = id ? `<img src="" data-id="${id}">` : `<div style="width:100%; height:100%; background:#000; border-radius:50%;"></div>`;
+        const clearBtn = id ? `<div class="clear-slot-btn" onclick="event.stopPropagation(); clearSlot('${team}', 'pick', '${role}')">×</div>` : '';
         return `<div class="draft-slot ${isActive?'active':''}" onclick="handleSlotClick('${team}', 'pick', '${role}')">
+          ${clearBtn}
           <div class="hero-avatar" style="width:45px; height:45px; border: 2px solid ${id ? 'var(--primary)' : '#334155'};">${avatar}</div>
           <div style="flex:1"><div style="font-size:0.8rem; font-weight:800; color:${id ? '#fff' : '#64748b'};">${h ? h.title : 'SELECT...'}</div>${h ? `<div style="font-size:0.55rem; color:var(--primary); font-weight:700; text-transform:uppercase;">${h.id}</div>`:''}</div>
           ${isMe ? '<div class="my-role-badge">YOU</div>' : ''}<div class="slot-role-label">${role}</div></div>`;
@@ -647,7 +664,8 @@
       const renderBans = (team) => (team === 'ally' ? draftState.allyBans : draftState.enemyBans).map((id, i) => {
         const isActive = activeDraftSlot && activeDraftSlot.team === team && activeDraftSlot.type === 'ban' && activeDraftSlot.key === i;
         const avatar = id ? `<img src="" data-id="${id}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">` : `<div style="width:100%; height:100%; background:#000; border-radius:50%;"></div>`;
-        return `<div class="draft-slot ${isActive?'active':''}" style="width:45px; height:45px; margin-bottom:0; padding:0; justify-content:center; border: 2px dashed ${id ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.4)'}; border-radius:50%; overflow:hidden;" onclick="handleSlotClick('${team}', 'ban', ${i})">${avatar}</div>`;
+        const clearBtn = id ? `<div class="clear-slot-btn" style="width:18px; height:18px; font-size:10px; top:-4px; right:-4px;" onclick="event.stopPropagation(); clearSlot('${team}', 'ban', ${i})">×</div>` : '';
+        return `<div class="draft-slot ${isActive?'active':''}" style="width:45px; height:45px; margin-bottom:0; padding:0; justify-content:center; border: 2px dashed ${id ? 'rgba(239, 68, 68, 0.8)' : 'rgba(239, 68, 68, 0.4)'}; border-radius:50%; overflow:visible;" onclick="handleSlotClick('${team}', 'ban', ${i})">${clearBtn}${avatar}</div>`;
       }).join('');
 
       document.getElementById('ally-picks-container').innerHTML = renderPicks('ally');

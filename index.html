@@ -121,6 +121,15 @@
     .copy-draft-btn { padding: 10px 20px; background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); color: var(--primary); border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.7rem; transition: 0.2s;}
     .copy-draft-btn:hover { background: var(--primary); color: #fff; }
 
+    /* 1v1 MATCHUP BOX */
+    #lane-matchup-output {
+      margin-top: 15px; 
+      padding-top: 15px; 
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
     @media (max-width: 1024px) {
       .draft-layout { flex-direction: column; align-items: stretch; }
       .team-panel { width: 100%; margin-bottom: 20px; }
@@ -185,6 +194,7 @@
         <div style="flex:1; border-left:1px solid rgba(255,255,255,0.1); padding-left:25px; min-width: 250px;">
            <div style="font-size:0.7rem; font-weight:900; color:var(--text-dim);">TACTICAL COACH</div>
            <div id="draft-advice-text" style="font-size:0.85rem; font-weight:700; margin-top:5px; line-height:1.4;">Draft teams to generate tactical advice...</div>
+           <div id="lane-matchup-output"></div>
         </div>
       </div>
       <div class="draft-layout">
@@ -577,7 +587,36 @@
       const enemyIds = Object.values(draftState.enemy).filter(Boolean);
       const allyIds = Object.values(draftState.ally).filter(Boolean);
       const output = document.getElementById('item-response-output');
+      const laneMatchupBox = document.getElementById('lane-matchup-output');
       
+      // 1v1 MATCHUP LOGIC
+      const myLane = draftState.myRole;
+      const myHeroId = draftState.ally[myLane];
+      const enemyHeroId = draftState.enemy[myLane];
+
+      if (myHeroId && enemyHeroId) {
+          const myH = HEROES.find(h => h.id === myHeroId);
+          const enH = HEROES.find(h => h.id === enemyHeroId);
+          let tip = '';
+          
+          if (enH.traits.includes('true_damage')) tip = `<strong>${enH.title}</strong> deals True Damage. Do not rush pure Armor/Magic Defense; buy raw HP items instead and avoid extended brawls.`;
+          else if (enH.traits.includes('sustain') || enH.traits.includes('healer')) tip = `<strong>${enH.title}</strong> will try to out-heal your damage. You MUST rush early anti-heal and stick to short, bursty trades.`;
+          else if (enH.traits.includes('poke') || enH.traits.includes('range')) tip = `<strong>${enH.title}</strong> outranges you. Give up minions if you have to, preserve your health, and wait for your Jungler to gank.`;
+          else if (enH.traits.includes('burst')) tip = `<strong>${enH.title}</strong> can 100-to-0 you quickly. Force them to waste their main damage skill on minions before you engage.`;
+          else if (enH.traits.includes('cc') || enH.traits.includes('control')) tip = `Watch your positioning. <strong>${enH.title}</strong> wants to lock you down. Invest in Boots of Resistance on your first recall.`;
+          else if (enH.traits.includes('shield')) tip = `<strong>${enH.title}</strong> relies on heavy shielding. Bait the shield out, wait for it to expire, and then immediately re-engage.`;
+          else if (enH.traits.includes('mobility')) tip = `<strong>${enH.title}</strong> is extremely slippery. Do not chase them blindly. Save your CC abilities for when they dash directly at you.`;
+          else tip = `Focus on securing your farm and controlling river vision. Only take trades when you have a clear minion advantage over <strong>${enH.title}</strong>.`;
+
+          if (myH.traits.includes('poke') && enH.traits.includes('tank')) tip = `Use your range advantage to constantly harass <strong>${enH.title}</strong>. Do not let them close the gap and play around your tower.`;
+
+          laneMatchupBox.innerHTML = `<div style="font-size:0.7rem; font-weight:900; color:var(--primary); margin-bottom:5px; text-transform:uppercase;">⚔️ ${myLane} 1v1 Matchup</div><div style="font-size:0.85rem; font-weight:700; line-height:1.4; color:#fff;">${tip}</div>`;
+          laneMatchupBox.style.display = 'block';
+      } else {
+          laneMatchupBox.style.display = 'none';
+          laneMatchupBox.innerHTML = '';
+      }
+
       let items = [];
       const healers = enemyIds.filter(id => { const h = HEROES.find(x => x.id === id); return h && h.traits?.includes('healer'); }).length;
       const tanks = enemyIds.filter(id => { const h = HEROES.find(x => x.id === id); return h && h.traits?.includes('tank'); }).length;

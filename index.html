@@ -50,6 +50,11 @@
     .hero-flavor { font-size: 0.85rem; font-weight: 800; color: #fff; display: block; margin-bottom: 2px; line-height: 1.1; }
     .hero-name-label { font-size: 0.6rem; color: var(--primary); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; display: block; }
     .card-stats { display: flex; justify-content: center; gap: 10px; font-size: 0.65rem; font-weight: 800; }
+    
+    /* ROSTER STAR BUTTON */
+    .star-btn { position: absolute; top: 10px; right: 10px; background: transparent; border: none; font-size: 1.4rem; cursor: pointer; color: rgba(255,255,255,0.15); transition: 0.2s; z-index: 10; padding: 5px; line-height: 1;}
+    .star-btn:hover { color: rgba(255,255,255,0.5); transform: scale(1.1); }
+    .star-btn.active { color: var(--gold); text-shadow: 0 0 10px rgba(251, 191, 36, 0.8); }
 
     /* DETAIL VIEW */
     .dashboard { background: var(--card-bg); padding: 40px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); max-width: 900px; margin: 0 auto; }
@@ -105,8 +110,16 @@
     .item-name { color: #fff; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; }
     .item-desc { color: var(--text-dim); font-size: 0.65rem; margin-top: 4px; line-height: 1.3; }
 
-    .matchup-banner { display: flex; background: rgba(15, 23, 42, 0.6); padding: 20px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; gap: 40px; flex-wrap: wrap;}
+    /* COLLAPSIBLE MATCHUP BANNER CSS */
+    .matchup-container { background: rgba(15, 23, 42, 0.6); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; overflow: hidden; }
+    .matchup-header { padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(0,0,0,0.3); transition: 0.2s; }
+    .matchup-header:hover { background: rgba(0,0,0,0.5); }
+    .matchup-header-title { font-size: 0.8rem; font-weight: 900; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+    .matchup-toggle-btn { font-size: 1.5rem; color: var(--text-dim); font-weight: 900; line-height: 1; transition: 0.3s; }
     
+    .matchup-content { display: flex; padding: 20px 25px; gap: 40px; flex-wrap: wrap; transition: 0.3s ease; opacity: 1; max-height: 1000px; }
+    .matchup-content.collapsed { max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; }
+
     .spike-row { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
     .spike-score-text { font-family: 'Kanit'; font-weight: 900; font-size: 1.1rem; width: 40px; text-align: center; }
     .spike-score-ally { color: var(--ally-team); }
@@ -122,21 +135,24 @@
     .copy-draft-btn:hover { background: var(--primary); color: #fff; }
 
     /* 1v1 MATCHUP BOX */
-    #lane-matchup-output {
-      margin-top: 15px; 
-      padding-top: 15px; 
-      border-top: 1px solid rgba(255,255,255,0.1);
-      display: none;
-      animation: fadeIn 0.4s ease;
-    }
+    #lane-matchup-output { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); display: none; animation: fadeIn 0.4s ease; }
+
+    /* CUSTOM CHECKBOX FOR ROSTER TOGGLE */
+    .roster-toggle-wrap { display: flex; align-items: center; gap: 8px; margin-left: 15px; }
+    .roster-toggle-wrap input { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer;}
+    .roster-toggle-wrap label { font-size: 0.75rem; font-weight: 900; color: var(--gold); text-transform: uppercase; cursor: pointer;}
 
     @media (max-width: 1024px) {
       .draft-layout { flex-direction: column; align-items: stretch; }
       .team-panel { width: 100%; margin-bottom: 20px; }
-      .matchup-banner { flex-direction: column; gap: 20px; }
-      .matchup-banner > div { border-left: none !important; padding-left: 0 !important; }
-      .pool-grid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); max-height: 400px; }
-      .pool-hero-img { width: 55px; height: 55px; }
+      .matchup-content { flex-direction: column; gap: 20px; }
+      .matchup-content > div { border-left: none !important; padding-left: 0 !important; }
+      
+      /* COMPACT MOBILE POOL GRID */
+      .pool-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); max-height: 400px; }
+      .pool-hero-img { width: 50px; height: 50px; margin-bottom: 4px;}
+      .pool-hero-title { font-size: 0.6rem; }
+      
       .draft-controls-wrap { flex-direction: column; align-items: flex-start; gap: 15px;}
     }
   </style>
@@ -169,7 +185,11 @@
     <div id="view-draft" class="view">
       <div class="draft-controls-wrap" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h2 style="font-family:'Kanit'; font-size:1.8rem;">Ranked Team Builder</h2>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items: center;">
+          <div class="roster-toggle-wrap">
+            <input type="checkbox" id="roster-toggle" onchange="toggleUseRoster(this.checked)">
+            <label for="roster-toggle">★ My Roster Only</label>
+          </div>
           <button id="export-btn" class="copy-draft-btn" onclick="exportDraft()">📋 Copy Draft</button>
           <button class="copy-draft-btn" style="border-color:var(--gold); color:var(--gold); background:rgba(251,191,36,0.1);" onclick="suggestCounters()">💡 Suggest Pick</button>
           <button class="copy-draft-btn" style="border-color:var(--s-tier); color:white; background:rgba(239,68,68,0.2);" onclick="suggestBans()">🚫 Suggest Ban</button>
@@ -184,19 +204,27 @@
         <button class="role-btn" onclick="setMyDraftRole('Farm Lane', this)">Farm</button>
         <button class="role-btn" onclick="setMyDraftRole('Roam', this)">Roam</button>
       </div>
-      <div class="matchup-banner">
-        <div style="flex:1; min-width: 250px;">
-          <div style="font-size:0.7rem; font-weight:900; color:var(--text-dim); margin-bottom:15px;">POWER SPIKE RATINGS (OUT OF 10)</div>
-          <div class="spike-row"><div id="num-early-ally" class="spike-score-text spike-score-ally">0.0</div><div class="spike-bar-wrap"><div id="bar-early-ally" class="spike-bar-ally-fill" style="width:0%;"></div></div><div class="spike-label">EARLY</div><div class="spike-bar-wrap"><div id="bar-early-enemy" class="spike-bar-enemy-fill" style="width:0%;"></div></div><div id="num-early-enemy" class="spike-score-text spike-score-enemy">0.0</div></div>
-          <div class="spike-row"><div id="num-mid-ally" class="spike-score-text spike-score-ally">0.0</div><div class="spike-bar-wrap"><div id="bar-mid-ally" class="spike-bar-ally-fill" style="width:0%;"></div></div><div class="spike-label">MID</div><div class="spike-bar-wrap"><div id="bar-mid-enemy" class="spike-bar-enemy-fill" style="width:0%;"></div></div><div id="num-mid-enemy" class="spike-score-text spike-score-enemy">0.0</div></div>
-          <div class="spike-row"><div id="num-late-ally" class="spike-score-text spike-score-ally">0.0</div><div class="spike-bar-wrap"><div id="bar-late-ally" class="spike-bar-ally-fill" style="width:0%;"></div></div><div class="spike-label">LATE</div><div class="spike-bar-wrap"><div id="bar-late-enemy" class="spike-bar-enemy-fill" style="width:0%;"></div></div><div id="num-late-enemy" class="spike-score-text spike-score-enemy">0.0</div></div>
+      
+      <div class="matchup-container">
+        <div class="matchup-header" onclick="toggleCoach()">
+          <span class="matchup-header-title">📊 Tactical Coach & Matchup Analysis</span>
+          <span id="coach-toggle-btn" class="matchup-toggle-btn">−</span>
         </div>
-        <div style="flex:1; border-left:1px solid rgba(255,255,255,0.1); padding-left:25px; min-width: 250px;">
-           <div style="font-size:0.7rem; font-weight:900; color:var(--text-dim);">TACTICAL COACH</div>
-           <div id="draft-advice-text" style="font-size:0.85rem; font-weight:700; margin-top:5px; line-height:1.4;">Draft teams to generate tactical advice...</div>
-           <div id="lane-matchup-output"></div>
+        <div id="matchup-content" class="matchup-content">
+          <div style="flex:1; min-width: 250px;">
+            <div style="font-size:0.7rem; font-weight:900; color:var(--text-dim); margin-bottom:15px;">POWER SPIKE RATINGS (OUT OF 10)</div>
+            <div class="spike-row"><div id="num-early-ally" class="spike-score-text spike-score-ally">0.0</div><div class="spike-bar-wrap"><div id="bar-early-ally" class="spike-bar-ally-fill" style="width:0%;"></div></div><div class="spike-label">EARLY</div><div class="spike-bar-wrap"><div id="bar-early-enemy" class="spike-bar-enemy-fill" style="width:0%;"></div></div><div id="num-early-enemy" class="spike-score-text spike-score-enemy">0.0</div></div>
+            <div class="spike-row"><div id="num-mid-ally" class="spike-score-text spike-score-ally">0.0</div><div class="spike-bar-wrap"><div id="bar-mid-ally" class="spike-bar-ally-fill" style="width:0%;"></div></div><div class="spike-label">MID</div><div class="spike-bar-wrap"><div id="bar-mid-enemy" class="spike-bar-enemy-fill" style="width:0%;"></div></div><div id="num-mid-enemy" class="spike-score-text spike-score-enemy">0.0</div></div>
+            <div class="spike-row"><div id="num-late-ally" class="spike-score-text spike-score-ally">0.0</div><div class="spike-bar-wrap"><div id="bar-late-ally" class="spike-bar-ally-fill" style="width:0%;"></div></div><div class="spike-label">LATE</div><div class="spike-bar-wrap"><div id="bar-late-enemy" class="spike-bar-enemy-fill" style="width:0%;"></div></div><div id="num-late-enemy" class="spike-score-text spike-score-enemy">0.0</div></div>
+          </div>
+          <div style="flex:1; border-left:1px solid rgba(255,255,255,0.1); padding-left:25px; min-width: 250px;">
+             <div style="font-size:0.7rem; font-weight:900; color:var(--text-dim);">TACTICAL ADVICE</div>
+             <div id="draft-advice-text" style="font-size:0.85rem; font-weight:700; margin-top:5px; line-height:1.4;">Draft teams to generate tactical advice...</div>
+             <div id="lane-matchup-output"></div>
+          </div>
         </div>
       </div>
+
       <div class="draft-layout">
         <div class="team-panel ally-team">
           <div class="team-header">Ally Team</div>
@@ -239,133 +267,130 @@
     }
 
     const HERO_DATA=[
-    {t:'Princess Frost',i:'Wang Zhaojun',r:'Mage',tr:'A',l:'Mid Lane / Roam',s:'Mid-Game',ts:['control','cc'],w:'50.4%',p:'14.2%', d:'Excellent blind pick. Her massive AoE control shuts down hard-engage and dive comps effectively.'},
-    {t:'Evernight Aspiration',i:'Haya',r:'Mage',tr:'A',l:'Mid Lane',s:'Late-Game',ts:['poke'],w:'51.1%',p:'11.5%', d:'Strong lane pressure and global mobility. Pick to out-rotate immobile mages and impact side lanes early.'},
-    {t:'Calligrapher',i:'Shangguan',r:'Mage',tr:'C',l:'Mid Lane',s:'Level 4',ts:['burst','dive'],w:'47.8%',p:'4.2%', d:'Ultimate backline threat. Pick her when the enemy relies on immobile squishy carries without hard CC.'},
-    {t:'Fateturner',i:'Heino',r:'Mage',tr:'C',l:'Mid Lane / Clash Lane',s:'Late-Game',ts:['sustain'],w:'46.5%',p:'5.1%', d:'Insane sustain and poke. Pick into heavy melee comps that struggle to close the gap quickly.'},
-    {t:'Fireninja',i:'Mai Shiranui',r:'Mage',tr:'C',l:'Mid Lane',s:'Mid-Game',ts:['burst','mobility'],w:'47.2%',p:'6.8%', d:'High burst and mobility. Great against squishy line-ups, but struggles against heavy crowd control.'},
-    {t:'Heartseeker',i:'Daji',r:'Mage',tr:'S',l:'Mid Lane',s:'Late-Game',ts:['burst'],w:'54.7%',p:'22.1%', d:'Incredible single-target deletion. Pick into squishy assassin/mage comps, but avoid picking into heavy tanks.'},
-    {t:'Scorchette',i:'Angela',r:'Mage',tr:'S',l:'Mid Lane',s:'Early-Mid',ts:['burst','aoe'],w:'53.3%',p:'19.8%', d:'Unmatched early wave clear. Pick to establish fast mid priority and aggressively invade the enemy jungle.'},
-    {t:'Timebender',i:'Sun Bin',r:'Support',tr:'C',l:'Roam',s:'Late-Game',ts:['utility'],w:'47.9%',p:'7.4%', d:'Late-game enabler. Pair with hyper-carries or sustained fighters to overwhelm enemies with speed and healing.'},
-    {t:'Mastermind',i:'Kongming',r:'Mage',tr:'B',l:'Mid Lane / Jungle',s:'Mid-Late',ts:['burst','execute'],w:'48.5%',p:'9.2%', d:'Snowball heavy assassin-mage. Pick him when your team has strong engage to guarantee his ultimate executes.'},
-    {t:'Breezeheart',i:'Xiao Qiao',r:'Mage',tr:'A',l:'Mid Lane',s:'Late-Game',ts:['burst'],w:'50.9%',p:'15.3%', d:'Massive late-game AoE burst. Excellent into teamfight-heavy comps but needs peel against dive assassins.'},
-    {t:'Lotusdancer',i:'Diaochan',r:'Mage',tr:'C',l:'Mid Lane / Clash Lane',s:'Mid-Game',ts:['true_damage'],w:'46.8%',p:'8.1%', d:'Tank-melter with high sustain. Unstoppable against low-burst, heavy melee comps if she avoids hard CC.'},
-    {t:'Mechaboss',i:'Milady',r:'Mage',tr:'A',l:'Mid Lane',s:'Early-Mid',ts:['push'],w:'51.4%',p:'10.5%', d:'Incredible pushing power. Pick her to punish heavy-roaming enemy mids by taking their towers instantly.'},
-    {t:'Divine Enforcer',i:'Ziya',r:'Mage',tr:'B',l:'Mid Lane / Roam',s:'Late-Game',ts:['utility'],w:'49.1%',p:'6.3%', d:'Late-game utility and EXP boost. Pick to accelerate your team\'s scaling and break base sieges.'},
-    {t:'Smith and Blade',i:'Gan & Mo',r:'Mage',tr:'C',l:'Mid Lane',s:'Mid-Late',ts:['poke'],w:'47.1%',p:'5.5%', d:'Incredible long-range burst. Pick against slow, immobile backlines that cannot dodge his swords.'},
-    {t:'Avici Puppeteer',i:'Yango',r:'Mage',tr:'B',l:'Clash Lane',s:'Late-Game',ts:['control'],w:'48.2%',p:'3.8%', d:'Strong objective control. Pick into teams that rely on a single carry, pulling them into the abyss.'},
-    {t:'Boardmaster',i:'Yixing',r:'Mage',tr:'B',l:'Mid Lane',s:'Mid-Late',ts:['control'],w:'52.8%',p:'8.4%', d:'The ultimate zone controller. Use his ultimate to trap low-mobility enemies or protect your team from dive.'},
-    {t:'Celestial',i:'Nuwa',r:'Mage',tr:'B',l:'Mid Lane',s:'Late-Game',ts:['range'],w:'49.3%',p:'4.1%', d:'Global presence and terrain creation. Perfect for delaying the game and stalling pushes against siege comps.'},
-    {t:'Curious Mixture',i:'Dr Bian',r:'Mage',tr:'C',l:'Mid Lane',s:'Early-Mid',ts:['healer'],w:'46.4%',p:'2.9%', d:'Sustained damage and team healing. Best paired with beefy frontlines to win extended, slow teamfights.'},
-    {t:'Inferno',i:'Zhou Yu',r:'Mage',tr:'C',l:'Mid Lane',s:'Mid-Game',ts:['control'],w:'47.5%',p:'4.7%', d:'Incredible zone denial and tower pushing. Pick into objective-focused comps to control the map with fire.'},
-    {t:'Silkweaver',i:'Shi',r:'Mage',tr:'C',l:'Mid Lane / Roam',s:'Mid-Game',ts:['control'],w:'46.9%',p:'3.4%', d:'Strong utility and displacement. Great for disrupting enemy formations and saving caught-out allies.'},
-    {t:'Tunecaster',i:'Yuhuan',r:'Mage',tr:'C',l:'Mid Lane / Jungle / Roam',s:'Late-Game',ts:['sustain'],w:'47.6%',p:'5.8%', d:'Versatile healer and poke mage. Pick for sustained teamfights and invulnerability to dodge key ultimates.'},
-    {t:'Demonplate',i:'Kaizer',r:'Tank',tr:'S',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['sustain','tank'],w:'52.5%',p:'18.4%', d:'An incredibly safe blind pick. Thrives in extended skirmishes and can easily isolate and lock down carries.'},
-    {t:'Earthshaker',i:'Lian Po',r:'Tank',tr:'A',l:'Clash Lane / Roam',s:'Early-Mid',ts:['cc','tank'],w:'50.2%',p:'11.2%', d:'Disruptive CC tank. Ideal for initiating teamfights and breaking up enemy backlines with chain knock-ups.'},
-    {t:'Harbinger',i:'Donghuang',r:'Tank',tr:'A',l:'Clash Lane / Roam',s:'Level 4',ts:['lockdown','sustain'],w:'51.1%',p:'14.5%', d:'The ultimate anti-carry. Pick him strictly to suppress ultra-mobile enemy assassins like Lam or Jing.'},
-    {t:'The Beast',i:'Zhang Fei',r:'Tank',tr:'C',l:'Roam',s:'Late-Game',ts:['shield','tank'],w:'47.3%',p:'8.6%', d:'Ultimate peeling tank. Pick him to protect immobile marksmen from heavy burst and dive assassins.'},
-    {t:'Dreamwanderer',i:'Zhuangzi',r:'Tank',tr:'B',l:'Clash Lane / Roam',s:'Mid-Game',ts:['cc_immune'],w:'48.7%',p:'9.1%', d:'The hard-CC counter. Pick him strictly when the enemy team relies heavily on AoE stuns and lockdown.'},
-    {t:'Mecha Brat',i:'Liu Shan',r:'Tank',tr:'C',l:'Roam',s:'Early-Game',ts:['cc','push'],w:'46.8%',p:'6.2%', d:'Tower-diving menace. Pick with aggressive marksmen or early-game junglers to snowball through objectives.'},
-    {t:'Sledgehammer',i:'Wuyan',r:'Tank',tr:'C',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['cc'],w:'51.3%',p:'0.4%', d:'High damage frontline. Excellent for skirmishing and zoning squishies with her area petrification.'},
-    {t:'Belligerence',i:'Dun',r:'Tank',tr:'A',l:'Clash Lane / Jungle / Roam',s:'Mid-Game',ts:['tank'],w:'50.6%',p:'12.3%', d:'Versatile frontline flex. Provides strong CC, sustain, and true damage. A very safe blind pick for any comp.'},
-    {t:'Ultimate Weapon',i:'Bai Qi',r:'Tank',tr:'C',l:'Clash Lane',s:'Late-Game',ts:['tank'],w:'47.1%',p:'5.7%', d:'Massive AoE taunt. Pick when your team has heavy follow-up burst damage like Marco Polo or Angela.'},
-    {t:'White Anchor',i:'Ata',r:'Tank',tr:'B',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['sustain'],w:'48.9%',p:'4.8%', d:'Wall-bouncing sustain tank. Incredible early jungle invader and great at trapping immobile carries in terrain.'},
-    {t:'Dominant Ruler',i:'Liu Bang',r:'Tank',tr:'C',l:'Clash Lane / Roam',s:'Mid-Game',ts:['global','shield'],w:'46.5%',p:'3.9%', d:'Global split-pusher. Pick him to pressure side lanes and instantly shield your hyper-carry during teamfights.'},
-    {t:'Unyielding Overlord',i:'Xiang Yu',r:'Tank',tr:'B',l:'Clash Lane / Roam',s:'Mid-Game',ts:['cc','tank'],w:'49.2%',p:'7.5%', d:'Unkillable late-game beast. Pick him to soak massive damage and counter-engage with his unyielding burst.'},
-    {t:'Soulguide',i:'Augran',r:'Fighter',tr:'S',l:'Jungle / Clash Lane',s:'Mid-Late',ts:['execute'],w:'55.1%',p:'24.2%', d:'Top tier execute threat. Pick when the enemy relies on shields or heavy sustain, as he completely bypasses them.'},
-    {t:'Unrivaled Warrior',i:'Lu Bu',r:'Fighter',tr:'B',l:'Clash Lane',s:'Late-Game',ts:['true_damage'],w:'48.4%',p:'16.8%', d:'The ultimate true-damage tank shredder. Pick into heavy frontline comps and punish them in extended fights.'},
-    {t:'Sparkmace',i:'Biron',r:'Fighter',tr:'A',l:'Clash Lane',s:'Early-Game',ts:['shield'],w:'50.7%',p:'9.6%', d:'Early-game lane bully. Pick him to dominate the clash lane and invade the enemy jungle with massive shields.'},
-    {t:'Ironbloom',i:'Mulan',r:'Fighter',tr:'C',l:'Clash Lane',s:'Level 4+',ts:['burst'],w:'47.4%',p:'8.2%', d:'High-skill burst assassin. Excellent at silencing and deleting key targets from the flank before fights start.'},
-    {t:'War Saint',i:'Guan Yu',r:'Fighter',tr:'C',l:'Clash Lane / Roam',s:'Mid-Game',ts:['mobility'],w:'46.7%',p:'6.1%', d:'High-speed flanker. Pick into low-CC teams to constantly disrupt their formation and isolate carries.'},
-    {t:'Vengeance',i:'Li Xin',r:'Fighter',tr:'S',l:'Clash Lane',s:'Mid-Game',ts:['sustain'],w:'52.1%',p:'15.4%', d:'Versatile fighter. Pick Light form for high ground defense/poke, or Dark form for relentless split-pushing.'},
-    {t:'Cold Spear',i:'Ma Chao',r:'Fighter',tr:'C',l:'Clash Lane',s:'Mid-Late',ts:['mobility'],w:'47.8%',p:'5.3%', d:'Ultra-mobile carry. Requires high mechanical skill, but can single-handedly take over if uncontested by CC.'},
-    {t:'Martial Genius',i:'Mayene',r:'Fighter',tr:'C',l:'Clash Lane / Jungle',s:'Late-Game',ts:['mobility'],w:'46.2%',p:'4.5%', d:'Combo-reliant duelist. Excellent at 1v1 isolating enemies, but struggles in large, chaotic 5v5 teamfights.'},
-    {t:'Forgotten Blade',i:'Allain',r:'Fighter',tr:'C',l:'Clash Lane',s:'Late-Game',ts:['true_damage'],w:'47.9%',p:'7.8%', d:'True damage bruiser. His ultimate makes him untargetable, perfect for diving the backline and shredding tanks.'},
-    {t:'Peaceful Fist',i:'Dharma',r:'Fighter',tr:'C',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['cc'],w:'46.6%',p:'3.2%', d:'Wall-kicking initiator. Pick into squishy backlines and look for flash-ultimate plays near jungle terrain.'},
-    {t:'Seafarer',i:'Sun Ce',r:'Fighter',tr:'B',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['engage'],w:'49.4%',p:'10.1%', d:'Global engage threat. Pick him to roam quickly and combo his ship into guaranteed kills on the marksman.'},
-    {t:'Shadowblade',i:'Gao Changgong',r:'Fighter',tr:'A',l:'Jungle',s:'Mid-Game',ts:['burst'],w:'51.2%',p:'13.7%', d:'Slippery assassin. Great at entering fights, bursting a squishy, and escaping before the enemy can react.'},
-    {t:'Swift Strike',i:'Ukyo Tachibana',r:'Assassin',tr:'B',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['burst'],w:'48.8%',p:'8.9%', d:'Strong early-game skirmisher. Pick him for high burst and sustain in short, fast-paced trades.'},
-    {t:'Rose Fencer',i:'Charlotte',r:'Fighter',tr:'B',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['sustain'],w:'49.1%',p:'9.4%', d:'Combo-heavy duelist. Excels against physical damage fighters by reducing their attack speed and bursting them.'},
-    {t:'Raveness',i:'Mi Yue',r:'Fighter',tr:'B',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['sustain'],w:'48.3%',p:'6.5%', d:'Sustain and split-push queen. Pick her to dominate the 1v1 lane and constantly steal enemy jungle camps.'},
-    {t:'Paladin',i:'Arthur',r:'Fighter',tr:'A',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['silence'],w:'54.2%',p:'18.5%', d:'Simple but effective bruiser. His silence is lethal against combo-reliant mages and mobile assassins.'},
-    {t:'Forge Maiden',i:'Chicha',r:'Fighter',tr:'S',l:'Clash Lane / Farm Lane / Jungle',s:'Mid-Game',ts:['cc'],w:'52.8%',p:'14.1%', d:'High-mobility initiator. Her pulling abilities easily disrupt enemy formations and isolate targets.'},
-    {t:'Mighty Conqueror',i:'Fatih',r:'Fighter',tr:'B',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['sustain'],w:'48.6%',p:'5.2%', d:'Sustained bruiser. Pick him for his ability to mitigate damage and outlast opponents in prolonged brawls.'},
-    {t:'Pointblank',i:'Liu Bei',r:'Fighter',tr:'B',l:'Jungle',s:'Early-Mid',ts:['burst'],w:'49.3%',p:'7.1%', d:'Close-range burst. Excellent at securing early dragons and countering CC-heavy teams with his ultimate.'},
-    {t:'Reefheart Datu',i:'Lapulapu',r:'Fighter',tr:'C',l:'Clash Lane / Roam',s:'Mid-Game',ts:['shield'],w:'47.2%',p:'4.3%', d:'Teamfight disruptor. Jumps into the backline with his heavy sword to soak damage and burst squishies.'},
-    {t:'Wild Spark',i:'Nezha',r:'Fighter',tr:'A',l:'Clash Lane / Jungle',s:'Late-Game',ts:['global'],w:'51.5%',p:'11.8%', d:'Global lock-on initiator. The ultimate counter to split-pushers and slippery backline marksmen.'},
-    {t:'Dominant',i:'Cao Cao',r:'Fighter',tr:'B',l:'Clash Lane',s:'Mid-Game',ts:['sustain'],w:'48.5%',p:'6.7%', d:'Incredible lifesteal duelist. Thrives in extended fights where he can continuously heal through enemy damage.'},
-    {t:'Trilight',i:'Yang Jian',r:'Fighter',tr:'C',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['execute'],w:'46.9%',p:'3.5%', d:'Early-game dominator. Look for execute opportunities with his hound and snowball the game fast.'},
-    {t:'Daybreak',i:'Pangu',r:'Fighter',tr:'B',l:'Clash Lane',s:'Early-Mid',ts:['disarm'],w:'49.0%',p:'4.9%', d:'The auto-attack counter. His disarm completely shuts down heroes like Wukong, Marco Polo, and Hou Yi.'},
-    {t:'Peacekeeper',i:'Mozi',r:'Fighter',tr:'B',l:'Mid Lane / Roam',s:'Late-Game',ts:['poke','cc'],w:'48.7%',p:'8.8%', d:'Long-range poke and stun. Pick him to constantly harass enemies under tower and set up kills for your team.'},
-    {t:'Berserker',i:'Dian Wei',r:'Fighter',tr:'A',l:'Jungle',s:'Late-Game',ts:['true_damage'],w:'50.8%',p:'12.5%', d:'Late-game true damage monster. Struggles against heavy kite, but unstoppable if he reaches his target.'},
-    {t:'Broken Mirage',i:'Jing',r:'Assassin',tr:'C',l:'Jungle',s:'Early-Mid',ts:['burst','dive'],w:'47.4%',p:'9.3%', d:'High-ceiling dive assassin. Her mirror combos can instantly delete the backline if executed perfectly.'},
-    {t:'Moonblade',i:'Luna',r:'Assassin',tr:'C',l:'Jungle',s:'Level 4+',ts:['magic_dps'],w:'46.8%',p:'7.2%', d:'Infinite dash potential. Pick her if the enemy lacks hard CC; she can 1v5 if played perfectly with blue buff.'},
-    {t:'Stealthfin',i:'Lam',r:'Assassin',tr:'A',l:'Jungle',s:'Mid-Late',ts:['dive'],w:'54.9%',p:'31.5%', d:'Punishes grouped-up enemies and low-mobility backlines. Perfect for diving and isolating the enemy marksman.'},
-    {t:'Windspear',i:'Han Xin',r:'Assassin',tr:'C',l:'Jungle',s:'Early-Mid',ts:['mobility'],w:'47.1%',p:'15.6%', d:'Ultimate mobility and split-pusher. Pick him to constantly apply map pressure and steal objectives.'},
-    {t:'Featherfoot',i:'Feyd',r:'Assassin',tr:'B',l:'Jungle',s:'Mid-Game',ts:['burst'],w:'49.2%',p:'8.5%', d:'Wall-walking burst. Great at flanking from unexpected angles and instantly deleting the enemy carry.'},
-    {t:'Shadowstalker',i:'Arke',r:'Assassin',tr:'A',l:'Jungle',s:'Mid-Game',ts:['flank'],w:'50.6%',p:'11.4%', d:'Reset-heavy assassin. Pick her when you have a strong engage team to clean up low-health enemies in fights.'},
-    {t:'Nightplume',i:'Umbrosa',r:'Assassin',tr:'B',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['invis','burst'],w:'51.5%',p:'11.4%', d:'Stealthy burst threat. Her invisibility forces the enemy to play passively and buy defensive items early.'},
-    {t:'Prince',i:'Prince of Lanling',r:'Assassin',tr:'A',l:'Jungle',s:'Early-Game',ts:['invis'],w:'50.9%',p:'16.2%', d:'Early-game terror. Use his stealth to constantly gank and mentally break the enemy marksman.'},
-    {t:'Lyricist',i:'Li Bai',r:'Assassin',tr:'B',l:'Jungle',s:'Late-Game',ts:['untargetable'],w:'48.6%',p:'13.1%', d:'Untargetable poke assassin. Build up stacks on jungle camps, dash in, use ultimate, and warp back to safety.'},
-    {t:'Death\'s Whisper',i:'Butterfly',r:'Assassin',tr:'C',l:'Jungle',s:'Mid-Game',ts:['reset'],w:'47.7%',p:'10.5%', d:'Snowball queen. Her resets allow her to wipe entire teams if she gets the first kill in a teamfight.'},
-    {t:'Firespear',i:'Ying',r:'Assassin',tr:'S',l:'Jungle',s:'Mid-Game',ts:['cc'],w:'52.4%',p:'17.3%', d:'Disruptive fighter-assassin. Pick her for strong CC chains and extended skirmishing power.'},
-    {t:'Hawk Whisperer',i:'Nakoruru',r:'Assassin',tr:'C',l:'Jungle',s:'Mid-Game',ts:['burst'],w:'46.5%',p:'5.8%', d:'High-mobility burst. Her hawk allows her to drop massive damage on the backline and escape quickly.'},
-    {t:'Madlash',i:'Xuance',r:'Assassin',tr:'C',l:'Jungle',s:'Early-Mid',ts:['control'],w:'47.3%',p:'4.2%', d:'High-skill hook assassin. Completely controls the flow of a fight if he successfully lands his hook on a carry.'},
-    {t:'Tigerous',i:'Pei',r:'Assassin',tr:'B',l:'Jungle',s:'Early-Game',ts:['early_pressure'],w:'49.1%',p:'8.7%', d:'Early jungle invader. Switch between ranged poke and melee burst to dominate the early map control.'},
-    {t:'Razorwing',i:'Cirrus',r:'Assassin',tr:'C',l:'Jungle',s:'Mid-Game',ts:['mobility'],w:'46.9%',p:'5.5%', d:'Airborne mobility. Great at bypassing the frontline completely to drop his burst directly on the backline.'},
-    {t:'Monkey King',i:'Wukong',r:'Assassin',tr:'S',l:'Jungle',s:'Late-Game',ts:['crit'],w:'51.8%',p:'21.4%', d:'Late-game crit monster. Weak early, but can one-shot almost any squishy hero once he gets his core items.'},
-    {t:'Fearless Spear',i:'Zilong',r:'Assassin',tr:'C',l:'Jungle',s:'Mid-Game',ts:['sustain'],w:'47.6%',p:'9.8%', d:'Jack-of-all-trades assassin. Provides reliable knock-ups and decent sustain for balanced team compositions.'},
-    {t:'Sacred Warrior',i:'Athena',r:'Assassin',tr:'C',l:'Jungle',s:'Mid-Game',ts:['execute'],w:'46.2%',p:'2.5%', d:'Relentless dive. Her continuous dashes and vision-providing death state make her a nuisance all game.'},
-    {t:'Shadowreaper',i:'Sima Yi',r:'Assassin',tr:'C',l:'Mid Lane / Jungle',s:'Mid-Game',ts:['silence'],w:'47.5%',p:'6.4%', d:'Magic damage assassin. His global vision and silence make him the perfect counter to squishy mages.'},
-    {t:'Starblade',i:'Yao',r:'Assassin',tr:'B',l:'Clash Lane / Jungle',s:'Mid-Late',ts:['kite'],w:'48.5%',p:'7.9%', d:'Sustained magic damage kite. Pick him to safely deal damage from afar while staying immune to hard engage.'},
-    {t:'Gunslinger',i:'Marco Polo',r:'Marksman',tr:'S',l:'Farm Lane',s:'Mid-Game',ts:['true_damage'],w:'53.6%',p:'26.7%', d:'The ultimate tank-buster. Pick him specifically when the enemy drafts 2+ tanks or bulky, slow fighters.'},
-    {t:'Mecha Shooter',i:'Luban No.7',r:'Marksman',tr:'B',l:'Farm Lane',s:'Late-Game',ts:['high_dps'],w:'49.4%',p:'20.1%', d:'Immobile machine gun. Deals massive %HP damage but requires a dedicated tank like Zhang Fei to babysit him.'},
-    {t:'Solarus',i:'Hou Yi',r:'Marksman',tr:'S',l:'Farm Lane',s:'Late-Game',ts:['high_dps'],w:'51.6%',p:'22.5%', d:'Classic hyper-carry. Offers strong engage with his ultimate and melts teams if left unchecked in late game.'},
-    {t:'Longshot',i:'Shouyue',r:'Marksman',tr:'C',l:'Farm Lane',s:'Early-Game',ts:['poke'],w:'46.8%',p:'18.2%', d:'Sniper marksman. Pick him for massive early-game poke and securing vision with his traps.'},
-    {t:'Loong',i:'Ao\'yin',r:'Marksman',tr:'A',l:'Farm Lane',s:'Late-Game',ts:['sustain'],w:'55.3%',p:'28.4%', d:'Highly self-sufficient marksman. Pick him when your team lacks peel, as his ultimate guarantees a safe escape.'},
-    {t:'Parasola',i:'Arli',r:'Marksman',tr:'C',l:'Farm Lane',s:'Mid-Game',ts:['mobility'],w:'47.2%',p:'11.3%', d:'Hyper-mobile outplayer. Excellent against skillshot-reliant enemies, but requires fast reflexes to survive.'},
-    {t:'Magistrate',i:'Di Renjie',r:'Marksman',tr:'C',l:'Farm Lane',s:'Mid-Game',ts:['anti_cc'],w:'47.9%',p:'13.5%', d:'Anti-CC marksman. His built-in cleanse makes him incredibly strong against teams with single-target stuns.'},
-    {t:'Cannon Belle',i:'Lady Sun',r:'Marksman',tr:'B',l:'Farm Lane',s:'Late-Game',ts:['burst'],w:'48.7%',p:'15.8%', d:'High burst mobility. Roll in, burst a target, and roll out. Great for hit-and-run tactics.'},
-    {t:'Laurel Princess',i:'Erin',r:'Marksman',tr:'A',l:'Farm Lane',s:'Mid-Game',ts:['magic_dps'],w:'50.5%',p:'9.2%', d:'Magic damage marksman. Pick her when your team drafts too much physical damage (AD) to balance the comp.'},
-    {t:'Loose Cannon',i:'Meng Ya',r:'Marksman',tr:'C',l:'Farm Lane',s:'Mid-Game',ts:['aoe'],w:'47.4%',p:'8.6%', d:'AoE suppression. His constant barrage is great for extended teamfights and suppressing enemy movement.'},
-    {t:'Piercing Arrow',i:'Garo',r:'Marksman',tr:'A',l:'Farm Lane',s:'Late-Game',ts:['range'],w:'51.1%',p:'14.7%', d:'Ultra long-range crit. Destroys shield-reliant heroes (like Zhang Fei/Kaizer) but needs heavy peel to survive.'},
-    {t:'Firesnake',i:'Luara',r:'Marksman',tr:'A',l:'Farm Lane',s:'Mid-Game',ts:['mobility'],w:'50.8%',p:'12.1%', d:'High-mobility damage. Uses terrain to her advantage to kite enemies and deal consistent damage.'},
-    {t:'Woodland Ranger',i:'Consort Yu',r:'Marksman',tr:'A',l:'Farm Lane',s:'Mid-Game',ts:['anti_phys'],w:'50.3%',p:'13.4%', d:'Anti-physical marksman. Her physical immunity makes her the ultimate counter to AD assassins like Wukong.'},
-    {t:'Artillerist',i:'Huang Zhong',r:'Marksman',tr:'C',l:'Farm Lane',s:'Late-Game',ts:['range'],w:'47.6%',p:'7.9%', d:'Siege master. His ultimate turns him into a turret; pair him with strong defensive tanks to auto-win base fights.'},
-    {t:'Red Hawk',i:'Alessio',r:'Marksman',tr:'C',l:'Farm Lane',s:'Mid-Game',ts:['aoe'],w:'46.9%',p:'6.3%', d:'Airborne AoE marksman. Great at dodging ground-based CC and dealing massive splash damage in teamfights.'},
-    {t:'Wild Rider',i:'Agudo',r:'Marksman',tr:'C',l:'Farm Lane / Jungle',s:'Mid-Game',ts:['utility'],w:'47.1%',p:'3.8%', d:'Supportive jungler. Rapidly clears camps and pushes towers fast with her animal army. Pairs well with hyper-carries.'},
-    {t:'Packleader',i:'Chano',r:'Marksman',tr:'C',l:'Farm Lane / Jungle',s:'Mid-Late',ts:['sustain'],w:'46.5%',p:'5.1%', d:'Sustained beast-rider. Good mobility and sustain; uses his wolf to soak damage and reposition in fights.'},
-    {t:'Seasinger',i:'Dolia',r:'Support',tr:'S',l:'Roam',s:'Level 4+',ts:['refresh'],w:'52.7%',p:'25.6%', d:'An absolute priority pick. Pair her with heroes that have game-changing ultimates to double their impact.'},
-    {t:'Healing Tone',i:'Cai Yan',r:'Support',tr:'S',l:'Roam',s:'Early-Mid',ts:['healer'],w:'51.9%',p:'19.4%', d:'The ultimate mobile ambulance. Pick her to counter heavy poke comps and keep your team topped off.'},
-    {t:'Bondweaver',i:'Dyadia',r:'Support',tr:'A',l:'Roam',s:'Mid-Game',ts:['healer'],w:'50.4%',p:'14.2%', d:'Sustain and gold thief. Constantly harasses the enemy while providing steady healing for your lane partner.'},
-    {t:'Lanternlight',i:'Da Qiao',r:'Support',tr:'B',l:'Roam / Mid Lane',s:'Late-Game',ts:['global'],w:'49.2%',p:'11.8%', d:'Macro-game mastermind. Use her portals to instantly rotate your team across the map and secure objectives.'},
-    {t:'Deerie',i:'Yaria',r:'Support',tr:'A',l:'Roam',s:'Mid-Game',ts:['shield'],w:'53.8%',p:'25.3%', d:'Pair exclusively with a hyper-carry Jungler or Marksman. Weak against comps with heavy area-of-effect (AoE) burst.'},
-    {t:'Dream Spirit',i:'Menki',r:'Support',tr:'C',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['tank'],w:'47.5%',p:'4.1%', d:'Tanky AP bruiser. Uses his massive shield to bully opponents in lane and disrupt teamfights.'},
-    {t:'Animist',i:'Guiguzi',r:'Support',tr:'C',l:'Roam',s:'Mid-Game',ts:['invis'],w:'46.8%',p:'5.6%', d:'Invisibility initiator. His AoE pull sets up devastating wombo-combos for heroes like Marco Polo or Gao.'},
-    {t:'Brushstrider',i:'Sakeer',r:'Support',tr:'C',l:'Roam',s:'Mid-Game',ts:['control'],w:'47.2%',p:'3.5%', d:'Strong CC and vision control. Great at scouting bushes and locking down isolated targets.'},
-    {t:'Private Ear',i:'Fang',r:'Support',tr:'C',l:'Farm Lane / Jungle',s:'Early-Mid',ts:['poke'],w:'47.9%',p:'8.3%', d:'Objective shredder. His early burst secures dragons and towers incredibly fast to snowball the game.'},
-    {t:'Star Teller',i:'Ming',r:'Support',tr:'C',l:'Roam',s:'Late-Game',ts:['buff'],w:'46.4%',p:'7.1%', d:'Single-target buffer. Attach him to a hyper-carry like Hou Yi or Wukong to make them virtually unstoppable.'},
-    {t:'Wise Sage',i:'Fuzi',r:'Support',tr:'B',l:'Clash Lane',s:'Mid-Game',ts:['control'],w:'48.8%',p:'9.5%', d:'The ultimate 1v1 lockdown. Pick him to tie down the enemy carry with his ultimate and split-push relentlessly.'},
-    {t:'Voidcaller',i:'Kui',r:'Mage',tr:'B',l:'Roam',s:'Early-Game',ts:['cc'],w:'49.5%',p:'12.8%', d:'Hook master. Pick him to terrorize immobile mages and marksmen by pulling them into your team.'},
-    {t:'Tomemaster',i:'Liang',r:'Mage',tr:'B',l:'Mid Lane / Roam',s:'Mid-Game',ts:['cc','control'],w:'49.5%',p:'5.2%', d:'Hard-CC lockdown. His suppression ultimate cannot be cleansed, making him the perfect counter to mobile assassins.'},
-    {t:'Cascada',i:'Lady Zhen',r:'Mage',tr:'A',l:'Mid Lane',s:'Mid-Late',ts:['control','burst'],w:'51.2%',p:'8.1%', d:'Massive AoE teamfight control. Her bouncing water and frozen terrain absolutely destroy tightly packed enemy comps.'},
-    {t:'Fatal Lyrist',i:'Gao',r:'Mage',tr:'B',l:'Mid Lane',s:'Mid-Game',ts:['aoe','sustain'],w:'48.3%',p:'6.2%', d:'Sustained AoE burst. He needs to dive into the center of the fight, so pair him with a tank that can peel for him.'},
-    {t:'Majestic Guardian',i:'Garuda',r:'Mage',tr:'A',l:'Mid Lane',s:'Late-Game',ts:['poke','range'],w:'51.8%',p:'12.3%', d:'Long-range artillery. Pick him for safe, consistent poke damage and strong high-ground defense.'},
-    {t:'Arcane Heart',i:'Hai Yue',r:'Mage',tr:'A',l:'Mid Lane',s:'Mid-Game',ts:['control','poke'],w:'50.1%',p:'7.5%', d:'1v1 isolation mage. Her ultimate pulls the enemy carry into a separate dimension, removing them from teamfights.'},
-    {t:'Steady Will',i:'Steady Will',r:'Marksman',tr:'B',l:'Farm Lane',s:'Mid-Game',ts:['mobility'],w:'49.6%',p:'8.2%', d:'Sustained mobility marksman. Good at kiting frontline bruisers while maintaining consistent DPS.'},
-    {t:'Swordmaster',i:'Musashi',r:'Fighter',tr:'S',l:'Jungle',s:'Mid-Game',ts:['anti_projectile'],w:'51.9%',p:'16.5%', d:'Anti-projectile bruiser. His windwall destroys incoming mage and marksman attacks, making him an amazing counter-pick.'}
+    {t:'Princess Frost',i:'Wang Zhaojun',r:'Mage',tr:'A',l:'Mid Lane / Roam',s:'Mid-Game',ts:['control','cc'],w:'50.4%',p:'14.2%', d:'Excellent blind pick. Massive AoE control shuts down hard-engage dive comps. Pair with heavy CC frontliners (like Lian Po) to guarantee her ultimate.'},
+    {t:'Evernight Aspiration',i:'Haya',r:'Mage',tr:'A',l:'Mid Lane',s:'Late-Game',ts:['poke'],w:'51.1%',p:'11.5%', d:'Strong lane pressure and global mobility. Pick to out-rotate immobile mages and impact side lanes early. Requires good map awareness to track enemy junglers.'},
+    {t:'Calligrapher',i:'Shangguan',r:'Mage',tr:'C',l:'Mid Lane',s:'Level 4',ts:['burst','dive'],w:'47.8%',p:'4.2%', d:'Ultimate backline threat. Pick her when the enemy relies on immobile squishy carries without hard CC. Extremely vulnerable to early invades and hard lockdown.'},
+    {t:'Fateturner',i:'Heino',r:'Mage',tr:'C',l:'Mid Lane / Clash Lane',s:'Late-Game',ts:['sustain'],w:'46.5%',p:'5.1%', d:'Insane sustain and poke. Pick into heavy melee comps that struggle to close the gap. Highly reliant on his ultimate to reverse bad trades.'},
+    {t:'Fireninja',i:'Mai Shiranui',r:'Mage',tr:'C',l:'Mid Lane',s:'Mid-Game',ts:['burst','mobility'],w:'47.2%',p:'6.8%', d:'High burst and infinite mobility. Great against squishy line-ups, but struggles against heavy crowd control and tanky team compositions.'},
+    {t:'Heartseeker',i:'Daji',r:'Mage',tr:'S',l:'Mid Lane',s:'Late-Game',ts:['burst'],w:'54.7%',p:'22.1%', d:'Incredible single-target deletion. Pick into squishy assassin/mage comps, but absolutely avoid picking her into heavy tanks or heroes with built-in cleanses (like Di Renjie).'},
+    {t:'Scorchette',i:'Angela',r:'Mage',tr:'S',l:'Mid Lane',s:'Early-Mid',ts:['burst','aoe'],w:'53.3%',p:'19.8%', d:'Unmatched early wave clear. Pick to establish fast mid priority and aggressively invade the enemy jungle. Pair with lockdown tanks like Bai Qi to land her ultimate.'},
+    {t:'Timebender',i:'Sun Bin',r:'Support',tr:'C',l:'Roam',s:'Late-Game',ts:['utility'],w:'47.9%',p:'7.4%', d:'Late-game enabler. Pair with hyper-carries or sustained fighters to overwhelm enemies with speed and healing. Weak early game presence.'},
+    {t:'Mastermind',i:'Kongming',r:'Mage',tr:'B',l:'Mid Lane / Jungle',s:'Mid-Late',ts:['burst','execute'],w:'48.5%',p:'9.2%', d:'Snowball heavy assassin-mage. Pick him when your team has strong engage to guarantee his ultimate executes. Needs to secure early kills to stay relevant.'},
+    {t:'Breezeheart',i:'Xiao Qiao',r:'Mage',tr:'A',l:'Mid Lane',s:'Late-Game',ts:['burst'],w:'50.9%',p:'15.3%', d:'Massive late-game AoE burst. Excellent into teamfight-heavy comps but needs peel against dive assassins like Lam or Jing.'},
+    {t:'Lotusdancer',i:'Diaochan',r:'Mage',tr:'C',l:'Mid Lane / Clash Lane',s:'Mid-Game',ts:['true_damage'],w:'46.8%',p:'8.1%', d:'Tank-melter with high sustain. Unstoppable against low-burst, heavy melee comps if she avoids hard CC. Very weak against long-range poke and anti-heal.'},
+    {t:'Mechaboss',i:'Milady',r:'Mage',tr:'A',l:'Mid Lane',s:'Early-Mid',ts:['push'],w:'51.4%',p:'10.5%', d:'Unmatched pushing power with robot minions. Pick her to punish heavy-roaming enemy mids by taking their towers instantly. Fades in late-game 5v5 teamfights.'},
+    {t:'Divine Enforcer',i:'Ziya',r:'Mage',tr:'B',l:'Mid Lane / Roam',s:'Late-Game',ts:['utility'],w:'49.1%',p:'6.3%', d:'Late-game utility and EXP boost. Pick to accelerate your team\'s scaling and break base sieges. Highly vulnerable to dive comps.'},
+    {t:'Smith and Blade',i:'Gan & Mo',r:'Mage',tr:'C',l:'Mid Lane',s:'Mid-Late',ts:['poke'],w:'47.1%',p:'5.5%', d:'Incredible long-range burst. Pick against slow, immobile backlines that cannot dodge his swords. Needs strong vision control from his Roam to thrive.'},
+    {t:'Avici Puppeteer',i:'Yango',r:'Mage',tr:'B',l:'Clash Lane',s:'Late-Game',ts:['control'],w:'48.2%',p:'3.8%', d:'Isolation specialist. Uses ultimate to turn 5v5s into 4v4s by removing the enemy carry. Essential to communicate ultimate targets with team.'},
+    {t:'Boardmaster',i:'Yixing',r:'Mage',tr:'B',l:'Mid Lane',s:'Mid-Late',ts:['control'],w:'52.8%',p:'8.4%', d:'The ultimate zone controller. Use his ultimate to trap low-mobility enemies or protect your team from dive. Essential for objective control around dragons.'},
+    {t:'Celestial',i:'Nuwa',r:'Mage',tr:'B',l:'Mid Lane',s:'Late-Game',ts:['range'],w:'49.3%',p:'4.1%', d:'Global presence and terrain creation. Perfect for delaying the game and stalling pushes against siege comps. Her blocks counter movement-based heroes.'},
+    {t:'Curious Mixture',i:'Dr Bian',r:'Mage',tr:'C',l:'Mid Lane',s:'Early-Mid',ts:['healer'],w:'46.4%',p:'2.9%', d:'Sustain/Attrition mage. Excels in prolonged, slow brawls alongside beefy frontliners. Extremely vulnerable to burst and anti-heal.'},
+    {t:'Inferno',i:'Zhou Yu',r:'Mage',tr:'C',l:'Mid Lane',s:'Mid-Game',ts:['control'],w:'47.5%',p:'4.7%', d:'Incredible zone denial and tower pushing. Pick into objective-focused comps to control the map with fire. Pairs well with poke/siege comps.'},
+    {t:'Silkweaver',i:'Shi',r:'Mage',tr:'C',l:'Mid Lane / Roam',s:'Mid-Game',ts:['control'],w:'46.9%',p:'3.4%', d:'Strong utility and displacement. Great for disrupting enemy formations and saving caught-out allies. Shines in highly coordinated, communicative teams.'},
+    {t:'Tunecaster',i:'Yuhuan',r:'Mage',tr:'C',l:'Mid Lane / Jungle / Roam',s:'Late-Game',ts:['sustain'],w:'47.6%',p:'5.8%', d:'Versatile healer and poke mage. Pick for sustained teamfights and her invulnerability to dodge key ultimates. Great at kiting bruisers.'},
+    {t:'Demonplate',i:'Kaizer',r:'Tank',tr:'S',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['sustain','tank'],w:'52.5%',p:'18.4%', d:'An incredibly safe blind pick. Thrives in extended skirmishes and can easily isolate and lock down carries. Vulnerable to heavy kiting.'},
+    {t:'Earthshaker',i:'Lian Po',r:'Tank',tr:'A',l:'Clash Lane / Roam',s:'Early-Mid',ts:['cc','tank'],w:'50.2%',p:'11.2%', d:'Disruptive CC tank. Ideal for initiating teamfights and breaking up enemy backlines with chain knock-ups. Pair with AoE burst mages.'},
+    {t:'Harbinger',i:'Donghuang',r:'Tank',tr:'A',l:'Clash Lane / Roam',s:'Level 4',ts:['lockdown','sustain'],w:'51.1%',p:'14.5%', d:'The ultimate anti-carry. Pick him strictly to suppress ultra-mobile enemy assassins like Lam, Jing, or Luna. His suppression cannot be cleansed.'},
+    {t:'The Beast',i:'Zhang Fei',r:'Tank',tr:'C',l:'Roam',s:'Late-Game',ts:['shield','tank'],w:'47.3%',p:'8.6%', d:'Ultimate peeling tank. Pick him to protect immobile marksmen (like Luban No.7 or Hou Yi) from heavy burst and dive assassins.'},
+    {t:'Dreamwanderer',i:'Zhuangzi',r:'Tank',tr:'B',l:'Clash Lane / Roam',s:'Mid-Game',ts:['cc_immune'],w:'48.7%',p:'9.1%', d:'The hard-CC counter. Pick him strictly when the enemy team relies heavily on AoE stuns and lockdown. His AoE cleanse wins teamfights.'},
+    {t:'Mecha Brat',i:'Liu Shan',r:'Tank',tr:'C',l:'Roam',s:'Early-Game',ts:['cc','push'],w:'46.8%',p:'6.2%', d:'Tower-diving menace. His abilities stun structures. Pick with early-game junglers to force tower dives and heavily snowball the early game.'},
+    {t:'Sledgehammer',i:'Wuyan',r:'Tank',tr:'C',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['cc'],w:'51.3%',p:'0.4%', d:'High damage frontline. Excellent for skirmishing and zoning squishies with her area petrification. Good early game lane dominance.'},
+    {t:'Belligerence',i:'Dun',r:'Tank',tr:'A',l:'Clash Lane / Jungle / Roam',s:'Mid-Game',ts:['tank'],w:'50.6%',p:'12.3%', d:'Versatile frontline flex. Provides strong CC, sustain, and true damage. A very safe blind pick that fits into almost any team composition.'},
+    {t:'Ultimate Weapon',i:'Bai Qi',r:'Tank',tr:'C',l:'Clash Lane',s:'Late-Game',ts:['tank'],w:'47.1%',p:'5.7%', d:'Scaling engage tank. Taunt duration increases with max HP, making him a late-game monster. Pick when your team has reliable follow-up burst.'},
+    {t:'White Anchor',i:'Ata',r:'Tank',tr:'B',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['sustain'],w:'48.9%',p:'4.8%', d:'Terrain-scaling sustain tank. Excellent at invading early and trapping immobile carries in terrain. Build anti-heal immediately against him.'},
+    {t:'Dominant Ruler',i:'Liu Bang',r:'Tank',tr:'C',l:'Clash Lane / Roam',s:'Mid-Game',ts:['global','shield'],w:'46.5%',p:'3.9%', d:'Global split-pusher. Pick him to pressure side lanes and instantly teleport to shield your hyper-carry during cross-map teamfights.'},
+    {t:'Unyielding Overlord',i:'Xiang Yu',r:'Tank',tr:'B',l:'Clash Lane / Roam',s:'Mid-Game',ts:['cc','tank'],w:'49.2%',p:'7.5%', d:'Damage-soaking counter-initiator. Pushes divers away from the backline and turns fights with massive low-health burst damage.'},
+    {t:'Soulguide',i:'Augran',r:'Fighter',tr:'S',l:'Jungle / Clash Lane',s:'Mid-Late',ts:['execute'],w:'55.1%',p:'24.2%', d:'Top tier execute threat. Pick when the enemy relies on shields or heavy sustain, as he completely bypasses them. Counter with early burst and Dominance Ice.'},
+    {t:'Unrivaled Warrior',i:'Lu Bu',r:'Fighter',tr:'B',l:'Clash Lane',s:'Late-Game',ts:['true_damage'],w:'48.4%',p:'16.8%', d:'The ultimate true-damage tank shredder. Pick into heavy frontline comps and punish them in extended fights. Very weak to being kited by long-range ADCs.'},
+    {t:'Sparkmace',i:'Biron',r:'Fighter',tr:'A',l:'Clash Lane',s:'Early-Game',ts:['shield'],w:'50.7%',p:'9.6%', d:'Early-game lane bully. Uses massive shields to win 1v1s and invade the enemy jungle. Must press the advantage early before scaling drops off.'},
+    {t:'Ironbloom',i:'Mulan',r:'Fighter',tr:'C',l:'Clash Lane',s:'Level 4+',ts:['burst'],w:'47.4%',p:'8.2%', d:'High-skill burst assassin. Excellent at silencing and deleting key targets from the flank before fights start. High skill ceiling required to execute combos.'},
+    {t:'War Saint',i:'Guan Yu',r:'Fighter',tr:'C',l:'Clash Lane / Roam',s:'Mid-Game',ts:['mobility'],w:'46.7%',p:'6.1%', d:'High-speed flanker. Pick into low-CC teams to constantly disrupt their formation and push enemies into your towers. Useless against heavy slows.'},
+    {t:'Vengeance',i:'Li Xin',r:'Fighter',tr:'S',l:'Clash Lane',s:'Mid-Game',ts:['sustain'],w:'52.1%',p:'15.4%', d:'Versatile split-pusher. Switch to Light form to defend base with heavy poke, or Dark form to relentlessly split-push and duel 1v1.'},
+    {t:'Cold Spear',i:'Ma Chao',r:'Fighter',tr:'C',l:'Clash Lane',s:'Mid-Late',ts:['mobility'],w:'47.8%',p:'5.3%', d:'Mechanically demanding hyper-carry. Sweeps teamfights if left unchecked, but is easily shut down by targeted crowd control and slows.'},
+    {t:'Martial Genius',i:'Mayene',r:'Fighter',tr:'C',l:'Clash Lane / Jungle',s:'Late-Game',ts:['mobility'],w:'46.2%',p:'4.5%', d:'Combo-reliant skirmisher. Excels at isolating targets and dodging abilities in 1v1s. Struggles significantly in 5v5 AoE-heavy teamfights.'},
+    {t:'Forgotten Blade',i:'Allain',r:'Fighter',tr:'C',l:'Clash Lane',s:'Late-Game',ts:['true_damage'],w:'47.9%',p:'7.8%', d:'Sticky true-damage bruiser. His ultimate makes him untargetable, perfect for diving the backline and shredding tanks. Very sticky once he engages.'},
+    {t:'Peaceful Fist',i:'Dharma',r:'Fighter',tr:'C',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['cc'],w:'46.6%',p:'3.2%', d:'Wall-kicking initiator. Pick into squishy backlines and look for flash-ultimate plays near jungle terrain. His knockback ignores resistance.'},
+    {t:'Seafarer',i:'Sun Ce',r:'Fighter',tr:'B',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['engage'],w:'49.4%',p:'10.1%', d:'Global engage threat. Uses his ship to instantly turn side-lane fights into number advantages. Perfect for diving the enemy marksman.'},
+    {t:'Shadowblade',i:'Gao Changgong',r:'Fighter',tr:'A',l:'Jungle',s:'Mid-Game',ts:['burst'],w:'51.2%',p:'13.7%', d:'Hit-and-run assassin. Enters, bursts a squishy, and escapes before retaliation. Requires an early lead to maintain kill pressure.'},
+    {t:'Swift Strike',i:'Ukyo Tachibana',r:'Assassin',tr:'B',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['burst'],w:'48.8%',p:'8.9%', d:'Strong early-game skirmisher. High burst and sustain in short trades. Excellent at contesting early river objectives and invading.'},
+    {t:'Rose Fencer',i:'Charlotte',r:'Fighter',tr:'B',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['sustain'],w:'49.1%',p:'9.4%', d:'Anti-physical duelist. Reduces enemy attack speed, making her a nightmare for basic-attack fighters. Weak against heavy magical burst.'},
+    {t:'Raveness',i:'Mi Yue',r:'Fighter',tr:'B',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['sustain'],w:'48.3%',p:'6.5%', d:'Sustain and split-push queen. Pick her to dominate the 1v1 lane and constantly steal enemy jungle camps. She requires an isolated 1v1 to thrive.'},
+    {t:'Paladin',i:'Arthur',r:'Fighter',tr:'A',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['silence'],w:'54.2%',p:'18.5%', d:'Simple but effective bruiser. His silence is lethal against combo-reliant mages and highly mobile assassins. Safe, consistent pick.'},
+    {t:'Forge Maiden',i:'Chicha',r:'Fighter',tr:'S',l:'Clash Lane / Farm Lane / Jungle',s:'Mid-Game',ts:['cc'],w:'52.8%',p:'14.1%', d:'High-mobility initiator. Her pulling abilities easily disrupt enemy formations and isolate targets. A fantastic flex pick for multiple roles.'},
+    {t:'Mighty Conqueror',i:'Fatih',r:'Fighter',tr:'B',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['sustain'],w:'48.6%',p:'5.2%', d:'Sustained bruiser. Pick him for his ability to mitigate damage and outlast opponents in prolonged brawls. Needs a few items to truly come online.'},
+    {t:'Pointblank',i:'Liu Bei',r:'Fighter',tr:'B',l:'Jungle',s:'Early-Mid',ts:['burst'],w:'49.3%',p:'7.1%', d:'Close-range burst jungler. Ultimate grants CC immunity and shielding. Excellent at solo-securing early dragons and countering CC comps.'},
+    {t:'Reefheart Datu',i:'Lapulapu',r:'Fighter',tr:'C',l:'Clash Lane / Roam',s:'Mid-Game',ts:['shield'],w:'47.2%',p:'4.3%', d:'Teamfight disruptor. Jumps into the backline with his heavy sword to soak damage and burst squishies. Good at surviving 1v2 ganks.'},
+    {t:'Wild Spark',i:'Nezha',r:'Fighter',tr:'A',l:'Clash Lane / Jungle',s:'Late-Game',ts:['global'],w:'51.5%',p:'11.8%', d:'Global lock-on initiator. The ultimate counter to slippery split-pushers or low-health backliners trying to escape. Provides total map pressure.'},
+    {t:'Dominant',i:'Cao Cao',r:'Fighter',tr:'B',l:'Clash Lane',s:'Mid-Game',ts:['sustain'],w:'48.5%',p:'6.7%', d:'Incredible lifesteal duelist. Thrives in extended fights where he can continuously heal through enemy damage. Hard countered by early anti-heal.'},
+    {t:'Trilight',i:'Yang Jian',r:'Fighter',tr:'C',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['execute'],w:'46.9%',p:'3.5%', d:'Early-game dominator. Look for execute opportunities with his hound and snowball the game fast. Must end the game before his damage falls off.'},
+    {t:'Daybreak',i:'Pangu',r:'Fighter',tr:'B',l:'Clash Lane',s:'Early-Mid',ts:['disarm'],w:'49.0%',p:'4.9%', d:'The auto-attack counter. His unique disarm mechanic completely shuts down basic-attack reliant hyper-carries (Wukong, Hou Yi, Marco Polo).'},
+    {t:'Peacekeeper',i:'Mozi',r:'Fighter',tr:'B',l:'Mid Lane / Roam',s:'Late-Game',ts:['poke','cc'],w:'48.7%',p:'8.8%', d:'Long-range poke and stun. Pick him to constantly harass enemies under tower and set up kills for your team. Provides excellent siege defense.'},
+    {t:'Berserker',i:'Dian Wei',r:'Fighter',tr:'A',l:'Jungle',s:'Late-Game',ts:['true_damage'],w:'50.8%',p:'12.5%', d:'Late-game true damage monster. Struggles against heavy kite and slows, but unstoppable if he reaches his target.'},
+    {t:'Broken Mirage',i:'Jing',r:'Assassin',tr:'C',l:'Jungle',s:'Early-Mid',ts:['burst','dive'],w:'47.4%',p:'9.3%', d:'High-ceiling dive assassin. Uses mirror combos to delete the backline. Extremely reliant on perfect mechanical execution and cooldown tracking.'},
+    {t:'Moonblade',i:'Luna',r:'Assassin',tr:'C',l:'Jungle',s:'Level 4+',ts:['magic_dps'],w:'46.8%',p:'7.2%', d:'Infinite dash magic assassin. Can 1v5 if the enemy lacks hard CC. Highly susceptible to early jungle invades that steal her blue buff.'},
+    {t:'Stealthfin',i:'Lam',r:'Assassin',tr:'A',l:'Jungle',s:'Mid-Late',ts:['dive'],w:'54.9%',p:'31.5%', d:'Teamfight isolating assassin. Punishes grouped enemies. Uses ultimate to drag the enemy marksman directly into his team. High ban priority.'},
+    {t:'Windspear',i:'Han Xin',r:'Assassin',tr:'C',l:'Jungle',s:'Early-Mid',ts:['mobility'],w:'47.1%',p:'15.6%', d:'Ultimate mobility and split-pusher. Pick him to constantly apply map pressure, steal objectives, and force the enemy to split up.'},
+    {t:'Featherfoot',i:'Feyd',r:'Assassin',tr:'B',l:'Jungle',s:'Mid-Game',ts:['burst'],w:'49.2%',p:'8.5%', d:'Wall-walking flanker. Bypasses standard vision wards by walking through terrain to instantly assassinate the backline carry.'},
+    {t:'Shadowstalker',i:'Arke',r:'Assassin',tr:'A',l:'Jungle',s:'Mid-Game',ts:['flank'],w:'50.6%',p:'11.4%', d:'Reset-heavy assassin. Needs a strong frontline to initiate and drop enemy health bars, allowing her to chain resets and wipe the team.'},
+    {t:'Nightplume',i:'Umbrosa',r:'Assassin',tr:'B',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['invis','burst'],w:'51.5%',p:'11.4%', d:'Stealthy burst threat. Her invisibility forces the enemy to play passively and buy defensive items early. Needs to snowball to maintain pressure.'},
+    {t:'Prince',i:'Prince of Lanling',r:'Assassin',tr:'A',l:'Jungle',s:'Early-Game',ts:['invis'],w:'50.9%',p:'16.2%', d:'Early-game psychological terror. Constantly ganks the side lanes to tilt the enemy carry. Damage falls off a cliff in late-game 5v5s.'},
+    {t:'Lyricist',i:'Li Bai',r:'Assassin',tr:'B',l:'Jungle',s:'Late-Game',ts:['untargetable'],w:'48.6%',p:'13.1%', d:'Untargetable poke assassin. Uses jungle camps to stack passive, dashes in, ults the backline, and rewinds safely. Needs careful positioning.'},
+    {t:'Death\'s Whisper',i:'Butterfly',r:'Assassin',tr:'C',l:'Jungle',s:'Mid-Game',ts:['reset'],w:'47.7%',p:'10.5%', d:'Snowball reset assassin. Can wipe entire teams if she secures the first kill in a teamfight. Useless if the team is playing from behind.'},
+    {t:'Firespear',i:'Ying',r:'Assassin',tr:'S',l:'Jungle',s:'Mid-Game',ts:['cc'],w:'52.4%',p:'17.3%', d:'Skirmisher assassin. Provides reliable CC chains and sustained damage, making her a strong pick into bruiser-heavy team compositions.'},
+    {t:'Hawk Whisperer',i:'Nakoruru',r:'Assassin',tr:'C',l:'Jungle',s:'Mid-Game',ts:['burst'],w:'46.5%',p:'5.8%', d:'Airborne burst. Drops massive damage onto the backline and escapes quickly. Excellent at bursting, but lacks sustained damage for extended fights.'},
+    {t:'Madlash',i:'Xuance',r:'Assassin',tr:'C',l:'Jungle',s:'Early-Mid',ts:['control'],w:'47.3%',p:'4.2%', d:'Displacement assassin. Completely controls the fight if he hooks a carry and throws them into his team. Very high mechanical skill floor.'},
+    {t:'Tigerous',i:'Pei',r:'Assassin',tr:'B',l:'Jungle',s:'Early-Game',ts:['early_pressure'],w:'49.1%',p:'8.7%', d:'Early map controller. Switches between ranged poke and melee burst to dominate early jungle invades and rapidly take down towers.'},
+    {t:'Razorwing',i:'Cirrus',r:'Assassin',tr:'C',l:'Jungle',s:'Mid-Game',ts:['mobility'],w:'46.9%',p:'5.5%', d:'Terrain-ignoring mobility. Bypasses the frontline entirely to drop burst damage directly on the backline. Weak against heavy target-lock CC.'},
+    {t:'Monkey King',i:'Wukong',r:'Assassin',tr:'S',l:'Jungle',s:'Late-Game',ts:['crit'],w:'51.8%',p:'21.4%', d:'Late-game crit hyper-carry. Weak early, but deletes squishies instantly at 3 items. Hard countered by Pangu (disarm) and Consort Yu (immunity).'},
+    {t:'Fearless Spear',i:'Zilong',r:'Assassin',tr:'C',l:'Jungle',s:'Mid-Game',ts:['sustain'],w:'47.6%',p:'9.8%', d:'Jack-of-all-trades assassin. Provides reliable knock-ups, decent burst, and survivability. A safe, consistent pick that fits most standard comps.'},
+    {t:'Sacred Warrior',i:'Athena',r:'Assassin',tr:'C',l:'Jungle',s:'Mid-Game',ts:['execute'],w:'46.2%',p:'2.5%', d:'Relentless diver. Provides global vision while dead. Requires extremely fast combo execution to maximize her execute damage.'},
+    {t:'Shadowreaper',i:'Sima Yi',r:'Assassin',tr:'C',l:'Mid Lane / Jungle',s:'Mid-Game',ts:['silence'],w:'47.5%',p:'6.4%', d:'Magic damage assassin. Global vision on low-health targets. His silence makes him the absolute perfect counter to squishy, ability-reliant mages.'},
+    {t:'Starblade',i:'Yao',r:'Assassin',tr:'B',l:'Clash Lane / Jungle',s:'Mid-Late',ts:['kite'],w:'48.5%',p:'7.9%', d:'Sustained magic damage kite. Pick him to safely deal damage from afar while staying immune to hard engage. Needs a solid frontline tank to function.'},
+    {t:'Gunslinger',i:'Marco Polo',r:'Marksman',tr:'S',l:'Farm Lane',s:'Mid-Game',ts:['true_damage'],w:'53.6%',p:'26.7%', d:'The ultimate tank-buster. Pick specifically when the enemy drafts heavy frontline/bruisers. Highly vulnerable to suppression (Donghuang/Liang).'},
+    {t:'Mecha Shooter',i:'Luban No.7',r:'Marksman',tr:'B',l:'Farm Lane',s:'Late-Game',ts:['high_dps'],w:'49.4%',p:'20.1%', d:'Immobile hyper-carry. Deals massive %HP area damage, but is guaranteed to die without a dedicated peel tank (like Zhang Fei) protecting him.'},
+    {t:'Solarus',i:'Hou Yi',r:'Marksman',tr:'S',l:'Farm Lane',s:'Late-Game',ts:['high_dps'],w:'51.6%',p:'22.5%', d:'Classic auto-attack carry. Global ultimate provides excellent engage. Melts entire teams late game if paired with a heavy-sustain support (Cai Yan).'},
+    {t:'Longshot',i:'Shouyue',r:'Marksman',tr:'C',l:'Farm Lane',s:'Early-Game',ts:['poke'],w:'46.8%',p:'18.2%', d:'Sniper marksman. Provides massive early-game poke and crucial vision control with traps. Can struggle to provide consistent DPS in late-game teamfights.'},
+    {t:'Loong',i:'Aoyin',r:'Marksman',tr:'A',l:'Farm Lane',s:'Late-Game',ts:['sustain'],w:'55.3%',p:'28.4%', d:'Self-sufficient marksman. Pick when your team lacks peel. His ultimate guarantees an escape from heavy dive comps while dealing massive damage.'},
+    {t:'Parasola',i:'Arli',r:'Marksman',tr:'C',l:'Farm Lane',s:'Mid-Game',ts:['mobility'],w:'47.2%',p:'11.3%', d:'Hyper-mobile outplayer. Counters skillshot-reliant enemies. Requires incredibly fast reflexes to survive, making her a high-risk, high-reward pick.'},
+    {t:'Magistrate',i:'Di Renjie',r:'Marksman',tr:'C',l:'Farm Lane',s:'Mid-Game',ts:['anti_cc'],w:'47.9%',p:'13.5%', d:'Anti-CC marksman. Built-in cleanse makes him the perfect counter to teams relying on single-target stuns. High sustained damage and armor shred.'},
+    {t:'Cannon Belle',i:'Lady Sun',r:'Marksman',tr:'B',l:'Farm Lane',s:'Late-Game',ts:['burst'],w:'48.7%',p:'15.8%', d:'Hit-and-run burst marksman. Rolls in, deletes a squishy, and rolls out. Excellent at fast objective taking and repositioning around terrain.'},
+    {t:'Laurel Princess',i:'Erin',r:'Marksman',tr:'A',l:'Farm Lane',s:'Mid-Game',ts:['magic_dps'],w:'50.5%',p:'9.2%', d:'Magic damage marksman. Crucial pick when your team drafts a pure physical (AD) top/jungle/mid to balance the team\'s damage profile.'},
+    {t:'Loose Cannon',i:'Meng Ya',r:'Marksman',tr:'C',l:'Farm Lane',s:'Mid-Game',ts:['aoe'],w:'47.4%',p:'8.6%', d:'AoE suppression carry. Constant barrage is great for extended teamfights and fighting in narrow jungle corridors. Has surprisingly good sustain.'},
+    {t:'Piercing Arrow',i:'Garo',r:'Marksman',tr:'A',l:'Farm Lane',s:'Late-Game',ts:['range'],w:'51.1%',p:'14.7%', d:'Ultra long-range shield breaker. Hard counters shield-reliant heroes (Zhang Fei, Kaizer). Needs a dedicated frontline to prevent dive assassinations.'},
+    {t:'Firesnake',i:'Luara',r:'Marksman',tr:'A',l:'Farm Lane',s:'Mid-Game',ts:['mobility'],w:'50.8%',p:'12.1%', d:'Terrain-mobile damage. Uses walls to her advantage to kite enemies and deal consistent damage. Extremely difficult for standard melee bruisers to lock down.'},
+    {t:'Woodland Ranger',i:'Consort Yu',r:'Marksman',tr:'A',l:'Farm Lane',s:'Mid-Game',ts:['anti_phys'],w:'50.3%',p:'13.4%', d:'Anti-physical marksman. Her physical immunity makes her the ultimate, hard-counter pick to AD assassins like Wukong, Prince of Lanling, and Lam.'},
+    {t:'Artillerist',i:'Huang Zhong',r:'Marksman',tr:'C',l:'Farm Lane',s:'Late-Game',ts:['range'],w:'47.6%',p:'7.9%', d:'Base-defense siege master. Ultimate turns him into a massive zoning turret. Must be paired with a strong defensive tank to survive while immobile.'},
+    {t:'Red Hawk',i:'Alessio',r:'Marksman',tr:'C',l:'Farm Lane',s:'Mid-Game',ts:['aoe'],w:'46.9%',p:'6.3%', d:'Airborne AoE marksman. Great at dodging ground-based CC and dealing massive splash damage to tightly grouped enemy teams. Great against death-ball comps.'},
+    {t:'Wild Rider',i:'Agudo',r:'Marksman',tr:'C',l:'Farm Lane / Jungle',s:'Mid-Game',ts:['utility'],w:'47.1%',p:'3.8%', d:'Supportive jungler. Rapidly clears camps and pushes towers fast with her animal summons. Pick to enable and buff a hyper-carry marksman.'},
+    {t:'Packleader',i:'Chano',r:'Marksman',tr:'C',l:'Farm Lane / Jungle',s:'Mid-Late',ts:['sustain'],w:'46.5%',p:'5.1%', d:'Sustained beast-rider. Uses his wolf to soak damage and reposition safely during chaotic teamfights. Good mobility and unexpected survivability.'},
+    {t:'Seasinger',i:'Dolia',r:'Support',tr:'S',l:'Roam',s:'Level 4+',ts:['refresh'],w:'52.7%',p:'25.6%', d:'Priority ban/pick. Instantly resets ultimates. Must be paired with game-changing AoE ultimates (Gao, Lady Zhen, Lian Po) to double their impact.'},
+    {t:'Healing Tone',i:'Cai Yan',r:'Support',tr:'S',l:'Roam',s:'Early-Mid',ts:['healer'],w:'51.9%',p:'19.4%', d:'The ultimate mobile ambulance. Pick to counter heavy poke comps and enable hyper-carries. Enemy is forced to rush anti-heal items immediately.'},
+    {t:'Bondweaver',i:'Dyadia',r:'Support',tr:'A',l:'Roam',s:'Mid-Game',ts:['healer'],w:'50.4%',p:'14.2%', d:'Sustain and gold thief. Constantly harasses the enemy while providing steady healing for your lane partner. Accelerates the team\'s economy.'},
+    {t:'Lanternlight',i:'Da Qiao',r:'Support',tr:'B',l:'Roam / Mid Lane',s:'Late-Game',ts:['global'],w:'49.2%',p:'11.8%', d:'Macro-game mastermind. Uses portals to rotate the team across the map, backdoor towers, and instantly reset health bars during objective fights.'},
+    {t:'Deerie',i:'Yaria',r:'Support',tr:'A',l:'Roam',s:'Mid-Game',ts:['shield'],w:'53.8%',p:'25.3%', d:'Single-target enabler. Pair exclusively with a hyper-carry (Marco Polo, Lam). Leaves the team lacking a true frontline, so top lane must pick a tank.'},
+    {t:'Dream Spirit',i:'Menki',r:'Support',tr:'C',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['tank'],w:'47.5%',p:'4.1%', d:'Tanky AP bruiser. Uses massive shields to bully opponents in lane and disrupt teamfights. Very hard to push out of lane, but low actual utility.'},
+    {t:'Animist',i:'Guiguzi',r:'Support',tr:'C',l:'Roam',s:'Mid-Game',ts:['invis'],w:'46.8%',p:'5.6%', d:'Invisibility initiator. His AoE pull sets up devastating wombo-combos for burst heroes. Requires an aggressive, highly coordinated team to succeed.'},
+    {t:'Brushstrider',i:'Sakeer',r:'Support',tr:'C',l:'Roam',s:'Mid-Game',ts:['control'],w:'47.2%',p:'3.5%', d:'Vision and lockdown support. Great at scouting brushes and isolating single targets for pick-comps. Lacks the raw defensive stats of traditional tanks.'},
+    {t:'Private Ear',i:'Fang',r:'Support',tr:'C',l:'Farm Lane / Jungle',s:'Early-Mid',ts:['poke'],w:'47.9%',p:'8.3%', d:'Aggressive early marksman. His burst secures dragons and towers incredibly fast to snowball the game. Needs to end early before scaling falls off.'},
+    {t:'Star Teller',i:'Ming',r:'Support',tr:'C',l:'Roam',s:'Late-Game',ts:['buff'],w:'46.4%',p:'7.1%', d:'Hyper-carry buffer. Attach him to a scaling auto-attacker (Hou Yi, Wukong) to heavily inflate their damage and make them virtually unstoppable.'},
+    {t:'Wise Sage',i:'Fuzi',r:'Support',tr:'B',l:'Clash Lane',s:'Mid-Game',ts:['control'],w:'48.8%',p:'9.5%', d:'The ultimate 1v1 lockdown. Tie down the enemy carry with his ultimate or relentlessly split-push the side lane. Very difficult to duel 1v1.'},
+    {t:'Voidcaller',i:'Kui',r:'Mage',tr:'B',l:'Roam',s:'Early-Game',ts:['cc'],w:'49.5%',p:'12.8%', d:'Hook master. Pick him to terrorize immobile mages/marksmen by pulling them out of position and into your team for instant deletion. Missed hooks leave him useless.'},
+    {t:'Tomemaster',i:'Liang',r:'Mage',tr:'B',l:'Mid Lane / Roam',s:'Mid-Game',ts:['cc','control'],w:'49.5%',p:'5.2%', d:'Hard-CC lockdown. His suppression ultimate cannot be cleansed, making him the absolute perfect counter to hyper-mobile assassins like Lam or Jing.'},
+    {t:'Cascada',i:'Lady Zhen',r:'Mage',tr:'A',l:'Mid Lane',s:'Mid-Late',ts:['control','burst'],w:'51.2%',p:'8.1%', d:'Massive AoE teamfight control. Bouncing water and frozen terrain absolutely destroy tightly packed enemy comps and heavily punish aggressive dive.'},
+    {t:'Fatal Lyrist',i:'Gao',r:'Mage',tr:'B',l:'Mid Lane',s:'Mid-Game',ts:['aoe','sustain'],w:'48.3%',p:'6.2%', d:'Sustained AoE burst. He needs to dive into the center of the fight, so pair him with a tank that can peel for him, or use Dolia to double his ultimate.'},
+    {t:'Majestic Guardian',i:'Garuda',r:'Mage',tr:'A',l:'Mid Lane',s:'Late-Game',ts:['poke','range'],w:'51.8%',p:'12.3%', d:'Long-range artillery. Pick him for safe, consistent poke damage and strong high-ground defense. Excellent at stalling the game out for your team to scale.'},
+    {t:'Arcane Heart',i:'Hai Yue',r:'Mage',tr:'A',l:'Mid Lane',s:'Mid-Game',ts:['control','poke'],w:'50.1%',p:'7.5%', d:'1v1 isolation mage. Her ultimate pulls the enemy carry into a separate dimension, completely removing them from key teamfights. Great for neutralizing threats.'},
+    {t:'Steady Will',i:'Steady Will',r:'Marksman',tr:'B',l:'Farm Lane',s:'Mid-Game',ts:['mobility'],w:'49.6%',p:'8.2%', d:'Sustained mobility marksman. Good at kiting frontline bruisers while maintaining consistent DPS. Requires excellent positioning to survive.'},
+    {t:'Swordmaster',i:'Musashi',r:'Fighter',tr:'S',l:'Jungle',s:'Mid-Game',ts:['anti_projectile'],w:'51.9%',p:'16.5%', d:'Anti-projectile bruiser. His windwall destroys incoming mage and marksman attacks, making him an amazing counter-pick to heavy poke compositions.'}
     ];
-
-    const HEROES = HERO_DATA.map(h => ({
-      title: h.t, id: h.i, role: h.r, tier: h.tr, lane: h.l, spike: h.s, traits: h.ts, wr: h.w, pr: h.p,
-      sprite: h.r === 'Mage' || h.r === 'Support' ? 'Coolio' : (h.r === 'Tank' || h.r === 'Fighter' ? 'Bigly' : 'Runsie'),
-      draft: h.d
-    }));
 
     const TEAM_ROLES = ['Clash Lane', 'Jungle', 'Mid Lane', 'Farm Lane', 'Roam'];
     let currentFilter = 'all', currentSearch = '', activeTab = 'list', activeDraftSlot = null;
     let suggestedPickIds = [], suggestedBanIds = [];
     
+    let myRoster = [];
+    let useRosterOnly = false;
+
     let draftState = {
       myRole: 'Clash Lane',
       ally: { 'Clash Lane': null, 'Jungle': null, 'Mid Lane': null, 'Farm Lane': null, 'Roam': null },
@@ -375,6 +400,7 @@
 
     function saveDraftState() {
       localStorage.setItem('hok_draft_state', JSON.stringify(draftState));
+      localStorage.setItem('hok_roster', JSON.stringify(myRoster));
     }
 
     function loadDraftState() {
@@ -382,10 +408,57 @@
       if (saved) {
         try { 
             draftState = JSON.parse(saved); 
-            if(draftState.allyBans.length === 2) draftState.allyBans.push(null);
-            if(draftState.enemyBans.length === 2) draftState.enemyBans.push(null);
+            // Self-Cleaning Cache: Remove any old IDs that no longer exist in HERO_DATA
+            ['ally', 'enemy'].forEach(t => {
+                for(let r in draftState[t]) {
+                    if (draftState[t][r] && !HERO_DATA.find(h => h.i === draftState[t][r])) draftState[t][r] = null;
+                }
+            });
+            draftState.allyBans = (draftState.allyBans || [null,null,null]).map(id => HERO_DATA.find(h => h.i === id) ? id : null);
+            draftState.enemyBans = (draftState.enemyBans || [null,null,null]).map(id => HERO_DATA.find(h => h.i === id) ? id : null);
+            
+            while(draftState.allyBans.length < 3) draftState.allyBans.push(null);
+            while(draftState.enemyBans.length < 3) draftState.enemyBans.push(null);
         } catch(e) {}
       }
+      const savedRoster = localStorage.getItem('hok_roster');
+      if(savedRoster) {
+          try { 
+              myRoster = JSON.parse(savedRoster).filter(id => HERO_DATA.find(h => h.i === id)); 
+          } catch(e){}
+      }
+    }
+
+    // MAP HERO_DATA AFTER CACHE LOAD
+    let HEROES = [];
+    function initHeroes() {
+        HEROES = HERO_DATA.map(h => ({
+          title: h.t, id: h.i, role: h.r, tier: h.tr, lane: h.l, spike: h.s, traits: h.ts, wr: h.w, pr: h.p,
+          sprite: h.r === 'Mage' || h.r === 'Support' ? 'Coolio' : (h.r === 'Tank' || h.r === 'Fighter' ? 'Bigly' : 'Runsie'),
+          draft: h.d
+        }));
+    }
+
+    function toggleCoach() {
+        const content = document.getElementById('matchup-content');
+        const btn = document.getElementById('coach-toggle-btn');
+        content.classList.toggle('collapsed');
+        if(content.classList.contains('collapsed')) {
+            btn.innerText = '+';
+        } else {
+            btn.innerText = '−';
+        }
+    }
+
+    function toggleRoster(id) {
+       if(myRoster.includes(id)) myRoster = myRoster.filter(x => x !== id);
+       else myRoster.push(id);
+       saveDraftState();
+       renderList();
+    }
+    
+    function toggleUseRoster(val) {
+        useRosterOnly = val;
     }
 
     function switchMainTab(tabId) {
@@ -397,7 +470,7 @@
         document.getElementById('view-list').insertBefore(nav, document.getElementById('tier-list-root'));
         setFilter('all', document.querySelector('.filter-btn[onclick*="all"]'));
       } else {
-        document.getElementById('view-draft').insertBefore(nav, document.querySelector('.matchup-banner'));
+        document.getElementById('view-draft').insertBefore(nav, document.querySelector('.matchup-container'));
         document.querySelectorAll('.role-btn').forEach(b => {
             b.classList.remove('active');
             if (b.innerText.toLowerCase().includes(draftState.myRole.split(' ')[0].toLowerCase())) b.classList.add('active');
@@ -433,7 +506,9 @@
           const grid = wrap.querySelector('.tier-grid');
           grid.innerHTML = filtered.map(h => {
             const wrColor = parseFloat(h.wr) >= 50.0 ? 'var(--wr-good)' : 'var(--wr-bad)';
+            const isStarred = myRoster.includes(h.id) ? 'active' : '';
             return `<div class="hero-card" onclick="showView('herodetail', '${h.id}')">
+              <button class="star-btn ${isStarred}" onclick="event.stopPropagation(); toggleRoster('${h.id}')">★</button>
               <div class="hero-avatar"><img src="" data-id="${h.id}"></div>
               <span class="hero-flavor">${h.title}</span>
               <span class="hero-name-label">${h.id}</span>
@@ -453,6 +528,7 @@
 
     function renderDetail(id) {
       const h = HEROES.find(x => x.id === id);
+      if(!h) return;
       const s = SPRITES[h.sprite] || SPRITES['Runsie'];
       const wrColor = parseFloat(h.wr) >= 50.0 ? 'var(--wr-good)' : 'var(--wr-bad)';
       const scores = getHeroScores(h.spike);
@@ -505,7 +581,7 @@
 
             </div>
 
-            <div class="stat-box draft-box"><div class="stat-label" style="margin-bottom: 8px;">Drafting Logic</div><div style="font-size: 0.95rem; font-weight: 700; color: #fff;">${h.draft}</div></div>
+            <div class="stat-box draft-box"><div class="stat-label" style="margin-bottom: 8px;">Tactical Insight</div><div style="font-size: 0.95rem; font-weight: 700; color: #fff;">${h.draft}</div></div>
           </div>
 
           <div class="section-title">Strategic Spriteling Matrix</div>
@@ -545,6 +621,7 @@
        else (team === 'ally' ? draftState.allyBans : draftState.enemyBans)[key] = null;
        suggestedPickIds = [];
        suggestedBanIds = [];
+       activeDraftSlot = { team, type, key };
        renderDraftBoard();
     }
 
@@ -554,10 +631,43 @@
         if(activeDraftSlot.type === 'pick') draftState[activeDraftSlot.team][activeDraftSlot.key] = id;
         else if(activeDraftSlot.team === 'ally') draftState.allyBans[activeDraftSlot.key] = id;
         else draftState.enemyBans[activeDraftSlot.key] = id;
+        
+        // SMART AUTO-ADVANCE
         activeDraftSlot = null;
+        const seq = [
+          {t:'ally', type:'ban', k:0}, {t:'enemy', type:'ban', k:0},
+          {t:'ally', type:'ban', k:1}, {t:'enemy', type:'ban', k:1},
+          {t:'ally', type:'ban', k:2}, {t:'enemy', type:'ban', k:2},
+          {t:'ally', type:'pick', k:'Clash Lane'}, {t:'ally', type:'pick', k:'Jungle'}, {t:'ally', type:'pick', k:'Mid Lane'}, {t:'ally', type:'pick', k:'Farm Lane'}, {t:'ally', type:'pick', k:'Roam'},
+          {t:'enemy', type:'pick', k:'Clash Lane'}, {t:'enemy', type:'pick', k:'Jungle'}, {t:'enemy', type:'pick', k:'Mid Lane'}, {t:'enemy', type:'pick', k:'Farm Lane'}, {t:'enemy', type:'pick', k:'Roam'}
+        ];
+        for(let s of seq) {
+            let isEmpty = s.type === 'pick' ? !draftState[s.t][s.k] : !(s.t === 'ally' ? draftState.allyBans : draftState.enemyBans)[s.k];
+            if(isEmpty) {
+                activeDraftSlot = {team: s.t, type: s.type, key: s.k};
+                if(s.type === 'pick') {
+                   const btn = document.querySelector(`.filter-btn[data-filter="${s.k}"]`);
+                   if(btn) {
+                       currentFilter = s.k;
+                       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                       btn.classList.add('active');
+                   }
+                }
+                break;
+            }
+        }
       }
       suggestedPickIds = [];
       suggestedBanIds = [];
+      
+      document.getElementById('search-input').value = '';
+      currentSearch = '';
+      if(!activeDraftSlot || activeDraftSlot.type !== 'pick') {
+         currentFilter = 'all';
+         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+         document.querySelector('.filter-btn[onclick*="all"]').classList.add('active');
+      }
+
       renderDraftBoard();
     }
 
@@ -566,8 +676,18 @@
       if (enemyHeroes.length === 0) { alert("Let the enemy pick a hero first so we can counter them!"); return; }
       const drafted = [...Object.values(draftState.ally), ...Object.values(draftState.enemy), ...draftState.allyBans, ...draftState.enemyBans].filter(Boolean);
       
-      const targetLane = draftState.myRole || 'Clash Lane';
-      const roleHeroes = HEROES.filter(h => h.lane.includes(targetLane) && !drafted.includes(h.id));
+      const targetLane = (activeDraftSlot && activeDraftSlot.type === 'pick') ? activeDraftSlot.key : (draftState.myRole || 'Clash Lane');
+      const roleHeroes = HEROES.filter(h => 
+          h.lane.includes(targetLane) && 
+          !drafted.includes(h.id) &&
+          (!useRosterOnly || myRoster.includes(h.id))
+      );
+      
+      if(useRosterOnly && roleHeroes.length === 0) {
+          alert("None of your starred heroes fit this lane, or they are already picked/banned! Uncheck 'My Roster Only' to see other options.");
+          return;
+      }
+      
       roleHeroes.sort((a, b) => parseFloat(b.wr) - parseFloat(a.wr));
       suggestedPickIds = roleHeroes.slice(0, 3).map(h => h.id);
       suggestedBanIds = [];
@@ -597,21 +717,22 @@
       if (myHeroId && enemyHeroId) {
           const myH = HEROES.find(h => h.id === myHeroId);
           const enH = HEROES.find(h => h.id === enemyHeroId);
-          let tip = '';
-          
-          if (enH.traits.includes('true_damage')) tip = `<strong>${enH.title}</strong> deals True Damage. Do not rush pure Armor/Magic Defense; buy raw HP items instead and avoid extended brawls.`;
-          else if (enH.traits.includes('sustain') || enH.traits.includes('healer')) tip = `<strong>${enH.title}</strong> will try to out-heal your damage. You MUST rush early anti-heal and stick to short, bursty trades.`;
-          else if (enH.traits.includes('poke') || enH.traits.includes('range')) tip = `<strong>${enH.title}</strong> outranges you. Give up minions if you have to, preserve your health, and wait for your Jungler to gank.`;
-          else if (enH.traits.includes('burst')) tip = `<strong>${enH.title}</strong> can 100-to-0 you quickly. Force them to waste their main damage skill on minions before you engage.`;
-          else if (enH.traits.includes('cc') || enH.traits.includes('control')) tip = `Watch your positioning. <strong>${enH.title}</strong> wants to lock you down. Invest in Boots of Resistance on your first recall.`;
-          else if (enH.traits.includes('shield')) tip = `<strong>${enH.title}</strong> relies on heavy shielding. Bait the shield out, wait for it to expire, and then immediately re-engage.`;
-          else if (enH.traits.includes('mobility')) tip = `<strong>${enH.title}</strong> is extremely slippery. Do not chase them blindly. Save your CC abilities for when they dash directly at you.`;
-          else tip = `Focus on securing your farm and controlling river vision. Only take trades when you have a clear minion advantage over <strong>${enH.title}</strong>.`;
+          if (myH && enH) {
+              let tip = '';
+              
+              if (enH.traits.includes('true_damage')) tip = `<strong>${enH.title}</strong> deals True Damage. Do not rush pure Armor/Magic Defense; buy raw HP items instead to survive trades.`;
+              else if (enH.traits.includes('sustain') || enH.traits.includes('healer')) tip = `<strong>${enH.title}</strong> will try to out-heal your damage. You MUST rush early anti-heal and stick to short, bursty trades.`;
+              else if (myH.traits.includes('poke') && enH.traits.includes('tank')) tip = `Use your range advantage to constantly harass <strong>${enH.title}</strong>. Do not let them close the gap and play around your tower.`;
+              else if (enH.traits.includes('poke') || enH.traits.includes('range')) tip = `<strong>${enH.title}</strong> outranges you. Give up minions if you have to, preserve your health, and wait for your Jungler to gank.`;
+              else if (enH.traits.includes('burst') && !myH.traits.includes('tank')) tip = `<strong>${enH.title}</strong> can 100-to-0 you quickly. Force them to waste their main damage skill on minions before you engage.`;
+              else if (enH.traits.includes('cc') || enH.traits.includes('control')) tip = `Watch your positioning. <strong>${enH.title}</strong> wants to lock you down. Invest in Boots of Resistance on your first recall.`;
+              else if (enH.traits.includes('shield')) tip = `<strong>${enH.title}</strong> relies on heavy shielding. Bait the shield out, wait for it to expire, and then immediately re-engage.`;
+              else if (enH.traits.includes('mobility')) tip = `<strong>${enH.title}</strong> is extremely slippery. Do not chase them blindly. Save your CC abilities for when they dash directly at you.`;
+              else tip = `Focus on securing your farm and controlling river vision. Only take trades when you have a clear minion or level advantage over <strong>${enH.title}</strong>.`;
 
-          if (myH.traits.includes('poke') && enH.traits.includes('tank')) tip = `Use your range advantage to constantly harass <strong>${enH.title}</strong>. Do not let them close the gap and play around your tower.`;
-
-          laneMatchupBox.innerHTML = `<div style="font-size:0.7rem; font-weight:900; color:var(--primary); margin-bottom:5px; text-transform:uppercase;">⚔️ ${myLane} 1v1 Matchup</div><div style="font-size:0.85rem; font-weight:700; line-height:1.4; color:#fff;">${tip}</div>`;
-          laneMatchupBox.style.display = 'block';
+              laneMatchupBox.innerHTML = `<div style="font-size:0.7rem; font-weight:900; color:var(--primary); margin-bottom:5px; text-transform:uppercase;">⚔️ ${myLane} 1v1 Matchup</div><div style="font-size:0.85rem; font-weight:700; line-height:1.4; color:#fff;">${tip}</div>`;
+              laneMatchupBox.style.display = 'block';
+          }
       } else {
           laneMatchupBox.style.display = 'none';
           laneMatchupBox.innerHTML = '';
@@ -633,7 +754,7 @@
       output.innerHTML = items.length > 0 ? items.join('') : '<div style="color:var(--text-dim); font-size:0.65rem;">No situational item threats detected...</div>';
 
       const calcSpike = (team) => {
-         const heroes = Object.values(team).filter(Boolean).map(id => HEROES.find(h => h.id === id));
+         const heroes = Object.values(team).filter(Boolean).map(id => HEROES.find(h => h.id === id)).filter(Boolean);
          if (heroes.length === 0) return {e:0, m:0, l:0};
          let sum = {e:0, m:0, l:0};
          heroes.forEach(h => { const s = getHeroScores(h.spike); sum.e += s.e; sum.m += s.m; sum.l += s.l; });
@@ -653,7 +774,7 @@
       });
 
       const adviceBox = document.getElementById('draft-advice-text');
-      let advice = '<span style="color:var(--text-dim); font-style:italic;">Draft heroes to analyze...</span>';
+      let advice = '<span style="color:var(--text-dim); font-style:italic;">Draft teams to generate tactical advice...</span>';
       
       if (allyIds.length > 0 && enemyIds.length > 0) {
         const eDiff = allySpike.e - enemySpike.e;
@@ -669,15 +790,19 @@
         advice = spikeAdvice;
       }
 
-      // ALLY COMP WARNINGS
+      // ALLY COMP WARNINGS (UPGRADED)
       if (allyIds.length >= 4) { 
-          const allyHeroes = allyIds.map(id => HEROES.find(h => h.id === id));
+          const allyHeroes = allyIds.map(id => HEROES.find(h => h.id === id)).filter(Boolean);
           const hasTank = allyHeroes.some(h => h.role === 'Tank' || (h.traits && h.traits.includes('tank')));
           const hasAP = allyHeroes.some(h => h.role === 'Mage' || ['Luna', 'Sima Yi', 'Erin', 'Guiguzi', 'Donghuang', 'Zhuangzi', 'Cai Yan'].includes(h.id));
+          const hasAD = allyHeroes.some(h => ['Marksman', 'Fighter', 'Assassin'].includes(h.role) && !['Luna', 'Sima Yi', 'Erin'].includes(h.id));
+          const ccCount = allyHeroes.filter(h => h.traits && (h.traits.includes('cc') || h.traits.includes('control'))).length;
           
           let compWarnings = '';
-          if (!hasTank) compWarnings += '<div style="margin-top:8px; color:var(--s-tier); font-size:0.75rem;">⚠️ <b>Fragile Comp:</b> No frontline tank. High risk of getting wiped in teamfights.</div>';
-          if (!hasAP) compWarnings += '<div style="margin-top:8px; color:var(--s-tier); font-size:0.75rem;">⚠️ <b>Full Physical Damage:</b> The enemy will easily counter your team by stacking Armor.</div>';
+          if (!hasTank) compWarnings += '<div style="margin-top:8px; color:var(--s-tier); font-size:0.75rem;">⚠️ <b>Fragile Comp:</b> No frontline. You will struggle to contest vision or survive burst.</div>';
+          if (!hasAP) compWarnings += '<div style="margin-top:8px; color:var(--s-tier); font-size:0.75rem;">⚠️ <b>Full AD:</b> The enemy will easily counter your team by stacking physical defense.</div>';
+          if (!hasAD) compWarnings += '<div style="margin-top:8px; color:var(--s-tier); font-size:0.75rem;">⚠️ <b>Lacking Physical DPS:</b> Your team will struggle to push towers and take neutral objectives.</div>';
+          if (ccCount < 2) compWarnings += '<div style="margin-top:8px; color:var(--gold); font-size:0.75rem;">⚠️ <b>Low CC:</b> You lack hard crowd control to lock down hyper-mobile enemies like Lam or Jing.</div>';
           
           if(compWarnings) advice += '<hr style="border-color:rgba(255,255,255,0.1); margin: 8px 0;">' + compWarnings;
       }
@@ -757,6 +882,7 @@
     }
     
     window.onload = () => { 
+      initHeroes();
       loadDraftState();
       renderList(); 
       renderDraftBoard(); 

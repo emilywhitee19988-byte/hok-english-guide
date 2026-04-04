@@ -453,7 +453,7 @@
     {t:'Swordmaster',i:'Musashi',r:'Fighter',tr:'S',l:'Jungle',s:'Mid-Game',ts:['anti_projectile'],w:'51.9%',p:'16.5%', d:'Anti-projectile bruiser. His windwall destroys incoming mage and marksman attacks, making him an amazing counter-pick to heavy poke compositions.'}
     ];
 
-    // Immediately map HEROES so they are available the second the script runs
+    // THE FIX: Immediately define HEROES without relying on function calls later
     const HEROES = HERO_DATA.map(h => ({
       title: h.t, id: h.i, role: h.r, tier: h.tr, lane: h.l, spike: h.s, traits: h.ts, wr: h.w, pr: h.p,
       sprite: h.r === 'Mage' || h.r === 'Support' ? 'Coolio' : (h.r === 'Tank' || h.r === 'Fighter' ? 'Bigly' : 'Runsie'),
@@ -475,12 +475,15 @@
     };
 
     function saveDraftState() {
-      localStorage.setItem('hok_draft_state', JSON.stringify(draftState));
+      localStorage.setItem('hok_draft_state_v2', JSON.stringify(draftState));
       localStorage.setItem('hok_roster', JSON.stringify(myRoster));
     }
 
     function loadDraftState() {
-      const saved = localStorage.getItem('hok_draft_state');
+      // The old cache is officially killed here
+      localStorage.removeItem('hok_draft_state');
+
+      const saved = localStorage.getItem('hok_draft_state_v2');
       if (saved) {
         try { 
             const parsed = JSON.parse(saved); 
@@ -500,7 +503,15 @@
             
             while(draftState.allyBans.length < 3) draftState.allyBans.push(null);
             while(draftState.enemyBans.length < 3) draftState.enemyBans.push(null);
-        } catch(e) {}
+        } catch(e) {
+            // Failsafe wipe if even v2 is corrupted
+            draftState = {
+                myRole: 'Clash Lane',
+                ally: { 'Clash Lane': null, 'Jungle': null, 'Mid Lane': null, 'Farm Lane': null, 'Roam': null },
+                enemy: { 'Clash Lane': null, 'Jungle': null, 'Mid Lane': null, 'Farm Lane': null, 'Roam': null },
+                allyBans: [null, null, null], enemyBans: [null, null, null]
+            };
+        }
       }
       const savedRoster = localStorage.getItem('hok_roster');
       if(savedRoster) {
@@ -530,6 +541,7 @@
     
     function toggleUseRoster(val) {
         useRosterOnly = val;
+        if(activeTab === 'draft') renderDraftPool(); 
     }
 
     function switchMainTab(tabId) {
@@ -954,13 +966,18 @@
     function renderDraftPool() {
       const root = document.getElementById('draft-pool-root');
       const drafted = [...Object.values(draftState.ally), ...Object.values(draftState.enemy), ...draftState.allyBans, ...draftState.enemyBans].filter(Boolean);
-      const filtered = HEROES.filter(h => (currentFilter === 'all' || h.lane.includes(currentFilter)) && (h.id.toLowerCase().includes(currentSearch) || h.title.toLowerCase().includes(currentSearch)))
-                             .sort((a, b) => parseFloat(b.wr) - parseFloat(a.wr));
+      
+      // VISUAL ROSTER FILTER LOGIC
+      const filtered = HEROES.filter(h => 
+          (currentFilter === 'all' || h.lane.includes(currentFilter)) && 
+          (h.id.toLowerCase().includes(currentSearch) || h.title.toLowerCase().includes(currentSearch)) &&
+          (!useRosterOnly || myRoster.includes(h.id))
+      ).sort((a, b) => parseFloat(b.wr) - parseFloat(a.wr));
       
       root.innerHTML = filtered.map(h => `<div class="pool-hero ${drafted.includes(h.id)?'drafted':''} ${suggestedPickIds.includes(h.id)?'suggested':''} ${suggestedBanIds.includes(h.id)?'banned-suggest':''}" onclick="handleHeroPoolClick('${h.id}')"><div class="pool-hero-img"><img src="" data-id="${h.id}"></div><div class="pool-hero-title">${h.title}</div><div style="font-size:0.45rem; color:var(--text-dim); text-transform:uppercase;">${h.id}</div></div>`).join('');
       root.querySelectorAll('img').forEach(i => loadPortrait(i, i.dataset.id));
 
-      if (root.innerHTML === '') root.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-dim); font-family: 'Kanit'; font-size: 1.2rem; grid-column: 1/-1;">No heroes found.</div>`;
+      if (root.innerHTML === '') root.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-dim); font-family: 'Kanit'; font-size: 1.2rem; grid-column: 1/-1;">No heroes found in your roster.</div>`;
     }
 
     function exportDraft() {

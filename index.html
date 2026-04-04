@@ -186,6 +186,9 @@
       <div class="draft-controls-wrap" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h2 style="font-family:'Kanit'; font-size:1.8rem;">Ranked Team Builder</h2>
         <div style="display:flex; gap:10px; flex-wrap:wrap; align-items: center;">
+          
+          <button id="sound-toggle-btn" class="site-nav-btn" style="font-size:1.4rem; padding:0; margin-right:10px; border-bottom:none; color:var(--text);" onclick="toggleSound()">🔊</button>
+          
           <div class="roster-toggle-wrap">
             <input type="checkbox" id="roster-toggle" onchange="toggleUseRoster(this.checked)">
             <label for="roster-toggle">★ My Roster Only</label>
@@ -248,6 +251,72 @@
   </div>
 
   <script>
+    // --- LAZY-LOADED SYNTHESIZER AUDIO SYSTEM ---
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function getAudioCtx() {
+        if (!audioCtx) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if(AudioContext) audioCtx = new AudioContext();
+            } catch(e) {
+                console.warn("Web Audio API not supported on this browser.");
+            }
+        }
+        return audioCtx;
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        document.getElementById('sound-toggle-btn').innerText = soundEnabled ? '🔊' : '🔇';
+        if(soundEnabled) playSound('click');
+    }
+
+    function playSound(type) {
+        if (!soundEnabled) return;
+        try {
+            const ctx = getAudioCtx();
+            if (!ctx) return;
+            
+            if (ctx.state === 'suspended') ctx.resume();
+            
+            const osc = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.1);
+            } else if (type === 'ban') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.05, ctx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.2);
+            } else if (type === 'swoosh') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.15);
+                gainNode.gain.setValueAtTime(0.03, ctx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            }
+        } catch(e) {
+            // Failsafe: if audio throws an error, ignore it so the app doesn't crash
+        }
+    }
+    // --------------------------------
+
     const SPRITES = {
       'Bigly': { icon: '🔥', bonus: '10% Damage Reduction', cost: '10% Movement Speed', desc: 'Superior frontline fortification.' },
       'Coolio': { icon: '❄️', bonus: 'Enhanced Spell Cooldowns', cost: '10% Max HP', desc: 'Tactical ability rotation frequency.' },
@@ -275,27 +344,27 @@
     {t:'Heartseeker',i:'Daji',r:'Mage',tr:'S',l:'Mid Lane',s:'Late-Game',ts:['burst'],w:'54.7%',p:'22.1%', d:'Bush-camping burst. Isolates and deletes squishies mid/late game. Do not pick into 2+ tanks or invulnerable heroes (e.g., Li Bai).'},
     {t:'Scorchette',i:'Angela',r:'Mage',tr:'S',l:'Mid Lane',s:'Early-Mid',ts:['burst','aoe'],w:'53.3%',p:'19.8%', d:'Early priority mage. Clears waves instantly to unlock jungle invades. Pair with lockdown tanks like Bai Qi or Lian Po to land her ultimate.'},
     {t:'Timebender',i:'Sun Bin',r:'Support',tr:'C',l:'Roam',s:'Late-Game',ts:['utility'],w:'47.9%',p:'7.4%', d:'Kite and disengage enabler. Best paired with bruisers (like Yang Jian or Biron) to allow them to run down enemies and reverse burst damage.'},
-    {t:'Mastermind',i:'Kongming',r:'Mage',tr:'B',l:'Mid Lane / Jungle',s:'Mid-Late',ts:['burst','execute'],w:'48.5%',p:'9.2%', d:'Snowball resetting mage. Needs strong frontline engage to drop enemies low enough for his ultimate to execute and chain.'},
-    {t:'Breezeheart',i:'Xiao Qiao',r:'Mage',tr:'A',l:'Mid Lane',s:'Late-Game',ts:['burst'],w:'50.9%',p:'15.3%', d:'Late-game AoE hyper-carry. Excellent in 5v5 front-to-back fights. Needs strong peel support to survive aggressive dive assassins.'},
+    {t:'Mastermind',i:'Kongming',r:'Mage',tr:'B',l:'Mid Lane / Jungle',s:'Mid-Late',ts:['burst','execute'],w:'48.5%',p:'9.2%', d:'Snowball heavy assassin-mage. Pick him when your team has strong engage to guarantee his ultimate executes. Needs to secure early kills to stay relevant.'},
+    {t:'Breezeheart',i:'Xiao Qiao',r:'Mage',tr:'A',l:'Mid Lane',s:'Late-Game',ts:['burst'],w:'50.9%',p:'15.3%', d:'Massive late-game AoE burst. Excellent into teamfight-heavy comps but needs peel against dive assassins like Lam or Jing.'},
     {t:'Lotusdancer',i:'Diaochan',r:'Mage',tr:'C',l:'Mid Lane / Clash Lane',s:'Mid-Game',ts:['true_damage'],w:'46.8%',p:'8.1%', d:'Sustained true-damage duelist. Melts low-burst, tanky melee comps. Hard countered by long-range poke and heavy, unavoidable CC.'},
     {t:'Mechaboss',i:'Milady',r:'Mage',tr:'A',l:'Mid Lane',s:'Early-Mid',ts:['push'],w:'51.4%',p:'10.5%', d:'Siege priority. Punishes heavy-roaming enemy mids by taking towers instantly. Lacks burst, making her weak in late-game 5v5 teamfights.'},
     {t:'Divine Enforcer',i:'Ziya',r:'Mage',tr:'B',l:'Mid Lane / Roam',s:'Late-Game',ts:['utility'],w:'49.1%',p:'6.3%', d:'Tempo accelerator. His passive allows the team to hit power spikes earlier. Great at breaking high-ground defenses with extreme range.'},
-    {t:'Smith and Blade',i:'Gan & Mo',r:'Mage',tr:'C',l:'Mid Lane',s:'Mid-Late',ts:['poke'],w:'47.1%',p:'5.5%', d:'High-skill artillery. Deletes backlines from out of vision. Pick against slow comps; struggles if heavily pressured early by aggressive junglers.'},
+    {t:'Smith and Blade',i:'Gan & Mo',r:'Mage',tr:'C',l:'Mid Lane',s:'Mid-Late',ts:['poke'],w:'47.1%',p:'5.5%', d:'Incredible long-range burst. Pick against slow, immobile backlines that cannot dodge his swords. Needs strong vision control from his Roam to thrive.'},
     {t:'Avici Puppeteer',i:'Yango',r:'Mage',tr:'B',l:'Clash Lane',s:'Late-Game',ts:['control'],w:'48.2%',p:'3.8%', d:'Isolation specialist. Uses ultimate to turn 5v5s into 4v4s by removing the enemy carry. Essential to communicate ultimate targets with team.'},
     {t:'Boardmaster',i:'Yixing',r:'Mage',tr:'B',l:'Mid Lane',s:'Mid-Late',ts:['control'],w:'52.8%',p:'8.4%', d:'The ultimate zone controller. Use his ultimate to trap low-mobility enemies or protect your team from dive. Essential for objective control around dragons.'},
-    {t:'Celestial',i:'Nuwa',r:'Mage',tr:'B',l:'Mid Lane',s:'Late-Game',ts:['range'],w:'49.3%',p:'4.1%', d:'Terrain manipulation. Best pick for stalling the game to late-game and completely shutting down choke points against siege comps.'},
+    {t:'Celestial',i:'Nuwa',r:'Mage',tr:'B',l:'Mid Lane',s:'Late-Game',ts:['range'],w:'49.3%',p:'4.1%', d:'Terrain manipulation. Best pick for stalling the game to late-game and completely shutting down choke points against siege comps. Her blocks counter movement-based heroes.'},
     {t:'Curious Mixture',i:'Dr Bian',r:'Mage',tr:'C',l:'Mid Lane',s:'Early-Mid',ts:['healer'],w:'46.4%',p:'2.9%', d:'Sustain/Attrition mage. Excels in prolonged, slow brawls alongside beefy frontliners. Extremely vulnerable to burst and anti-heal.'},
     {t:'Inferno',i:'Zhou Yu',r:'Mage',tr:'C',l:'Mid Lane',s:'Mid-Game',ts:['control'],w:'47.5%',p:'4.7%', d:'Area denial and tower siege. Forces enemies out of objectives. Pair with poke comps to slowly choke the enemy out of their base.'},
-    {t:'Silkweaver',i:'Shi',r:'Mage',tr:'C',l:'Mid Lane / Roam',s:'Mid-Game',ts:['control'],w:'46.9%',p:'3.4%', d:'Displacement utility. Can pull allies out of danger or drag enemies into bad positions. High synergy with coordinated dive teams.'},
-    {t:'Tunecaster',i:'Yuhuan',r:'Mage',tr:'C',l:'Mid Lane / Jungle / Roam',s:'Late-Game',ts:['sustain'],w:'47.6%',p:'5.8%', d:'Sustain and invulnerability. Uses ultimate to bait crucial enemy cooldowns and heal the team. Excellent kiting potential against bruisers.'},
-    {t:'Demonplate',i:'Kaizer',r:'Tank',tr:'S',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['sustain','tank'],w:'52.5%',p:'18.4%', d:'Sustain bruiser. Ultimate grants massive damage block. Excellent at isolating and dueling carries. Can be kited by heavy slows.'},
-    {t:'Earthshaker',i:'Lian Po',r:'Tank',tr:'A',l:'Clash Lane / Roam',s:'Early-Mid',ts:['cc','tank'],w:'50.2%',p:'11.2%', d:'Hard-engage CC tank. Chain knock-ups disrupt enemy backlines perfectly. High synergy with AoE burst mages like Wang Zhaojun.'},
+    {t:'Silkweaver',i:'Shi',r:'Mage',tr:'C',l:'Mid Lane / Roam',s:'Mid-Game',ts:['control'],w:'46.9%',p:'3.4%', d:'Strong utility and displacement. Great for disrupting enemy formations and saving caught-out allies. Shines in highly coordinated, communicative teams.'},
+    {t:'Tunecaster',i:'Yuhuan',r:'Mage',tr:'C',l:'Mid Lane / Jungle / Roam',s:'Late-Game',ts:['sustain'],w:'47.6%',p:'5.8%', d:'Versatile healer and poke mage. Pick for sustained teamfights and her invulnerability to dodge key ultimates. Great at kiting bruisers.'},
+    {t:'Demonplate',i:'Kaizer',r:'Tank',tr:'S',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['sustain','tank'],w:'52.5%',p:'18.4%', d:'An incredibly safe blind pick. Thrives in extended skirmishes and can easily isolate and lock down carries. Vulnerable to heavy kiting.'},
+    {t:'Earthshaker',i:'Lian Po',r:'Tank',tr:'A',l:'Clash Lane / Roam',s:'Early-Mid',ts:['cc','tank'],w:'50.2%',p:'11.2%', d:'Disruptive CC tank. Ideal for initiating teamfights and breaking up enemy backlines with chain knock-ups. Pair with AoE burst mages.'},
     {t:'Harbinger',i:'Donghuang',r:'Tank',tr:'A',l:'Clash Lane / Roam',s:'Level 4',ts:['lockdown','sustain'],w:'51.1%',p:'14.5%', d:'The ultimate anti-dive. Suppression ultimate cannot be cleansed. Mandatory pick against hyper-mobile assassins (Lam, Luna, Jing).'},
-    {t:'The Beast',i:'Zhang Fei',r:'Tank',tr:'C',l:'Roam',s:'Late-Game',ts:['shield','tank'],w:'47.3%',p:'8.6%', d:'Premier peel tank. Pick him specifically to protect immobile hyper-carries (Luban, Hou Yi) from aggressive flankers and dive comps.'},
+    {t:'The Beast',i:'Zhang Fei',r:'Tank',tr:'C',l:'Roam',s:'Late-Game',ts:['shield','tank'],w:'47.3%',p:'8.6%', d:'Premier peel tank. Pick him specifically to protect immobile marksmen (like Luban No.7 or Hou Yi) from aggressive flankers and dive comps.'},
     {t:'Dreamwanderer',i:'Zhuangzi',r:'Tank',tr:'B',l:'Clash Lane / Roam',s:'Mid-Game',ts:['cc_immune'],w:'48.7%',p:'9.1%', d:'Anti-CC utility. Pick strictly when the enemy drafts heavy AoE crowd control (e.g., Lian Po, Guiguzi). His ultimate turns fights instantly.'},
     {t:'Mecha Brat',i:'Liu Shan',r:'Tank',tr:'C',l:'Roam',s:'Early-Game',ts:['cc','push'],w:'46.8%',p:'6.2%', d:'Tower-diving menace. His abilities stun structures. Pick with early-game junglers to force tower dives and heavily snowball the early game.'},
     {t:'Sledgehammer',i:'Wuyan',r:'Tank',tr:'C',l:'Clash Lane / Jungle',s:'Mid-Game',ts:['cc'],w:'51.3%',p:'0.4%', d:'Aggressive skirmisher. Uses area petrification to disrupt groups of enemies. Excellent early game pressure but falls off late compared to pure tanks.'},
-    {t:'Belligerence',i:'Dun',r:'Tank',tr:'A',l:'Clash Lane / Jungle / Roam',s:'Mid-Game',ts:['tank'],w:'50.6%',p:'12.3%', d:'Jack-of-all-trades frontline. Provides reliable CC, sustain, and true damage. A very safe blind pick that fits into almost any team composition.'},
+    {t:'Belligerence',i:'Dun',r:'Tank',tr:'A',l:'Clash Lane / Jungle / Roam',s:'Mid-Game',ts:['tank'],w:'50.6%',p:'12.3%', d:'Versatile frontline flex. Provides strong CC, sustain, and true damage. A very safe blind pick that fits into almost any team composition.'},
     {t:'Ultimate Weapon',i:'Bai Qi',r:'Tank',tr:'C',l:'Clash Lane',s:'Late-Game',ts:['tank'],w:'47.1%',p:'5.7%', d:'Scaling engage tank. Taunt duration increases with max HP, making him a late-game monster. Pick when your team has reliable follow-up burst.'},
     {t:'White Anchor',i:'Ata',r:'Tank',tr:'B',l:'Clash Lane / Jungle',s:'Early-Mid',ts:['sustain'],w:'48.9%',p:'4.8%', d:'Terrain-scaling sustain tank. Excellent at invading early and trapping immobile carries in terrain. Build anti-heal immediately against him.'},
     {t:'Dominant Ruler',i:'Liu Bang',r:'Tank',tr:'C',l:'Clash Lane / Roam',s:'Mid-Game',ts:['global','shield'],w:'46.5%',p:'3.9%', d:'Global presence tank. Plays in the side lane to create pressure, then instantly teleports to shield the carry when a fight breaks out.'},
@@ -364,7 +433,7 @@
     {t:'Wild Rider',i:'Agudo',r:'Marksman',tr:'C',l:'Farm Lane / Jungle',s:'Mid-Game',ts:['utility'],w:'47.1%',p:'3.8%', d:'Supportive jungler. Rapidly clears camps and pushes towers fast with her animal summons. Pick to enable and buff a hyper-carry marksman.'},
     {t:'Packleader',i:'Chano',r:'Marksman',tr:'C',l:'Farm Lane / Jungle',s:'Mid-Late',ts:['sustain'],w:'46.5%',p:'5.1%', d:'Sustained beast-rider. Uses his wolf to soak damage and reposition safely during chaotic teamfights. Good mobility and unexpected survivability.'},
     {t:'Seasinger',i:'Dolia',r:'Support',tr:'S',l:'Roam',s:'Level 4+',ts:['refresh'],w:'52.7%',p:'25.6%', d:'Priority ban/pick. Instantly resets ultimates. Must be paired with game-changing AoE ultimates (Gao, Lady Zhen, Lian Po) to double their impact.'},
-    {t:'Healing Tone',i:'Cai Yan',r:'Support',tr:'S',l:'Roam',s:'Early-Mid',ts:['healer'],w:'51.9%',p:'19.4%', d:'The ultimate mobile ambulance. Pick to counter heavy poke comps and keep your team topped off during extended sieges.'},
+    {t:'Healing Tone',i:'Cai Yan',r:'Support',tr:'S',l:'Roam',s:'Early-Mid',ts:['healer'],w:'51.9%',p:'19.4%', d:'The ultimate mobile ambulance. Pick to counter heavy poke comps and enable hyper-carries. Enemy is forced to rush anti-heal items immediately.'},
     {t:'Bondweaver',i:'Dyadia',r:'Support',tr:'A',l:'Roam',s:'Mid-Game',ts:['healer'],w:'50.4%',p:'14.2%', d:'Sustain and gold thief. Constantly harasses the enemy while providing steady healing for your lane partner. Accelerates the team\'s economy.'},
     {t:'Lanternlight',i:'Da Qiao',r:'Support',tr:'B',l:'Roam / Mid Lane',s:'Late-Game',ts:['global'],w:'49.2%',p:'11.8%', d:'Macro-game mastermind. Uses portals to rotate the team across the map, backdoor towers, and instantly reset health bars during objective fights.'},
     {t:'Deerie',i:'Yaria',r:'Support',tr:'A',l:'Roam',s:'Mid-Game',ts:['shield'],w:'53.8%',p:'25.3%', d:'Single-target enabler. Pair exclusively with a hyper-carry (Marco Polo, Lam). Leaves the team lacking a true frontline, so top lane must pick a tank.'},
@@ -384,7 +453,14 @@
     {t:'Swordmaster',i:'Musashi',r:'Fighter',tr:'S',l:'Jungle',s:'Mid-Game',ts:['anti_projectile'],w:'51.9%',p:'16.5%', d:'Anti-projectile bruiser. His windwall destroys incoming mage and marksman attacks, making him an amazing counter-pick to heavy poke compositions.'}
     ];
 
-    let HEROES = [];
+    // Immediately map HEROES so they are available the second the script runs
+    const HEROES = HERO_DATA.map(h => ({
+      title: h.t, id: h.i, role: h.r, tier: h.tr, lane: h.l, spike: h.s, traits: h.ts, wr: h.w, pr: h.p,
+      sprite: h.r === 'Mage' || h.r === 'Support' ? 'Coolio' : (h.r === 'Tank' || h.r === 'Fighter' ? 'Bigly' : 'Runsie'),
+      draft: h.d
+    }));
+
+    const TEAM_ROLES = ['Clash Lane', 'Jungle', 'Mid Lane', 'Farm Lane', 'Roam'];
     let currentFilter = 'all', currentSearch = '', activeTab = 'list', activeDraftSlot = null;
     let suggestedPickIds = [], suggestedBanIds = [];
     
@@ -398,14 +474,6 @@
       allyBans: [null, null, null], enemyBans: [null, null, null]
     };
 
-    function initHeroes() {
-        HEROES = HERO_DATA.map(h => ({
-          title: h.t, id: h.i, role: h.r, tier: h.tr, lane: h.l, spike: h.s, traits: h.ts, wr: h.w, pr: h.p,
-          sprite: h.r === 'Mage' || h.r === 'Support' ? 'Coolio' : (h.r === 'Tank' || h.r === 'Fighter' ? 'Bigly' : 'Runsie'),
-          draft: h.d
-        }));
-    }
-
     function saveDraftState() {
       localStorage.setItem('hok_draft_state', JSON.stringify(draftState));
       localStorage.setItem('hok_roster', JSON.stringify(myRoster));
@@ -415,14 +483,20 @@
       const saved = localStorage.getItem('hok_draft_state');
       if (saved) {
         try { 
-            draftState = JSON.parse(saved); 
+            const parsed = JSON.parse(saved); 
+            if(parsed.myRole) draftState.myRole = parsed.myRole;
+            if(parsed.ally) draftState.ally = {...draftState.ally, ...parsed.ally};
+            if(parsed.enemy) draftState.enemy = {...draftState.enemy, ...parsed.enemy};
+            if(parsed.allyBans) draftState.allyBans = parsed.allyBans;
+            if(parsed.enemyBans) draftState.enemyBans = parsed.enemyBans;
+
             ['ally', 'enemy'].forEach(t => {
                 for(let r in draftState[t]) {
                     if (draftState[t][r] && !HERO_DATA.find(h => h.i === draftState[t][r])) draftState[t][r] = null;
                 }
             });
-            draftState.allyBans = (draftState.allyBans || [null,null,null]).map(id => HERO_DATA.find(h => h.i === id) ? id : null);
-            draftState.enemyBans = (draftState.enemyBans || [null,null,null]).map(id => HERO_DATA.find(h => h.i === id) ? id : null);
+            draftState.allyBans = (draftState.allyBans || [null,null,null]).map(id => id && HERO_DATA.find(h => h.i === id) ? id : null);
+            draftState.enemyBans = (draftState.enemyBans || [null,null,null]).map(id => id && HERO_DATA.find(h => h.i === id) ? id : null);
             
             while(draftState.allyBans.length < 3) draftState.allyBans.push(null);
             while(draftState.enemyBans.length < 3) draftState.enemyBans.push(null);
@@ -459,6 +533,7 @@
     }
 
     function switchMainTab(tabId) {
+      if(soundEnabled) playSound('click');
       activeTab = tabId;
       document.querySelectorAll('.site-nav-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById('nav-' + tabId).classList.add('active');
@@ -521,8 +596,8 @@
           grid.innerHTML = filtered.map(h => {
             const wrColor = parseFloat(h.wr) >= 50.0 ? 'var(--wr-good)' : 'var(--wr-bad)';
             const isStarred = myRoster.includes(h.id) ? 'active' : '';
-            return `<div class="hero-card" onclick="showView('herodetail', '${h.id}')">
-              <button class="star-btn ${isStarred}" onclick="event.stopPropagation(); toggleRoster('${h.id}')">★</button>
+            return `<div class="hero-card" onclick="if(soundEnabled) playSound('click'); showView('herodetail', '${h.id}')">
+              <button class="star-btn ${isStarred}" onclick="event.stopPropagation(); if(soundEnabled) playSound('click'); toggleRoster('${h.id}')">★</button>
               <div class="hero-avatar"><img src="" data-id="${h.id}"></div>
               <span class="hero-flavor">${h.title}</span>
               <span class="hero-name-label">${h.id}</span>
@@ -613,6 +688,7 @@
     }
 
     function setMyDraftRole(role, btn) {
+      if(soundEnabled) playSound('click');
       draftState.myRole = role;
       document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -622,6 +698,7 @@
     }
 
     function handleSlotClick(team, type, key) {
+      if(soundEnabled) playSound('click');
       activeDraftSlot = { team, type, key };
       if(type === 'pick') {
         const btn = document.querySelector(`.filter-btn[data-filter="${key}"]`);
@@ -631,6 +708,7 @@
     }
 
     function clearSlot(team, type, key) {
+       if(soundEnabled) playSound('swoosh');
        if(type === 'pick') draftState[team][key] = null;
        else (team === 'ally' ? draftState.allyBans : draftState.enemyBans)[key] = null;
        suggestedPickIds = [];
@@ -640,11 +718,26 @@
     }
 
     function handleHeroPoolClick(id) {
-      if(!activeDraftSlot) { draftState.ally[draftState.myRole] = id; }
+      let playedSound = false;
+      if(!activeDraftSlot) { 
+          draftState.ally[draftState.myRole] = id; 
+          if(soundEnabled) playSound('click');
+      }
       else {
-        if(activeDraftSlot.type === 'pick') draftState[activeDraftSlot.team][activeDraftSlot.key] = id;
-        else if(activeDraftSlot.team === 'ally') draftState.allyBans[activeDraftSlot.key] = id;
-        else draftState.enemyBans[activeDraftSlot.key] = id;
+        if(activeDraftSlot.type === 'pick') {
+            draftState[activeDraftSlot.team][activeDraftSlot.key] = id;
+            if(soundEnabled) playSound('click');
+        }
+        else if(activeDraftSlot.team === 'ally') {
+            draftState.allyBans[activeDraftSlot.key] = id;
+            if(soundEnabled) playSound('ban');
+            playedSound = true;
+        }
+        else {
+            draftState.enemyBans[activeDraftSlot.key] = id;
+            if(soundEnabled) playSound('ban');
+            playedSound = true;
+        }
         
         // SMART AUTO-ADVANCE
         activeDraftSlot = null;
@@ -686,6 +779,7 @@
     }
 
     function suggestCounters() {
+      if(soundEnabled) playSound('click');
       const enemyHeroes = Object.values(draftState.enemy).filter(Boolean);
       if (enemyHeroes.length === 0) { alert("Let the enemy pick a hero first so we can counter them!"); return; }
       const drafted = [...Object.values(draftState.ally), ...Object.values(draftState.enemy), ...draftState.allyBans, ...draftState.enemyBans].filter(Boolean);
@@ -709,6 +803,7 @@
     }
 
     function suggestBans() {
+      if(soundEnabled) playSound('click');
       const drafted = [...Object.values(draftState.ally), ...Object.values(draftState.enemy), ...draftState.allyBans, ...draftState.enemyBans].filter(Boolean);
       const available = HEROES.filter(h => !drafted.includes(h.id) && (h.tier === 'S' || h.tier === 'A'));
       available.sort((a, b) => parseFloat(b.wr) - parseFloat(a.wr));
@@ -804,7 +899,7 @@
         advice = spikeAdvice;
       }
 
-      // ALLY COMP WARNINGS (UPGRADED)
+      // ALLY COMP WARNINGS
       if (allyIds.length >= 4) { 
           const allyHeroes = allyIds.map(id => HEROES.find(h => h.id === id)).filter(Boolean);
           const hasTank = allyHeroes.some(h => h.role === 'Tank' || (h.traits && h.traits.includes('tank')));
@@ -869,6 +964,7 @@
     }
 
     function exportDraft() {
+        if(soundEnabled) playSound('click');
         let text = "🏆 HONOR OF KINGS DRAFT 🏆\n\n🟦 ALLY TEAM:\n";
         TEAM_ROLES.forEach(r => { const id = draftState.ally[r]; text += `- ${r}: ${id ? HEROES.find(x => x.id === id).title : 'Empty'}\n`; });
         text += "\n🟥 ENEMY TEAM:\n";
@@ -880,6 +976,7 @@
     }
 
     function resetDraft() {
+      if(soundEnabled) playSound('swoosh');
       draftState.ally = { 'Clash Lane': null, 'Jungle': null, 'Mid Lane': null, 'Farm Lane': null, 'Roam': null };
       draftState.enemy = { 'Clash Lane': null, 'Jungle': null, 'Mid Lane': null, 'Farm Lane': null, 'Roam': null };
       draftState.allyBans = [null, null, null]; draftState.enemyBans = [null, null, null];
@@ -889,6 +986,7 @@
     function handleSearch() { currentSearch = document.getElementById('search-input').value.toLowerCase(); if(activeTab==='list') renderList(); else renderDraftPool(); }
     
     function setFilter(f, b) { 
+      if(soundEnabled) playSound('click');
       currentFilter = f; 
       document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); 
       b.classList.add('active'); 
@@ -896,7 +994,6 @@
     }
     
     window.onload = () => { 
-      initHeroes();
       loadDraftState();
       renderList(); 
       renderDraftBoard(); 

@@ -159,7 +159,7 @@
     </div>
 
     <div id="shared-navbar" class="nav-bar">
-      <div class="search-box"><input type="text" id="search-input" placeholder="Search by name..." oninput="handleSearch()"></div>
+      <div class="search-box"><input type="text" id="search-input" placeholder="Search by Title or Name..." oninput="handleSearch()"></div>
       <div id="role-filters" style="display:flex; gap:6px; flex-wrap:wrap;">
         <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
         <button class="filter-btn" data-filter="Clash Lane" onclick="setFilter('Clash Lane', this)">Clash Lane</button>
@@ -417,7 +417,7 @@
     {t:'Shadowreaper',i:'Sima Yi',r:'Assassin',tr:'C',l:'Mid Lane / Jungle',s:'Mid-Game',ts:['silence','magic_dps'],w:'47.5',p:'6.4', d:'Magic damage assassin. Global vision on low-health targets. His silence counters squishy mages.'},
     {t:'Starblade',i:'Yao',r:'Assassin',tr:'B',l:'Clash Lane / Jungle',s:'Mid-Late',ts:['magic_dps','mobility'],w:'48.5',p:'7.9', d:'Ranged magic assassin. Safely deals damage from afar while dodging engage.'},
 
-    {t:'Gunslinger',i:'Marco Polo',r:'Marksman',tr:'S',l:'Farm Lane',s:'Mid-Game',ts:['true_damage','mobility'],w:'53.6',p:'26.7', d:'The ultimate tank-buster. Pick specifically when the enemy drafts heavy frontline/bruisers.'},
+    {t:'Gunslinger',i:'Marco Polo',r:'Marksman',tr:'S',l:'Farm Lane',s:'Mid-Game',ts:['true_damage','mobility','high_dps'],w:'53.6',p:'26.7', d:'The ultimate tank-buster. Pick specifically when the enemy drafts heavy frontline/bruisers.'},
     {t:'Mecha Shooter',i:'Luban No.7',r:'Marksman',tr:'B',l:'Farm Lane',s:'Late-Game',ts:['high_dps','anti_tank'],w:'49.4',p:'20.1', d:'Immobile hyper-carry. Deals massive %HP area damage, but is guaranteed to die without a dedicated peel tank.'},
     {t:'Solarus',i:'Hou Yi',r:'Marksman',tr:'S',l:'Farm Lane',s:'Late-Game',ts:['high_dps','engage'],w:'51.6',p:'22.5', d:'Classic auto-attack carry. Global ultimate provides excellent engage. Melts entire teams late game.'},
     {t:'Longshot',i:'Shouyue',r:'Marksman',tr:'C',l:'Farm Lane',s:'Early-Game',ts:['poke','vision'],w:'46.8',p:'18.2', d:'Sniper marksman. Provides massive early-game poke and crucial vision control with traps.'},
@@ -466,9 +466,9 @@
       if(h.r === 'Marksman') emblemRole = 'Marksman';
 
       return {
-        title: h.i, 
-        flavor: h.t, 
-        id: h.i, 
+        title: h.t, // Display Name = English Title (e.g., Princess Frost)
+        flavor: h.i, // Subtitle = English Name (e.g., Wang Zhaojun)
+        id: h.i, // ID matches English Name for logic engine
         role: h.r, baseTier: h.tr, lane: h.l, spike: h.s, traits: h.ts, baseWr: parseFloat(h.w), pr: parseFloat(h.p), comp: comp,
         sprite: emblemRole, draft: h.d, counterScore: 0, reasons: []
       };
@@ -520,12 +520,12 @@
     }
 
     function saveDraftState() {
-      localStorage.setItem('hok_draft_state_v16', JSON.stringify(draftState));
-      localStorage.setItem('hok_roster_v16', JSON.stringify(myRoster));
+      localStorage.setItem('hok_draft_state_v18', JSON.stringify(draftState));
+      localStorage.setItem('hok_roster_v18', JSON.stringify(myRoster));
     }
 
     function loadDraftState() {
-      const saved = localStorage.getItem('hok_draft_state_v16');
+      const saved = localStorage.getItem('hok_draft_state_v18');
       if (saved) {
         try { 
             const parsed = JSON.parse(saved); 
@@ -544,7 +544,7 @@
             draftState.enemyBans = (draftState.enemyBans || [null,null,null]).map(id => id && RAW_HEROES.find(h => h.id === id) ? id : null);
         } catch(e) {}
       }
-      const savedRoster = localStorage.getItem('hok_roster_v16');
+      const savedRoster = localStorage.getItem('hok_roster_v18');
       if(savedRoster) {
           try { 
               myRoster = JSON.parse(savedRoster).filter(id => RAW_HEROES.find(h => h.id === id)); 
@@ -601,27 +601,27 @@
     }
 
     function loadPortrait(el, h) {
-      const titleNoSpace = h.flavor.replace(/ /g, '');
-      const titleUnderscore = h.flavor.replace(/ /g, '_');
-      const titleLower = h.flavor.toLowerCase();
+      const titleNoSpace = h.title.replace(/ /g, '');
+      const titleUnderscore = h.title.replace(/ /g, '_');
+      const titleLower = h.title.toLowerCase();
       const titleNoSpaceLower = titleNoSpace.toLowerCase();
 
-      const nameNoSpace = h.title.replace(/ /g, '');
-      const nameUnderscore = h.title.replace(/ /g, '_');
-      const nameLower = h.title.toLowerCase();
+      const nameNoSpace = h.flavor.replace(/ /g, '');
+      const nameUnderscore = h.flavor.replace(/ /g, '_');
+      const nameLower = h.flavor.toLowerCase();
       const nameNoSpaceLower = nameNoSpace.toLowerCase();
       
       const paths = [
         `hero_portraits/${h.title}.png`,
-        `hero_portraits/${nameLower}.png`,
-        `hero_portraits/${nameNoSpace}.png`,
-        `hero_portraits/${nameNoSpaceLower}.png`,
-        `hero_portraits/${nameUnderscore}.png`,
-        `hero_portraits/${h.flavor}.png`,
         `hero_portraits/${titleLower}.png`,
         `hero_portraits/${titleNoSpace}.png`,
         `hero_portraits/${titleNoSpaceLower}.png`,
-        `hero_portraits/${titleUnderscore}.png`
+        `hero_portraits/${titleUnderscore}.png`,
+        `hero_portraits/${h.flavor}.png`,
+        `hero_portraits/${nameLower}.png`,
+        `hero_portraits/${nameNoSpace}.png`,
+        `hero_portraits/${nameNoSpaceLower}.png`,
+        `hero_portraits/${nameUnderscore}.png`
       ];
       
       let i = 0;
@@ -638,7 +638,7 @@
     function renderList() {
       const root = document.getElementById('tier-list-root'); root.innerHTML = '';
       ['S', 'A', 'B', 'C'].forEach(t => {
-        const filtered = HEROES.filter(h => h.tier === t && (currentFilter === 'all' || h.lane.includes(currentFilter)) && (h.id.toLowerCase().includes(currentSearch) || h.flavor.toLowerCase().includes(currentSearch)))
+        const filtered = HEROES.filter(h => h.tier === t && (currentFilter === 'all' || h.lane.includes(currentFilter)) && (h.id.toLowerCase().includes(currentSearch) || h.title.toLowerCase().includes(currentSearch)))
                                .sort((a, b) => parseFloat(b.wr) - parseFloat(a.wr));
                                
         if(filtered.length > 0) {
@@ -830,7 +830,6 @@
       renderDraftBoard();
     }
 
-    // THE SOLO Q VS PRO LEAGUE DUAL-ENGINE
     function suggestCounters() {
       if(soundEnabled) playSound('click');
       const enemyHeroes = Object.values(draftState.enemy).filter(Boolean).map(id => HEROES.find(h => h.id === id)).filter(Boolean);
@@ -871,7 +870,6 @@
           if (pr > 15.0) h.reasons.push("High Meta Priority");
 
           if(h.traits) {
-              // Standard Matchups
               if (enemyTraits.includes('tank') || enemyTraits.includes('shield')) {
                   if (h.traits.includes('true_damage') || h.traits.includes('poke') || h.traits.includes('anti_shield') || h.traits.includes('anti_tank')) { h.counterScore += 8; h.reasons.push("Shreds enemy frontline"); }
               }
@@ -892,15 +890,12 @@
                   h.counterScore -= 5; h.reasons.push("⚠️ DANGER: Enemy burst can kill before you heal");
               }
 
-              // DUAL ENGINE: PRO VS SOLO Q SYNERGY
               if (currentRankScope === 'glory') {
-                  // Pro Meta: Maximize Team Wombo Combos & Draft Structure
                   if (allyTraits.includes('cc') || allyTraits.includes('control')) {
                       if (h.traits.includes('burst') || h.traits.includes('aoe')) { h.counterScore += 8; h.reasons.push("Massive Pro-Level Combo Synergy"); }
                   }
                   if (allyTraits.includes('healer') && h.traits.includes('tank')) { h.counterScore += 6; h.reasons.push("Unkillable sustain core"); }
               } else {
-                  // Solo Q Meta: Maximize Independence & Self-Sustain
                   if (h.traits.includes('sustain') || h.traits.includes('mobility') || h.traits.includes('untargetable')) {
                       h.counterScore += 4; h.reasons.push("High self-sufficiency for Solo Queue");
                   }
@@ -909,7 +904,6 @@
                   }
               }
               
-              // Composition Fixes
               if (!hasTank && (h.role === 'Tank' || h.traits.includes('tank'))) {
                   h.counterScore += 12; 
                   h.reasons.push("Provides desperately needed Frontline");
@@ -923,7 +917,6 @@
                   h.reasons.push("Provides Physical DPS for objectives");
               }
 
-              // Power Curve Balancing
               if (lateGameCount >= 2) {
                   if (h.spike.includes('Early')) { h.counterScore += 6; h.reasons.push("Stabilizes early-game tempo"); }
                   if (h.spike.includes('Late')) { h.counterScore -= 5; h.reasons.push("Too greedy (already have late-game core)"); }
@@ -977,7 +970,6 @@
           if (myHeroId) {
               const myH = HEROES.find(h => h.id === myHeroId);
 
-              // MACRO COACHING (Core Identity + Matchups)
               if (myLane === 'Roam') {
                   tip = `<strong>Roam Macro:</strong> `;
                   if (myH.traits.includes('tank') && myH.traits.includes('engage')) {
@@ -1041,7 +1033,6 @@
                   }
               }
 
-              // DUAL ENGINE: SOLO Q VS PRO META NOTES
               if (currentRankScope !== 'glory') {
                   tip += `<br><br><span style="color:var(--gold);"><strong>Solo Queue Note:</strong> Do not expect perfect peel. Focus on securing your own farm and only rotate if the wave is completely cleared. Prioritize pushing over chasing kills.</span>`;
               } else {
@@ -1090,10 +1081,11 @@
           let enemyBonus = 0;
 
           if (allyHeroes.length > 0 && enemyHeroes.length > 0) {
-              if (allyHeroes.length >= 3 && !allyHeroes.some(h => h.role === 'Tank' || (h.traits && h.traits.includes('tank')))) allyBonus -= 3.0;
-              if (allyHeroes.length >= 3 && !allyHeroes.some(h => h.role === 'Mage' || (h.traits && h.traits.includes('magic_dps')))) allyBonus -= 2.0;
-              if (enemyHeroes.length >= 3 && !enemyHeroes.some(h => h.role === 'Tank' || (h.traits && h.traits.includes('tank')))) enemyBonus -= 3.0;
-              if (enemyHeroes.length >= 3 && !enemyHeroes.some(h => h.role === 'Mage' || (h.traits && h.traits.includes('magic_dps')))) enemyBonus -= 2.0;
+              if (allyHeroes.length >= 3 && !allyHeroes.some(h => h.role === 'Tank' || (h.traits && h.traits.includes('tank')))) allyBonus -= 4.0;
+              if (allyHeroes.length >= 3 && !allyHeroes.some(h => h.role === 'Mage' || (h.traits && h.traits.includes('magic_dps')))) allyBonus -= 3.0;
+              
+              if (enemyHeroes.length >= 3 && !enemyHeroes.some(h => h.role === 'Tank' || (h.traits && h.traits.includes('tank')))) enemyBonus -= 4.0;
+              if (enemyHeroes.length >= 3 && !enemyHeroes.some(h => h.role === 'Mage' || (h.traits && h.traits.includes('magic_dps')))) enemyBonus -= 3.0;
 
               if ((allyTraits.includes('true_damage') || allyTraits.includes('anti_tank')) && (enemyTraits.includes('tank') || enemyTraits.includes('shield'))) allyBonus += 3.0;
               if ((allyTraits.includes('burst') || allyTraits.includes('anti_heal')) && (enemyTraits.includes('healer') || enemyTraits.includes('sustain'))) allyBonus += 2.5;
@@ -1152,37 +1144,18 @@
           let advice = '';
 
           if (allyIds.length > 0) {
-              let hyperCarries = ['Hou Yi', 'Luban No.7', 'Marco Polo', 'Garo', 'Aoyin', 'Lady Sun', 'Consort Yu', 'Wukong', 'Huang Zhong'];
-              let engageTanks = ['Lian Po', 'Bai Qi', 'Zhang Fei', 'Donghuang', 'Guiguzi', 'Dun', 'Xiang Yu'];
-              let splitPushers = ['Li Xin', 'Mi Yue', 'Han Xin', 'Fuzi', 'Ma Chao', 'Sun Ce'];
-              let earlySnowball = ['Pei', 'Prince of Lanling', 'Ukyo Tachibana', 'Liu Shan', 'Milady', 'Angela', 'Jing', 'Lam'];
-
-              let foundHyper = allyHeroes.find(h => hyperCarries.includes(h.id));
-              let foundEngage = allyHeroes.find(h => engageTanks.includes(h.id));
-              let foundSplit = allyHeroes.find(h => splitPushers.includes(h.id));
-              let foundEarly = allyHeroes.find(h => earlySnowball.includes(h.id));
-
               const hasTank = allyHeroes.some(h => h.role === 'Tank' || (h.traits && h.traits.includes('tank')));
               const hasMagic = allyHeroes.some(h => h.role === 'Mage' || (h.traits && h.traits.includes('magic_dps')));
               const hasPhysical = allyHeroes.some(h => ['Marksman', 'Fighter', 'Assassin'].includes(h.role) && (!h.traits || !h.traits.includes('magic_dps')));
               const ccCount = allyHeroes.filter(h => h.traits && (h.traits.includes('cc') || h.traits.includes('control'))).length;
               
               let compWarnings = '';
+              // Triggers at 3+ picks to guide the rest of the draft
               if (allyIds.length >= 3) {
                   if (!hasTank) compWarnings += '<div style="margin-top:8px; color:var(--s-tier); font-size:0.75rem;">⚠️ <b>Fragile Comp:</b> No frontline tank. You will struggle to contest vision.</div>';
                   if (!hasMagic) compWarnings += '<div style="margin-top:8px; color:var(--s-tier); font-size:0.75rem;">⚠️ <b>Full AD:</b> The enemy will easily counter your team by stacking physical defense.</div>';
                   if (!hasPhysical) compWarnings += '<div style="margin-top:8px; color:var(--s-tier); font-size:0.75rem;">⚠️ <b>Lacking Physical DPS:</b> Your team will struggle to push towers.</div>';
                   if (ccCount < 1) compWarnings += '<div style="margin-top:8px; color:var(--gold); font-size:0.75rem;">⚠️ <b>Low CC:</b> You lack crowd control to lock down mobile enemies.</div>';
-              }
-
-              if (foundHyper) {
-                  compWarnings += `<div style="margin-top:8px; color:var(--gold); font-size:0.75rem;">🏆 <b>TEAM WIN CON:</b> Your late-game insurance is <strong>${foundHyper.title}</strong>. Protect them at all costs.</div>`;
-              } else if (foundEngage) {
-                  compWarnings += `<div style="margin-top:8px; color:var(--gold); font-size:0.75rem;">🏆 <b>TEAM WIN CON:</b> You have massive teamfight setup with <strong>${foundEngage.title}</strong>. Force fights at Tyrant/Overlord.</div>`;
-              } else if (foundSplit) {
-                  compWarnings += `<div style="margin-top:8px; color:var(--gold); font-size:0.75rem;">🏆 <b>TEAM WIN CON:</b> Stall the enemy team 4v5 while <strong>${foundSplit.title}</strong> takes towers in the side lane.</div>`;
-              } else if (foundEarly) {
-                  compWarnings += `<div style="margin-top:8px; color:var(--gold); font-size:0.75rem;">🏆 <b>TEAM WIN CON:</b> <strong>${foundEarly.title}</strong> needs to snowball. Invade and end the game before late-game scaling.</div>`;
               }
 
               if(compWarnings) advice += compWarnings;
@@ -1261,9 +1234,9 @@
     function exportDraft() {
         if(soundEnabled) playSound('click');
         let text = "🏆 HONOR OF KINGS DRAFT 🏆\n\n🟦 ALLY TEAM:\n";
-        TEAM_ROLES.forEach(r => { const id = draftState.ally[r]; text += `- ${r}: ${id ? RAW_HEROES.find(x => x.id === id).title : 'Empty'}\n`; });
+        TEAM_ROLES.forEach(r => { const id = draftState.ally[r]; const hObj = id ? RAW_HEROES.find(x => x.id === id) : null; text += `- ${r}: ${hObj ? hObj.title + ' (' + hObj.flavor + ')' : 'Empty'}\n`; });
         text += "\n🟥 ENEMY TEAM:\n";
-        TEAM_ROLES.forEach(r => { const id = draftState.enemy[r]; text += `- ${r}: ${id ? RAW_HEROES.find(x => x.id === id).title : 'Empty'}\n`; });
+        TEAM_ROLES.forEach(r => { const id = draftState.enemy[r]; const hObj = id ? RAW_HEROES.find(x => x.id === id) : null; text += `- ${r}: ${hObj ? hObj.title + ' (' + hObj.flavor + ')' : 'Empty'}\n`; });
         navigator.clipboard.writeText(text).then(() => {
             const btn = document.getElementById('export-btn'); btn.innerText = "✅ Copied!";
             setTimeout(() => btn.innerText = "📋 Copy Draft", 2000);
